@@ -1,2 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.bomberman.controller.GameController">
+    <top>
+        <HBox alignment="CENTER" prefHeight="50.0" styleClass="header">
+            <children>
+                <Label styleClass="title" text="Super Bomberman">
+                    <font>
+                        <Font name="System Bold" size="24.0" />
+                    </font>
+                </Label>
+            </children>
+        </HBox>
+    </top>
+    <center>
+        <StackPane fx:id="gameArea" styleClass="game-area">
+            <children>
+                <!-- Ici sera placé le plateau de jeu -->
+                <GridPane fx:id="gameGrid" alignment="CENTER" styleClass="game-grid">
+                </GridPane>
+            </children>
+        </StackPane>
+    </center>
+    <bottom>
+        <HBox alignment="CENTER" prefHeight="60.0" spacing="10.0" styleClass="controls">
+            <children>
+                <Button fx:id="startButton" onAction="#startGame" text="Démarrer" />
+                <Button fx:id="pauseButton" onAction="#pauseGame" text="Pause" />
+                <Button fx:id="resetButton" onAction="#resetGame" text="Reset" />
+                <Label text="Score: " />
+                <Label fx:id="scoreLabel" text="0" />
+            </children>
+        </HBox>
+    </bottom>
+</BorderPane>

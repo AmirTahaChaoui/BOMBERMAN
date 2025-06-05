@@ -85,11 +85,17 @@ public class Bomb {
             }
 
             GameBoard.CellType cellType = gameBoard.getCellType(newRow, col);
+
+            // Si c'est un mur indestructible, on s'arrête SANS l'ajouter
+            if (cellType == GameBoard.CellType.INDESTRUCTIBLE_WALL) {
+                break;
+            }
+
+            // Ajouter la cellule à l'explosion
             explosionCells.add(new Position(newRow, col));
 
-            // Arrêter après un mur (destructible ou non)
-            if (cellType == GameBoard.CellType.INDESTRUCTIBLE_WALL ||
-                    cellType == GameBoard.CellType.DESTRUCTIBLE_WALL) {
+            // Si c'est un mur destructible, on s'arrête APRÈS l'avoir ajouté
+            if (cellType == GameBoard.CellType.DESTRUCTIBLE_WALL) {
                 break;
             }
         }
@@ -102,10 +108,14 @@ public class Bomb {
             }
 
             GameBoard.CellType cellType = gameBoard.getCellType(newRow, col);
+
+            if (cellType == GameBoard.CellType.INDESTRUCTIBLE_WALL) {
+                break;
+            }
+
             explosionCells.add(new Position(newRow, col));
 
-            if (cellType == GameBoard.CellType.INDESTRUCTIBLE_WALL ||
-                    cellType == GameBoard.CellType.DESTRUCTIBLE_WALL) {
+            if (cellType == GameBoard.CellType.DESTRUCTIBLE_WALL) {
                 break;
             }
         }
@@ -118,10 +128,14 @@ public class Bomb {
             }
 
             GameBoard.CellType cellType = gameBoard.getCellType(row, newCol);
+
+            if (cellType == GameBoard.CellType.INDESTRUCTIBLE_WALL) {
+                break;
+            }
+
             explosionCells.add(new Position(row, newCol));
 
-            if (cellType == GameBoard.CellType.INDESTRUCTIBLE_WALL ||
-                    cellType == GameBoard.CellType.DESTRUCTIBLE_WALL) {
+            if (cellType == GameBoard.CellType.DESTRUCTIBLE_WALL) {
                 break;
             }
         }
@@ -134,10 +148,14 @@ public class Bomb {
             }
 
             GameBoard.CellType cellType = gameBoard.getCellType(row, newCol);
+
+            if (cellType == GameBoard.CellType.INDESTRUCTIBLE_WALL) {
+                break;
+            }
+
             explosionCells.add(new Position(row, newCol));
 
-            if (cellType == GameBoard.CellType.INDESTRUCTIBLE_WALL ||
-                    cellType == GameBoard.CellType.DESTRUCTIBLE_WALL) {
+            if (cellType == GameBoard.CellType.DESTRUCTIBLE_WALL) {
                 break;
             }
         }
