@@ -169,7 +169,6 @@ public class MenuController implements Initializable {
             cursorBlinkTimeline.stop();
         }
 
-        // Charger le jeu
         loadGameScene();
     }
 
@@ -177,8 +176,6 @@ public class MenuController implements Initializable {
     private void handleSettingsButton() {
         System.out.println("SETTINGS sélectionné");
 
-
-        // Ici vous pouvez ouvrir un dialogue de paramètres
         showSettingsDialog();
     }
 
@@ -201,7 +198,7 @@ public class MenuController implements Initializable {
             Stage stage = (Stage) menuContainer.getScene().getWindow();
 
             // Charger le CSS du jeu si nécessaire
-            gameScene.getStylesheets().add(getClass().getResource("/css/game.css").toExternalForm());
+            gameScene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
 
             // Changer de scène
             stage.setScene(gameScene);
