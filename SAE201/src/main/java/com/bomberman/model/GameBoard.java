@@ -62,6 +62,7 @@ public class GameBoard {
         }
     }
 
+
     /**
      * Vérifie si une position est valide et accessible
      */
