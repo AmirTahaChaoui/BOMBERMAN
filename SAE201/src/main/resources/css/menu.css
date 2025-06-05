@@ -1,173 +1,272 @@
-/* menu.css - Styles pour le menu Bomberman style Doom 64 */
+/* menu.css - Enhanced Styles for Super Bomberman Menu (Doom 64 Style) */
 
-/* Police personnalisée - vous devez ajouter PressStart2P.ttf dans resources/fonts/ */
+/* ========== FONT LOADING ========== */
 @font-face {
     font-family: 'Press Start 2P';
-    src: url('../fonts/PressStart2P.ttf');
+    src: url('../fonts/PressStart2P.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
 }
 
-/* Fond principal */
+/* ========== ROOT STYLES ========== */
 .root {
-    -fx-background-color: #1a1a1a;
-    -fx-font-family: 'Press Start 2P', monospace;
+    -fx-background-color: linear-gradient(to bottom, #0a0a0a, #1a1a1a, #0f0f0f);
+    -fx-font-family: 'Press Start 2P', 'Courier New', monospace;
     -fx-font-size: 12px;
+    -fx-text-fill: white;
 }
 
-/* Container principal du menu */
+/* ========== MAIN MENU CONTAINER ========== */
 .menu-container {
-    -fx-background-color: #2a2a2a;
-    -fx-border-color: #666666;
-    -fx-border-width: 4px;
-    -fx-border-style: solid;
-    -fx-padding: 40px;
-    -fx-spacing: 20px;
+    -fx-background-color: linear-gradient(to bottom, #2a2a2a, #1f1f1f, #252525);
+    -fx-border-color: #666666, #333333;
+    -fx-border-width: 4px, 2px;
+    -fx-border-style: solid, solid;
+    -fx-border-insets: 0, 4px;
+    -fx-padding: 50px 40px;
+    -fx-spacing: 25px;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
 
-    /* Effet d'ombre interne */
-    -fx-effect: innershadow(three-pass-box, rgba(68,68,68,0.8), 2, 0, 2, 2),
-    innershadow(three-pass-box, rgba(0,0,0,0.8), 2, 0, -2, -2);
+    /* Enhanced shadow effects */
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 15, 0.3, 0, 5),
+    innershadow(three-pass-box, rgba(68,68,68,0.6), 3, 0, 2, 2),
+    innershadow(three-pass-box, rgba(0,0,0,0.9), 3, 0, -2, -2);
 }
 
-/* Titre du jeu */
+/* ========== TITLE STYLES ========== */
 .game-title {
-    -fx-text-fill: #ff6600;
-    -fx-font-size: 24px;
-    -fx-font-family: 'Press Start 2P', monospace;
-    -fx-effect: dropshadow(one-pass-box, #aa3300, 0, 0, 2, 2);
-}
-
-/* Sous-titre */
-.game-subtitle {
-    -fx-text-fill: #cccccc;
-    -fx-font-size: 8px;
-    -fx-font-family: 'Press Start 2P', monospace;
-    -fx-padding: 0 0 20 0;
-    -fx-letter-spacing: 2px;
-}
-
-/* Container des boutons */
-.menu-buttons {
-    -fx-spacing: 15px;
+    -fx-font-size: 28px;
+    -fx-text-fill: linear-gradient(to bottom, #ffffff, #cccccc);
     -fx-alignment: center;
+    -fx-padding: 10px;
+    -fx-letter-spacing: 3px;
+    -fx-effect: dropshadow(three-pass-box, rgba(255,102,0,0.8), 2, 0, 0, 2);
 }
 
-/* Container de chaque bouton avec curseur */
+.game-subtitle {
+    -fx-text-fill: #ff6600;
+    -fx-font-size: 10px;
+    -fx-font-family: 'Press Start 2P', 'Courier New', monospace;
+    -fx-padding: 0 0 25 0;
+    -fx-letter-spacing: 4px;
+    -fx-alignment: center;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 1, 0, 0, 1);
+}
+
+/* ========== MENU BUTTONS CONTAINER ========== */
+.menu-buttons {
+    -fx-spacing: 18px;
+    -fx-alignment: center;
+    -fx-padding: 10px 0;
+}
+
+/* ========== BUTTON CONTAINER ========== */
 .button-container {
-    -fx-spacing: 10px;
+    -fx-spacing: 15px;
     -fx-alignment: center-left;
-    -fx-min-width: 200px;
+    -fx-min-width: 250px;
+    -fx-max-width: 250px;
+    -fx-pref-width: 250px;
+    -fx-padding: 2px 0;
 }
 
-/* Curseur ">" */
+/* ========== CURSOR STYLES ========== */
 .cursor {
     -fx-text-fill: #ff6600;
-    -fx-font-size: 12px;
-    -fx-font-family: 'Press Start 2P', monospace;
-    -fx-min-width: 20px;
+    -fx-font-size: 14px;
+    -fx-font-family: 'Press Start 2P', 'Courier New', monospace;
+    -fx-min-width: 25px;
+    -fx-max-width: 25px;
+    -fx-pref-width: 25px;
     -fx-alignment: center;
+    -fx-effect: dropshadow(three-pass-box, rgba(255,102,0,0.8), 3, 0, 1, 0);
 }
 
-/* Boutons du menu */
+/* ========== MENU BUTTON STYLES ========== */
 .menu-btn {
-    -fx-background-color: #444444;
-    -fx-border-color: #666666;
-    -fx-border-width: 2px;
-    -fx-border-style: solid;
-    -fx-text-fill: white;
-    -fx-font-family: 'Press Start 2P', monospace;
-    -fx-font-size: 12px;
-    -fx-padding: 15px 30px;
+    -fx-background-color: linear-gradient(to bottom, #555555, #444444, #383838);
+    -fx-border-color: #777777, #333333;
+    -fx-border-width: 2px, 1px;
+    -fx-border-style: solid, solid;
+    -fx-border-insets: 0, 2px;
+    -fx-text-fill: #ffffff;
+    -fx-font-family: 'Press Start 2P', 'Courier New', monospace;
+    -fx-font-size: 11px;
+    -fx-padding: 18px 35px;
     -fx-cursor: hand;
-    -fx-background-radius: 0;
-    -fx-border-radius: 0;
+    -fx-background-radius: 4px;
+    -fx-border-radius: 4px;
+    -fx-min-width: 180px;
+    -fx-max-width: 180px;
+    -fx-alignment: center;
+    -fx-letter-spacing: 1px;
 
-    /* Effet d'ombre interne pour le relief */
-    -fx-effect: innershadow(three-pass-box, rgba(102,102,102,0.8), 1, 0, 1, 1),
+    /* 3D button effect */
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.6), 4, 0, 2, 2),
+    innershadow(three-pass-box, rgba(119,119,119,0.4), 1, 0, 1, 1),
     innershadow(three-pass-box, rgba(34,34,34,0.8), 1, 0, -1, -1);
 }
 
-/* Bouton au survol */
+/* ========== BUTTON HOVER STATE ========== */
 .menu-btn:hover {
-    -fx-background-color: #555555;
-    -fx-border-color: #ff6600;
-    -fx-text-fill: #ff6600;
-    -fx-effect: innershadow(three-pass-box, rgba(119,119,119,0.8), 1, 0, 1, 1),
+    -fx-background-color: linear-gradient(to bottom, #666666, #555555, #494949);
+    -fx-border-color: #ff6600, #cc5500;
+    -fx-text-fill: #ff9933;
+    -fx-effect: dropshadow(three-pass-box, rgba(255,102,0,0.6), 6, 0, 0, 3),
+    innershadow(three-pass-box, rgba(136,136,136,0.4), 1, 0, 1, 1),
     innershadow(three-pass-box, rgba(51,51,51,0.8), 1, 0, -1, -1);
 }
 
-/* Bouton sélectionné */
+/* ========== BUTTON SELECTED STATE ========== */
 .menu-btn.selected {
-    -fx-background-color: #ff6600;
-    -fx-text-fill: black;
-    -fx-border-color: #ff9933;
-    -fx-effect: innershadow(three-pass-box, rgba(255,153,51,0.8), 1, 0, 1, 1),
-    innershadow(three-pass-box, rgba(204,51,0,0.8), 1, 0, -1, -1);
+    -fx-background-color: linear-gradient(to bottom, #ff7700, #ff6600, #e55a00);
+    -fx-text-fill: #000000;
+    -fx-border-color: #ffaa33, #cc4400;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(three-pass-box, rgba(255,102,0,0.9), 8, 0, 0, 4),
+    innershadow(three-pass-box, rgba(255,153,51,0.6), 2, 0, 1, 1),
+    innershadow(three-pass-box, rgba(204,51,0,0.8), 2, 0, -1, -1);
 }
 
-/* Bouton pressé */
+/* ========== BUTTON PRESSED STATE ========== */
 .menu-btn:pressed {
-    -fx-background-color: #333333;
-    -fx-effect: innershadow(three-pass-box, rgba(34,34,34,0.8), 1, 0, 1, 1),
-    innershadow(three-pass-box, rgba(102,102,102,0.8), 1, 0, -1, -1);
+    -fx-background-color: linear-gradient(to bottom, #333333, #222222, #2a2a2a);
+    -fx-effect: innershadow(three-pass-box, rgba(34,34,34,0.9), 3, 0, 2, 2),
+    innershadow(three-pass-box, rgba(102,102,102,0.3), 1, 0, -1, -1);
+    -fx-translate-y: 1px;
 }
 
-/* Label de version */
+/* ========== SELECTED BUTTON PRESSED STATE ========== */
+.menu-btn.selected:pressed {
+    -fx-background-color: linear-gradient(to bottom, #cc5500, #bb4400, #aa3300);
+    -fx-effect: innershadow(three-pass-box, rgba(170,51,0,0.9), 3, 0, 2, 2),
+    innershadow(three-pass-box, rgba(255,136,68,0.3), 1, 0, -1, -1);
+}
+
+/* ========== VERSION AND CONTROLS LABELS ========== */
 .version {
     -fx-text-fill: #666666;
-    -fx-font-size: 8px;
-    -fx-font-family: 'Press Start 2P', monospace;
+    -fx-font-size: 7px;
+    -fx-font-family: 'Press Start 2P', 'Courier New', monospace;
+    -fx-letter-spacing: 1px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 1, 0, 0, 1);
 }
 
-/* Animation de focus pour le container principal */
+/* ========== FOCUS EFFECTS ========== */
 .menu-container:focused {
-    -fx-border-color: #ff6600;
+    -fx-border-color: #ff6600, #ffaa33;
+    -fx-effect: dropshadow(three-pass-box, rgba(255,102,0,0.4), 20, 0.2, 0, 5),
+    innershadow(three-pass-box, rgba(68,68,68,0.6), 3, 0, 2, 2),
+    innershadow(three-pass-box, rgba(0,0,0,0.9), 3, 0, -2, -2);
 }
 
-/* Styles pour les différents états des boutons avec curseur */
-.button-container .cursor {
-    -fx-opacity: 1.0;
-}
-
-/* Animation du curseur clignotant sera gérée en Java */
-
-/* Effets de transition */
+/* ========== BUTTON TRANSITIONS ========== */
 .menu-btn {
-    -fx-transition: all 0.1s ease;
+    -fx-transition: all 0.15s ease-in-out;
 }
 
-/* Style pour les dialogues d'alerte (Settings/More) */
+/* ========== DIALOG STYLES ========== */
 .alert {
-    -fx-font-family: 'Press Start 2P', monospace;
-    -fx-font-size: 10px;
+    -fx-font-family: 'Press Start 2P', 'Courier New', monospace;
+    -fx-font-size: 9px;
 }
 
 .alert .header-panel {
-    -fx-background-color: #2a2a2a;
+    -fx-background-color: linear-gradient(to bottom, #2a2a2a, #1f1f1f);
+    -fx-border-color: #666666;
+    -fx-border-width: 0 0 2px 0;
+    -fx-padding: 15px;
 }
 
 .alert .header-panel .label {
     -fx-text-fill: #ff6600;
-    -fx-font-family: 'Press Start 2P', monospace;
+    -fx-font-family: 'Press Start 2P', 'Courier New', monospace;
+    -fx-font-size: 11px;
+    -fx-letter-spacing: 2px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 1, 0, 0, 1);
 }
 
 .alert .content.label {
-    -fx-text-fill: white;
-    -fx-font-family: 'Press Start 2P', monospace;
+    -fx-text-fill: #ffffff;
+    -fx-font-family: 'Press Start 2P', 'Courier New', monospace;
     -fx-font-size: 8px;
+    -fx-line-spacing: 3px;
+    -fx-padding: 20px;
+    -fx-background-color: #1a1a1a;
 }
 
-/* Personnalisation des boutons des dialogues */
+/* ========== DIALOG BUTTONS ========== */
+.alert .button-bar {
+    -fx-background-color: #2a2a2a;
+    -fx-padding: 15px;
+}
+
 .alert .button-bar .button {
-    -fx-background-color: #444444;
-    -fx-text-fill: white;
+    -fx-background-color: linear-gradient(to bottom, #555555, #444444);
+    -fx-text-fill: #ffffff;
     -fx-border-color: #666666;
     -fx-border-width: 2px;
-    -fx-font-family: 'Press Start 2P', monospace;
+    -fx-font-family: 'Press Start 2P', 'Courier New', monospace;
     -fx-font-size: 8px;
-    -fx-background-radius: 0;
-    -fx-border-radius: 0;
+    -fx-background-radius: 3px;
+    -fx-border-radius: 3px;
+    -fx-padding: 8px 15px;
+    -fx-letter-spacing: 1px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.6), 2, 0, 1, 1);
 }
 
 .alert .button-bar .button:hover {
-    -fx-background-color: #ff6600;
-    -fx-text-fill: black;
+    -fx-background-color: linear-gradient(to bottom, #ff6600, #e55a00);
+    -fx-text-fill: #000000;
+    -fx-border-color: #ff9933;
+    -fx-effect: dropshadow(three-pass-box, rgba(255,102,0,0.6), 4, 0, 0, 2);
+}
+
+.alert .button-bar .button:pressed {
+    -fx-background-color: linear-gradient(to bottom, #cc5500, #bb4400);
+    -fx-translate-y: 1px;
+}
+
+/* ========== DIALOG PANE STYLING ========== */
+.alert .dialog-pane {
+    -fx-background-color: linear-gradient(to bottom, #1a1a1a, #0f0f0f);
+    -fx-border-color: #666666;
+    -fx-border-width: 3px;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.9), 15, 0.3, 0, 5);
+}
+
+/* ========== IMAGE VIEW ENHANCEMENTS ========== */
+.menu-container .image-view {
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 5, 0, 0, 3);
+}
+
+/* ========== ADDITIONAL HOVER EFFECTS ========== */
+.button-container:hover .cursor {
+    -fx-text-fill: #ffaa33;
+    -fx-effect: dropshadow(three-pass-box, rgba(255,170,51,0.9), 5, 0, 2, 0);
+}
+
+/* ========== ANIMATION KEYFRAMES ========== */
+@keyframes cursor-blink {
+    0% { -fx-opacity: 1.0; }
+    50% { -fx-opacity: 0.3; }
+    100% { -fx-opacity: 1.0; }
+}
+
+/* ========== RESPONSIVE ADJUSTMENTS ========== */
+.menu-container .label {
+    -fx-text-alignment: center;
+    -fx-alignment: center;
+}
+
+/* ========== ACCESSIBILITY IMPROVEMENTS ========== */
+.menu-btn:focused {
+    -fx-border-color: #ffaa33, #ff6600;
+    -fx-border-width: 3px, 1px;
+    -fx-effect: dropshadow(three-pass-box, rgba(255,170,51,0.8), 6, 0, 0, 3),
+    innershadow(three-pass-box, rgba(119,119,119,0.4), 1, 0, 1, 1),
+    innershadow(three-pass-box, rgba(34,34,34,0.8), 1, 0, -1, -1);
 }

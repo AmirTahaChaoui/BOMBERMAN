@@ -6,52 +6,142 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
 
-<StackPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.bomberman.controller.MenuController">
+<StackPane fx:id="root"
+           xmlns="http://javafx.com/javafx/11.0.1"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="com.bomberman.controller.MenuController"
+           styleClass="root"
+           focusTraversable="true">
 
     <!-- Container principal du menu -->
-    <VBox fx:id="menuContainer" alignment="CENTER" styleClass="menu-container">
+    <VBox fx:id="menuContainer"
+          alignment="CENTER"
+          styleClass="menu-container"
+          spacing="20">
 
         <!-- Titre du jeu -->
-        <Label fx:id="gameTitle" styleClass="game-title" text="SUPER BOMBERMAN" />
+        <VBox alignment="CENTER" spacing="10">
+            <!-- Logo/Image du jeu -->
+            <ImageView fx:id="titleImage"
+                       fitHeight="120"
+                       fitWidth="400"
+                       preserveRatio="true"
+                       smooth="true">
+                <image>
+                    <Image url="@../images/logo.png" />
+                </image>
+            </ImageView>
+
+            <!-- Titre textuel au cas où l'image ne charge pas -->
+            <Label fx:id="gameTitle"
+                   styleClass="game-title"
+                   text="SUPER BOMBERMAN"
+                   visible="false" />
+        </VBox>
 
         <!-- Sous-titre -->
-        <Label fx:id="gameSubtitle" styleClass="game-subtitle" text="SELECT OPTION" />
+        <Label fx:id="gameSubtitle"
+               styleClass="game-subtitle"
+               text="SELECT OPTION"
+               alignment="CENTER" />
 
         <!-- Container des boutons -->
-        <VBox fx:id="menuButtons" alignment="CENTER" styleClass="menu-buttons">
+        <VBox fx:id="menuButtons"
+              alignment="CENTER"
+              styleClass="menu-buttons"
+              spacing="15">
 
             <!-- Bouton PLAY -->
-            <HBox fx:id="playButtonContainer" alignment="CENTER_LEFT" styleClass="button-container">
-                <Label fx:id="playCursor" styleClass="cursor" text=">" visible="true" />
-                <Button fx:id="playButton" mnemonicParsing="false" onAction="#handlePlayButton" styleClass="menu-btn selected" text="PLAY" />
+            <HBox fx:id="playButtonContainer"
+                  alignment="CENTER_LEFT"
+                  styleClass="button-container">
+                <Label fx:id="playCursor"
+                       styleClass="cursor"
+                       text=">"
+                       visible="true" />
+                <Button fx:id="playButton"
+                        mnemonicParsing="false"
+                        onAction="#handlePlayButton"
+                        styleClass="menu-btn,selected"
+                        text="PLAY"
+                        focusTraversable="false" />
             </HBox>
 
             <!-- Bouton SETTINGS -->
-            <HBox fx:id="settingsButtonContainer" alignment="CENTER_LEFT" styleClass="button-container">
-                <Label fx:id="settingsCursor" styleClass="cursor" text=">" visible="false" />
-                <Button fx:id="settingsButton" mnemonicParsing="false" onAction="#handleSettingsButton" styleClass="menu-btn" text="SETTINGS" />
+            <HBox fx:id="settingsButtonContainer"
+                  alignment="CENTER_LEFT"
+                  styleClass="button-container">
+                <Label fx:id="settingsCursor"
+                       styleClass="cursor"
+                       text=">"
+                       visible="false" />
+                <Button fx:id="settingsButton"
+                        mnemonicParsing="false"
+                        onAction="#handleSettingsButton"
+                        styleClass="menu-btn"
+                        text="SETTINGS"
+                        focusTraversable="false" />
             </HBox>
 
-            <!-- Bouton MORE -->
-            <HBox fx:id="moreButtonContainer" alignment="CENTER_LEFT" styleClass="button-container">
-                <Label fx:id="moreCursor" styleClass="cursor" text=">" visible="false" />
-                <Button fx:id="moreButton" mnemonicParsing="false" onAction="#handleMoreButton" styleClass="menu-btn" text="MORE" />
+            <!-- Bouton CREDITS -->
+            <HBox fx:id="creditsButtonContainer"
+                  alignment="CENTER_LEFT"
+                  styleClass="button-container">
+                <Label fx:id="creditsCursor"
+                       styleClass="cursor"
+                       text=">"
+                       visible="false" />
+                <Button fx:id="creditsButton"
+                        mnemonicParsing="false"
+                        onAction="#handleCreditsButton"
+                        styleClass="menu-btn"
+                        text="CREDITS"
+                        focusTraversable="false" />
             </HBox>
 
+            <!-- Bouton EXIT -->
+            <HBox fx:id="exitButtonContainer"
+                  alignment="CENTER_LEFT"
+                  styleClass="button-container">
+                <Label fx:id="exitCursor"
+                       styleClass="cursor"
+                       text=">"
+                       visible="false" />
+                <Button fx:id="exitButton"
+                        mnemonicParsing="false"
+                        onAction="#handleExitButton"
+                        styleClass="menu-btn"
+                        text="EXIT"
+                        focusTraversable="false" />
+            </HBox>
         </VBox>
 
         <!-- Espacement -->
         <VBox.margin>
-            <Insets bottom="20.0" left="40.0" right="40.0" top="20.0" />
+            <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
         </VBox.margin>
-
     </VBox>
 
     <!-- Version en bas à droite -->
-    <Label fx:id="versionLabel" styleClass="version" text="V1.0" StackPane.alignment="BOTTOM_RIGHT">
+    <Label fx:id="versionLabel"
+           styleClass="version"
+           text="V1.0 - RETRO EDITION"
+           StackPane.alignment="BOTTOM_RIGHT">
         <StackPane.margin>
-            <Insets bottom="10.0" right="10.0" />
+            <Insets bottom="15.0" right="15.0" />
+        </StackPane.margin>
+    </Label>
+
+    <!-- Instructions de contrôle en bas à gauche -->
+    <Label fx:id="controlsLabel"
+           styleClass="version"
+           text="USE ARROW KEYS + ENTER"
+           StackPane.alignment="BOTTOM_LEFT">
+        <StackPane.margin>
+            <Insets bottom="15.0" left="15.0" />
         </StackPane.margin>
     </Label>
 
