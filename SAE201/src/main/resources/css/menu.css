@@ -1,0 +1,173 @@
+/* menu.css - Styles pour le menu Bomberman style Doom 64 */
+
+/* Police personnalisée - vous devez ajouter PressStart2P.ttf dans resources/fonts/ */
+@font-face {
+    font-family: 'Press Start 2P';
+    src: url('../fonts/PressStart2P.ttf');
+}
+
+/* Fond principal */
+.root {
+    -fx-background-color: #1a1a1a;
+    -fx-font-family: 'Press Start 2P', monospace;
+    -fx-font-size: 12px;
+}
+
+/* Container principal du menu */
+.menu-container {
+    -fx-background-color: #2a2a2a;
+    -fx-border-color: #666666;
+    -fx-border-width: 4px;
+    -fx-border-style: solid;
+    -fx-padding: 40px;
+    -fx-spacing: 20px;
+
+    /* Effet d'ombre interne */
+    -fx-effect: innershadow(three-pass-box, rgba(68,68,68,0.8), 2, 0, 2, 2),
+    innershadow(three-pass-box, rgba(0,0,0,0.8), 2, 0, -2, -2);
+}
+
+/* Titre du jeu */
+.game-title {
+    -fx-text-fill: #ff6600;
+    -fx-font-size: 24px;
+    -fx-font-family: 'Press Start 2P', monospace;
+    -fx-effect: dropshadow(one-pass-box, #aa3300, 0, 0, 2, 2);
+}
+
+/* Sous-titre */
+.game-subtitle {
+    -fx-text-fill: #cccccc;
+    -fx-font-size: 8px;
+    -fx-font-family: 'Press Start 2P', monospace;
+    -fx-padding: 0 0 20 0;
+    -fx-letter-spacing: 2px;
+}
+
+/* Container des boutons */
+.menu-buttons {
+    -fx-spacing: 15px;
+    -fx-alignment: center;
+}
+
+/* Container de chaque bouton avec curseur */
+.button-container {
+    -fx-spacing: 10px;
+    -fx-alignment: center-left;
+    -fx-min-width: 200px;
+}
+
+/* Curseur ">" */
+.cursor {
+    -fx-text-fill: #ff6600;
+    -fx-font-size: 12px;
+    -fx-font-family: 'Press Start 2P', monospace;
+    -fx-min-width: 20px;
+    -fx-alignment: center;
+}
+
+/* Boutons du menu */
+.menu-btn {
+    -fx-background-color: #444444;
+    -fx-border-color: #666666;
+    -fx-border-width: 2px;
+    -fx-border-style: solid;
+    -fx-text-fill: white;
+    -fx-font-family: 'Press Start 2P', monospace;
+    -fx-font-size: 12px;
+    -fx-padding: 15px 30px;
+    -fx-cursor: hand;
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
+
+    /* Effet d'ombre interne pour le relief */
+    -fx-effect: innershadow(three-pass-box, rgba(102,102,102,0.8), 1, 0, 1, 1),
+    innershadow(three-pass-box, rgba(34,34,34,0.8), 1, 0, -1, -1);
+}
+
+/* Bouton au survol */
+.menu-btn:hover {
+    -fx-background-color: #555555;
+    -fx-border-color: #ff6600;
+    -fx-text-fill: #ff6600;
+    -fx-effect: innershadow(three-pass-box, rgba(119,119,119,0.8), 1, 0, 1, 1),
+    innershadow(three-pass-box, rgba(51,51,51,0.8), 1, 0, -1, -1);
+}
+
+/* Bouton sélectionné */
+.menu-btn.selected {
+    -fx-background-color: #ff6600;
+    -fx-text-fill: black;
+    -fx-border-color: #ff9933;
+    -fx-effect: innershadow(three-pass-box, rgba(255,153,51,0.8), 1, 0, 1, 1),
+    innershadow(three-pass-box, rgba(204,51,0,0.8), 1, 0, -1, -1);
+}
+
+/* Bouton pressé */
+.menu-btn:pressed {
+    -fx-background-color: #333333;
+    -fx-effect: innershadow(three-pass-box, rgba(34,34,34,0.8), 1, 0, 1, 1),
+    innershadow(three-pass-box, rgba(102,102,102,0.8), 1, 0, -1, -1);
+}
+
+/* Label de version */
+.version {
+    -fx-text-fill: #666666;
+    -fx-font-size: 8px;
+    -fx-font-family: 'Press Start 2P', monospace;
+}
+
+/* Animation de focus pour le container principal */
+.menu-container:focused {
+    -fx-border-color: #ff6600;
+}
+
+/* Styles pour les différents états des boutons avec curseur */
+.button-container .cursor {
+    -fx-opacity: 1.0;
+}
+
+/* Animation du curseur clignotant sera gérée en Java */
+
+/* Effets de transition */
+.menu-btn {
+    -fx-transition: all 0.1s ease;
+}
+
+/* Style pour les dialogues d'alerte (Settings/More) */
+.alert {
+    -fx-font-family: 'Press Start 2P', monospace;
+    -fx-font-size: 10px;
+}
+
+.alert .header-panel {
+    -fx-background-color: #2a2a2a;
+}
+
+.alert .header-panel .label {
+    -fx-text-fill: #ff6600;
+    -fx-font-family: 'Press Start 2P', monospace;
+}
+
+.alert .content.label {
+    -fx-text-fill: white;
+    -fx-font-family: 'Press Start 2P', monospace;
+    -fx-font-size: 8px;
+}
+
+/* Personnalisation des boutons des dialogues */
+.alert .button-bar .button {
+    -fx-background-color: #444444;
+    -fx-text-fill: white;
+    -fx-border-color: #666666;
+    -fx-border-width: 2px;
+    -fx-font-family: 'Press Start 2P', monospace;
+    -fx-font-size: 8px;
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
+}
+
+.alert .button-bar .button:hover {
+    -fx-background-color: #ff6600;
+    -fx-text-fill: black;
+}
