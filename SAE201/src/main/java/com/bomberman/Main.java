@@ -8,17 +8,39 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 
+    private static final String TITLE = "Super Bomberman";
+    private static final int WINDOW_WIDTH = 800;
+    private static final int WINDOW_HEIGHT = 600;
+
     @Override
-    public void start(Stage primaryStage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("/com/bomberman/fxml/bomb.fxml"));
-        Scene scene = new Scene(root);
-        scene.getStylesheets().add(getClass().getResource("/com/bomberman/css/style.css").toExternalForm());
-        primaryStage.setTitle("Bomberman");
-        primaryStage.setScene(scene);
-        primaryStage.show();
+    public void start(Stage primaryStage) {
+        try {
+            // Charger le fichier FXML
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/game.fxml"));
+            Parent root = loader.load();
+
+            // Créer la scène
+            Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
+
+            // Charger le CSS (optionnel pour l'instant)
+            scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
+
+            // Configurer la fenêtre
+            primaryStage.setTitle(TITLE);
+            primaryStage.setScene(scene);
+            primaryStage.setResizable(false); // Taille fixe pour un jeu
+            primaryStage.show();
+
+            // Centrer la fenêtre
+            primaryStage.centerOnScreen();
+
+        } catch (Exception e) {
+            System.err.println("Erreur lors du chargement de l'application : " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     public static void main(String[] args) {
-        launch();
+        launch(args);
     }
 }
