@@ -16,6 +16,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) {
         try {
             // Charger le fichier FXML
+
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/game.fxml"));
             Parent root = loader.load();
 

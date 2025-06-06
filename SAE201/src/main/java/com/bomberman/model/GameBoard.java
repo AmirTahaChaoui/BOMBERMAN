@@ -12,6 +12,7 @@ public class GameBoard {
         DESTRUCTIBLE_WALL,   // Mur destructible
         BOMB_BONUS,         // Bonus nombre de bombes
         RANGE_BONUS         // Bonus portée d'explosion
+
     }
 
     private CellType[][] board;
@@ -50,6 +51,7 @@ public class GameBoard {
             for (int col = 1; col < BOARD_WIDTH - 1; col++) {
                 // Ne placer que sur les cases vides
                 if (board[row][col] == CellType.EMPTY) {
+
                     // Éviter les positions de départ du joueur 1 (coin supérieur gauche)
                     if ((row <= 2 && col <= 2)) {
                         continue; // Laisser libre pour le spawn du joueur 1
@@ -58,6 +60,7 @@ public class GameBoard {
                     // Éviter les positions de départ du joueur 2 (coin inférieur droit)
                     if ((row >= BOARD_HEIGHT - 3 && col >= BOARD_WIDTH - 3)) {
                         continue; // Laisser libre pour le spawn du joueur 2
+
                     }
 
                     // 60% de chance de placer un mur destructible
@@ -81,6 +84,7 @@ public class GameBoard {
         return cellType == CellType.EMPTY ||
                 cellType == CellType.BOMB_BONUS ||
                 cellType == CellType.RANGE_BONUS;
+
     }
 
     /**
@@ -110,11 +114,13 @@ public class GameBoard {
     }
 
     /**
+
      * Détruit un mur destructible à la position donnée et peut générer un bonus
      * @return true si un mur a été détruit, false sinon
      */
     public boolean destroyWall(int row, int col) {
         if (isInBounds(row, col) && board[row][col] == CellType.DESTRUCTIBLE_WALL) {
+
             // Générer un bonus aléatoirement
             double random = Math.random();
 
@@ -130,6 +136,7 @@ public class GameBoard {
                 // 70% chance de case vide
                 board[row][col] = CellType.EMPTY;
             }
+
 
             return true;
         }
