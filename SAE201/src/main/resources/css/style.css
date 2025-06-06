@@ -6,7 +6,7 @@
 
 /* Header */
 .header {
-    -fx-background-color: #34495e;
+    -fx-background-color: orange;
     -fx-padding: 10px;
     -fx-border-color: #1abc9c;
     -fx-border-width: 0 0 3px 0;
@@ -30,9 +30,8 @@
 
 /* Contrôles */
 .controls {
-    -fx-background-color: #34495e;
+    -fx-background-color: #orange;
     -fx-padding: 15px;
-    -fx-border-color: #1abc9c;
     -fx-border-width: 3px 0 0 0;
 }
 
@@ -124,4 +123,14 @@
     -fx-fill: #f39c12;
     -fx-stroke: #e67e22;
     -fx-stroke-width: 1px;
+}
+
+/* Styles pour la section timer - à ajouter dans votre fichier CSS */
+
+.timer-display {
+    -fx-text-fill: white;
+    -fx-background-color: black;
+    -fx-padding: 5px 10px;
+    -fx-background-radius: 3px;
+
 }
