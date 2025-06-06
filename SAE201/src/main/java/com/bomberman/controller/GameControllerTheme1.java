@@ -7,6 +7,8 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.HPos;
+import javafx.geometry.VPos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -397,6 +399,8 @@ public class GameControllerTheme1 implements Initializable {
         // Placer la bombe sur la grille
         gameGrid.add(bombSprite, bomb.getCol(), bomb.getRow());
 
+        GridPane.setHalignment(bombSprite, HPos.CENTER);
+        GridPane.setValignment(bombSprite, VPos.CENTER);
         // Démarrer le minuteur
         bomb.startTimer(this::onBombExplosion, gameBoard);
 
