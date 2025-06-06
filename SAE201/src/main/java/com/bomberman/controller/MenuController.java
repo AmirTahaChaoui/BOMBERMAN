@@ -173,8 +173,7 @@ public class MenuController implements Initializable {
                 handleExitButton();
                 event.consume();
                 break;
-            // Contrôles de musique (optionnel)
-            case M:
+            case B:
                 toggleMusic();
                 event.consume();
                 break;
