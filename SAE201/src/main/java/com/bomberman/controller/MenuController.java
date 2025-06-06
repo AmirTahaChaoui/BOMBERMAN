@@ -279,7 +279,7 @@ public class MenuController implements Initializable {
 
         try {
             // Load the game scene
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/game.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/theme1.fxml"));
             Parent gameRoot = loader.load();
 
             Scene gameScene = new Scene(gameRoot, 800, 600);
