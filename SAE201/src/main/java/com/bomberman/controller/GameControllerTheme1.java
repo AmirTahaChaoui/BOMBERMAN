@@ -45,9 +45,6 @@ public class GameControllerTheme1 implements Initializable {
     @FXML
     private Button resetButton;
 
-    @FXML
-    private Label scoreLabel;
-
     private boolean gameStarted = false;
     private boolean gamePaused = false;
 
@@ -95,6 +92,83 @@ public class GameControllerTheme1 implements Initializable {
     private Image perso2Right;
     private Image perso2Death;
 
+    private Image wallImage ;
+    private Image blockImage ;
+
+    @FXML
+    private Label timerLabel;
+
+    // Variables pour le timer
+    private Timeline gameTimer;
+    private int timeRemainingSeconds = 120; // 2 minutes = 120 secondes
+    private static final int GAME_DURATION_SECONDS = 120;
+
+    // À ajouter dans la méthode initialize()
+    private void initializeTimer() {
+        // Initialiser le timer de jeu
+        gameTimer = new Timeline(new KeyFrame(Duration.seconds(1), e -> updateTimer()));
+        gameTimer.setCycleCount(Timeline.INDEFINITE);
+        updateTimerDisplay();
+    }
+
+    // Nouvelle méthode pour mettre à jour le timer
+    private void updateTimer() {
+        timeRemainingSeconds--;
+        updateTimerDisplay();
+
+        if (timeRemainingSeconds <= 0) {
+            // Temps écoulé - fin de partie
+            gameTimer.stop();
+            handleTimeUp();
+        }
+    }
+
+    // Méthode pour mettre à jour l'affichage du timer
+    private void updateTimerDisplay() {
+        int minutes = timeRemainingSeconds / 60;
+        int seconds = timeRemainingSeconds % 60;
+        String timeText = String.format("%02d:%02d", minutes, seconds);
+        timerLabel.setText(timeText);
+
+        // Changer la couleur du timer quand il reste moins de 30 secondes
+        if (timeRemainingSeconds <= 30) {
+            timerLabel.setStyle("-fx-text-fill: red;");
+        } else if (timeRemainingSeconds <= 60) {
+            timerLabel.setStyle("-fx-text-fill: orange;");
+        } else {
+            timerLabel.setStyle("-fx-text-fill: green;");
+        }
+    }
+
+    // Méthode appelée quand le temps est écoulé
+    private void handleTimeUp() {
+        System.out.println("⏰ TEMPS ÉCOULÉ !");
+
+        // Arrêter toutes les bombes actives
+        for (Bomb bomb : activeBombs) {
+            bomb.stopTimer();
+        }
+
+        // Déterminer le gagnant selon les règles de votre jeu
+        // Par exemple, le joueur qui a survécu gagne, ou match nul si les deux sont vivants
+        if (player1Alive && player2Alive) {
+            System.out.println("🤝 MATCH NUL - TEMPS ÉCOULÉ !");
+            startButton.setText("MATCH NUL");
+        } else if (player1Alive) {
+            System.out.println("🏆 JOUEUR 1 GAGNE - TEMPS ÉCOULÉ !");
+            startButton.setText("JOUEUR 1 GAGNE");
+        } else if (player2Alive) {
+            System.out.println("🏆 JOUEUR 2 GAGNE - TEMPS ÉCOULÉ !");
+            startButton.setText("JOUEUR 2 GAGNE");
+        } else {
+            System.out.println("🤝 MATCH NUL - TOUS MORTS !");
+            startButton.setText("MATCH NUL");
+        }
+
+        gamePaused = true;
+        startButton.setDisable(true);
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Init des images perso 1 :
@@ -111,9 +185,14 @@ public class GameControllerTheme1 implements Initializable {
         perso2Up = new Image(getClass().getResource("/images/perso2Up.png").toExternalForm());
         perso2Death = new Image(getClass().getResource("/images/death2.png").toExternalForm());
 
+        wallImage = new Image(getClass().getResource("/images/wall.png").toExternalForm());
+        blockImage = new Image(getClass().getResource("/images/block.png").toExternalForm());
+
+
         System.out.println("GameController initialisé");
         initializeGameArea();
         setupKeyboardControls();
+        initializeTimer();
     }
 
     private void initializeGameArea() {
@@ -174,10 +253,10 @@ public class GameControllerTheme1 implements Initializable {
                 cell.getStyleClass().add("floor");
                 break;
             case INDESTRUCTIBLE_WALL:
-                cell.getStyleClass().add("wall");
+                cell.setFill(new ImagePattern(wallImage));
                 break;
             case DESTRUCTIBLE_WALL:
-                cell.getStyleClass().add("destructible-wall");
+                cell.setFill(new ImagePattern(blockImage));
                 break;
             case BOMB_BONUS:
                 cell.getStyleClass().add("bomb-bonus");
@@ -575,6 +654,7 @@ public class GameControllerTheme1 implements Initializable {
             gameStarted = true;
             startButton.setText("Reprendre");
             pauseButton.setDisable(false);
+            gameTimer.play();
 
             // Donner le focus pour les contrôles clavier
             gameArea.requestFocus();
@@ -583,6 +663,7 @@ public class GameControllerTheme1 implements Initializable {
             gamePaused = false;
             startButton.setText("Reprendre");
             pauseButton.setText("Pause");
+            gameTimer.play();
 
             // Redonner le focus
             gameArea.requestFocus();
@@ -596,6 +677,7 @@ public class GameControllerTheme1 implements Initializable {
             gamePaused = true;
             pauseButton.setText("Reprendre");
             startButton.setText("Reprendre");
+            gameTimer.pause();
         }
     }
 
@@ -608,7 +690,11 @@ public class GameControllerTheme1 implements Initializable {
         startButton.setDisable(false);
         pauseButton.setText("Pause");
         pauseButton.setDisable(true);
-        scoreLabel.setText("0");
+
+        // Reset du timer
+        gameTimer.stop();
+        timeRemainingSeconds = GAME_DURATION_SECONDS;
+        updateTimerDisplay();
 
         // Arrêter toutes les bombes actives
         for (Bomb bomb : activeBombs) {
