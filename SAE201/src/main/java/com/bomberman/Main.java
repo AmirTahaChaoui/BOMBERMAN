@@ -10,7 +10,7 @@ import javafx.stage.Stage;
 import javafx.scene.text.Font;
 import java.net.URL;
 
-public class Main extends Application {
+public class    Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {

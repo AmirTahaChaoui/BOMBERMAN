@@ -74,7 +74,7 @@ public class GameControllerTheme1 implements Initializable {
     private int player2MaxBombs;
 
     // Taille des cellules en pixels
-    private static final int CELL_SIZE = 50;
+    private static final int CELL_SIZE = 30;
     private static final int DEFAULT_EXPLOSION_RANGE = 1;
     private static final int DEFAULT_MAX_BOMBS = 1; // Au début, on peut poser qu'une seule bombe
 
@@ -169,6 +169,11 @@ public class GameControllerTheme1 implements Initializable {
         startButton.setDisable(true);
     }
 
+    // Images Bomb et bonus
+    private Image bombImage;
+    private Image bombBonusImage;
+    private Image rangeBonusImage;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Init des images perso 1 :
@@ -188,6 +193,11 @@ public class GameControllerTheme1 implements Initializable {
         wallImage = new Image(getClass().getResource("/images/wall.png").toExternalForm());
         blockImage = new Image(getClass().getResource("/images/block.png").toExternalForm());
 
+
+        // Bomb et bonus image
+        bombImage = new Image(this.getClass().getResource("/images/bomb.png").toExternalForm());
+        bombBonusImage = new Image(this.getClass().getResource("/images/bomb-bonus.png").toExternalForm());
+        rangeBonusImage = new Image(this.getClass().getResource("/images/range-bonus.png").toExternalForm());
 
         System.out.println("GameController initialisé");
         initializeGameArea();
@@ -259,10 +269,10 @@ public class GameControllerTheme1 implements Initializable {
                 cell.setFill(new ImagePattern(blockImage));
                 break;
             case BOMB_BONUS:
-                cell.getStyleClass().add("bomb-bonus");
+                cell.setFill(new ImagePattern(bombBonusImage));
                 break;
             case RANGE_BONUS:
-                cell.getStyleClass().add("range-bonus");
+                cell.setFill(new ImagePattern(rangeBonusImage));
                 break;
         }
 
@@ -470,12 +480,8 @@ public class GameControllerTheme1 implements Initializable {
         activeBombs.add(bomb);
 
         // Créer le sprite visuel de la bombe
-        Circle bombSprite = new Circle(CELL_SIZE / 4.0);
-        if (playerNumber == 1) {
-            bombSprite.getStyleClass().add("bomb1");
-        } else {
-            bombSprite.getStyleClass().add("bomb2");
-        }
+        Circle bombSprite = new Circle(CELL_SIZE / 2.1);
+        bombSprite.setFill(new ImagePattern(bombImage));
 
         bombSprites.put(bomb, bombSprite);
 
