@@ -338,6 +338,7 @@ public class MenuController implements Initializable {
         alert.showAndWait();
     }
 
+
     @FXML
     private void handleExitButton() {
         System.out.println("Fermeture du jeux...");
