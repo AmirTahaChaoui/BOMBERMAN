@@ -64,7 +64,7 @@ public class GameBoard {
                     }
 
                     // 60% de chance de placer un mur destructible
-                    if (Math.random() < 0.6) {
+                    if (Math.random() < 0.7) {
                         board[row][col] = CellType.DESTRUCTIBLE_WALL;
                     }
                 }

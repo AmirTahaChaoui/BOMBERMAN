@@ -54,7 +54,7 @@ public class Bomb {
      * Démarre le minuteur de la bombe
      */
     public void startTimer(ExplosionCallback callback, GameBoard gameBoard) {
-        timer = new Timeline(new KeyFrame(Duration.seconds(3), e -> explode(callback, gameBoard)));
+        timer = new Timeline(new KeyFrame(Duration.seconds(2), e -> explode(callback, gameBoard)));
         timer.play();
     }
 
