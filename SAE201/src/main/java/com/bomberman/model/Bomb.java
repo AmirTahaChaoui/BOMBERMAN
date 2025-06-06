@@ -14,6 +14,8 @@ public class Bomb {
     private int explosionRange;
     private Timeline timer;
     private boolean hasExploded;
+    private int owner; // ID du joueur propriétaire (1 ou 2)
+
 
     // Interface pour notifier l'explosion
     public interface ExplosionCallback {
@@ -44,6 +46,8 @@ public class Bomb {
         this.col = col;
         this.explosionRange = explosionRange;
         this.hasExploded = false;
+        this.owner = 0; // Pas de propriétaire par défaut
+
     }
 
     /**
@@ -172,11 +176,17 @@ public class Bomb {
         }
     }
 
-    // Getters
+
+    // Getters et Setters
+
     public int getRow() { return row; }
     public int getCol() { return col; }
     public int getExplosionRange() { return explosionRange; }
     public boolean hasExploded() { return hasExploded; }
+
+    public int getOwner() { return owner; }
+    public void setOwner(int owner) { this.owner = owner; }
+
 
     @Override
     public String toString() {
