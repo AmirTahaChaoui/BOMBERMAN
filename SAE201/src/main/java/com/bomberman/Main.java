@@ -10,20 +10,21 @@ public class Main extends Application {
 
     private static final String TITLE = "Super Bomberman";
     private static final int WINDOW_WIDTH = 800;
-    private static final int WINDOW_HEIGHT = 600;
+    private static final int WINDOW_HEIGHT = 800;
 
     @Override
     public void start(Stage primaryStage) {
         try {
             // Charger le fichier FXML
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/theme1.fxml"));
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/game.fxml"));
             Parent root = loader.load();
 
             // Créer la scène
             Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
 
             // Charger le CSS (optionnel pour l'instant)
-            scene.getStylesheets().add(getClass().getResource("/css/theme1.css").toExternalForm());
+            scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
 
             // Configurer la fenêtre
             primaryStage.setTitle(TITLE);

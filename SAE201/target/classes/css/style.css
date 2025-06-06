@@ -25,12 +25,6 @@
 
 .game-grid {
     -fx-background-color: #2ecc71;
-    -fx-border-color: #27ae60;
-    -fx-border-width: 2px;
-    -fx-padding: 10px;
-    -fx-hgap: 1px;
-    -fx-vgap: 1px;
-
 }
 
 /* Contrôles */
@@ -84,12 +78,10 @@
 
 .wall {
     -fx-fill: #34495e;
-
 }
 
 .destructible-wall {
     -fx-fill: #e67e22;
-
 }
 
 .bomb-bonus {
@@ -105,7 +97,6 @@
     -fx-stroke: #c0392b;
     -fx-stroke-width: 2px;
 }
-
 
 .player2 {
     -fx-fill: #3498db;
