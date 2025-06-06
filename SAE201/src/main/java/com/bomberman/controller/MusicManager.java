@@ -33,7 +33,7 @@ public class MusicManager {
 
     private void initializeMusicFiles() {
         musicFiles = new ArrayList<>();
-        for (int i = 1; i <= 10; i++) {
+        for (int i = 1; i <= 11; i++) {
             musicFiles.add(String.format("%02d.mp3", i));
         }
     }
