@@ -21,6 +21,9 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+
 
 import java.io.IOException;
 import java.net.URL;
@@ -163,6 +166,30 @@ public class MenuController implements Initializable {
         }
     }
 
+    // Méthode générique pour jouer un son
+    private void playSound(String soundFileName) {
+        try {
+            URL soundUrl = getClass().getResource("/Sound/" + soundFileName);
+            if (soundUrl == null) {
+                System.out.println("Fichier son non trouvé: /Sound/" + soundFileName);
+                return;
+            }
+
+            String musicFile = soundUrl.toExternalForm();
+            Media media = new Media(musicFile);
+            MediaPlayer mediaPlayer = new MediaPlayer(media);
+            mediaPlayer.play();
+
+        } catch (Exception e) {
+            System.out.println("Erreur lors du chargement du son " + soundFileName + ": " + e.getMessage());
+        }
+    }
+
+    // Méthode publique pour compatibility (si utilisée ailleurs)
+    public void playSound() {
+        playSound("select.mp3"); // Utilise un fichier par défaut
+    }
+
     private void navigateUp() {
         if (selectedIndex > 0) {
             selectedIndex--;
@@ -184,14 +211,14 @@ public class MenuController implements Initializable {
         for (int i = 0; i < menuOptions.size(); i++) {
             MenuOption option = menuOptions.get(i);
             option.cursor.setVisible(false);
-            option.button.getStyleClass().remove("selected");
+            option.button.getStyleClass().remove("Choisie");
         }
 
         // Show selected cursor and add selection style
         MenuOption selected = menuOptions.get(selectedIndex);
         selected.cursor.setVisible(true);
-        if (!selected.button.getStyleClass().contains("selected")) {
-            selected.button.getStyleClass().add("selected");
+        if (!selected.button.getStyleClass().contains("Choisie")) {
+            selected.button.getStyleClass().add("Choisie");
         }
     }
 
@@ -214,7 +241,7 @@ public class MenuController implements Initializable {
     // Button action handlers
     @FXML
     private void handlePlayButton() {
-        System.out.println("Starting game...");
+        System.out.println("Demarrage du jeux ...");
 
         try {
             // Load the game scene
@@ -226,15 +253,15 @@ public class MenuController implements Initializable {
 
             Stage stage = (Stage) playButton.getScene().getWindow();
             stage.setScene(gameScene);
-            stage.setTitle("Super Bomberman - Game");
+            stage.setTitle("Super Bomberman - Jeux");
 
             // Stop menu animations
             shutdown();
 
         } catch (IOException e) {
             e.printStackTrace();
-            showErrorDialog("Game Error", "Could not load the game scene.",
-                    "Please check that game.fxml exists in the resources/fxml folder.");
+            showErrorDialog("Erreur au niveau du jeux", "Impossible de charger le jeux.",
+                    "Verifie que le game.fxml existes belle est bien dans le resources/fxml.");
         }
     }
 
@@ -244,38 +271,38 @@ public class MenuController implements Initializable {
         System.out.println("Opening settings...");
 
         Alert alert = createStyledAlert("Settings",
-                "Game Settings",
+                "Parametre du jeux",
                 "Resolution: 800x600\n" +
-                        "Sound: Enabled\n" +
-                        "Controls: Arrow Keys + Space\n" +
-                        "Difficulty: Normal\n\n" +
-                        "Settings configuration coming soon!");
+                        "Son: Activé\n" +
+                        "Controles: Fleche + Espace\n" +
+                        "Difficulté: Normal\n\n" +
+                        "Parametre configuration prochaine!");
         alert.showAndWait();
     }
 
     @FXML
     private void handleCreditsButton() {
-        System.out.println("Showing credits...");
+        System.out.println("Affichage des credits");
 
         Alert alert = createStyledAlert("Credits",
-                "Super Bomberman - Retro Edition",
-                "Developed with JavaFX\n\n" +
-                        "Programming: Your Team\n" +
-                        "Graphics: Retro Style\n" +
-                        "Music: 8-bit Inspired\n" +
+                "Super Bomberman - IUT edition",
+                "Developper avec JavaFx\n\n" +
+                        "Programmation: Adam Kuropatwa-BUtté, Theo gheux, Simon El Kassouf, Amir Taha Chaoui\n" +
+                        "Graphiques: Style Retro (originelle)\n" +
+                        "Music: Pixibay free copiright\n" +
                         "Font: Press Start 2P\n\n" +
-                        "Thank you for playing!");
+                        "Merci de jouer !");
         alert.showAndWait();
     }
 
     @FXML
     private void handleExitButton() {
-        System.out.println("Exiting game...");
+        System.out.println("Fermeture du jeux...");
 
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Exit Game");
-        alert.setHeaderText("Are you sure you want to exit?");
-        alert.setContentText("All unsaved progress will be lost.");
+        alert.setTitle("Fermeture du jeux");
+        alert.setHeaderText("Etes vous sur de vouloir quitter ?");
+        alert.setContentText("Tous les progres non sauvegrader seront perdue.");
 
         // Apply custom styling
         alert.getDialogPane().getStylesheets().add(
@@ -319,16 +346,19 @@ public class MenuController implements Initializable {
         alert.showAndWait();
     }
 
-    // Sound effect placeholders (implement with actual sound library if desired)
+    // Sound effect methods
     private void playNavigationSound() {
-        // Placeholder for navigation sound effect
-        // Could implement with JavaFX MediaPlayer or other audio library
-        System.out.println("♪ Navigation sound");
+        // Essaye d'abord navigation.mp3, sinon utilise select.mp3 comme fallback
+        URL navigationSound = getClass().getResource("/Sound/navigation.mp3");
+        playSound("navigation.mp3");
+        System.out.println("♪ Son de navigation menu");
     }
 
     private void playSelectionSound() {
-        // Placeholder for selection sound effect
-        System.out.println("♪ Selection sound");
+        // Essaye d'abord select.mp3, sinon utilise navigation.mp3 comme fallback
+        URL selectionSound = getClass().getResource("/Sound/select.mp3");
+        playSound("select.mp3");
+        System.out.println("♪ Son de selection menu");
     }
 
     // Public methods for external control
