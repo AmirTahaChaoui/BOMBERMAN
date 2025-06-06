@@ -77,25 +77,23 @@ public class GameControllerTheme1 implements Initializable {
     private int player2MaxBombs;
 
     // Taille des cellules en pixels
-    private static final int CELL_SIZE = 30;
+    private static final int CELL_SIZE = 50;
     private static final int DEFAULT_EXPLOSION_RANGE = 1;
-    private static final int DEFAULT_MAX_BOMBS = 100;
+    private static final int DEFAULT_MAX_BOMBS = 1; // Au début, on peut poser qu'une seule bombe
 
     // Images perso 1
-    private Image persoUp ;
-    private Image persoDown ;
-    private Image persoLeft ;
-    private Image persoRight ;
-    private Image persoDeath ;
+    private Image persoUp;
+    private Image persoDown;
+    private Image persoLeft;
+    private Image persoRight;
+    private Image persoDeath;
 
     // Images perso 2
-
-    private Image perso2Up ;
-    private Image perso2Down ;
-    private Image perso2Left ;
-    private Image perso2Right ;
-    private Image perso2Death ;
-
+    private Image perso2Up;
+    private Image perso2Down;
+    private Image perso2Left;
+    private Image perso2Right;
+    private Image perso2Death;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -153,9 +151,8 @@ public class GameControllerTheme1 implements Initializable {
         createPlayersSprites();
 
         System.out.println("Plateau de jeu " + gameBoard.getWidth() + "x" + gameBoard.getHeight() + " créé");
-        System.out.println("Joueur 1 créé : " + player1);
-        System.out.println("Joueur 2 créé : " + player2);
-
+        System.out.println("Joueur 1 créé : " + player1 + " (Max bombes: " + player1MaxBombs + ")");
+        System.out.println("Joueur 2 créé : " + player2 + " (Max bombes: " + player2MaxBombs + ")");
     }
 
     private void createVisualBoard() {
@@ -182,14 +179,12 @@ public class GameControllerTheme1 implements Initializable {
             case DESTRUCTIBLE_WALL:
                 cell.getStyleClass().add("destructible-wall");
                 break;
-
             case BOMB_BONUS:
                 cell.getStyleClass().add("bomb-bonus");
                 break;
             case RANGE_BONUS:
                 cell.getStyleClass().add("range-bonus");
                 break;
-
         }
 
         return cell;
@@ -262,7 +257,7 @@ public class GameControllerTheme1 implements Initializable {
             }
         }
 
-        // Contrôles du joueur 2 (Flèches + SHIFT)
+        // Contrôles du joueur 2 (OKML + SHIFT)
         if (player2Alive) {
             switch (event.getCode()) {
                 case O: // Haut
@@ -297,7 +292,6 @@ public class GameControllerTheme1 implements Initializable {
                     placeBomb(2);
                     break;
             }
-
         }
 
         // Conserver le focus
@@ -353,24 +347,34 @@ public class GameControllerTheme1 implements Initializable {
             updateBoardDisplay();
         }
     }
+
     private void placeBomb(int playerNumber) {
         Player currentPlayer;
         int playerExplosionRange;
+        int playerMaxBombs;
 
         if (playerNumber == 1) {
             currentPlayer = player1;
             playerExplosionRange = player1ExplosionRange;
+            playerMaxBombs = player1MaxBombs;
         } else {
             currentPlayer = player2;
             playerExplosionRange = player2ExplosionRange;
+            playerMaxBombs = player2MaxBombs;
         }
 
-        // Vérifier si le joueur a déjà une bombe active
+        // Compter le nombre de bombes actives pour ce joueur
+        int activeBombsCount = 0;
         for (Bomb bomb : activeBombs) {
             if (bomb.getOwner() == playerNumber) {
-                System.out.println("❌ Joueur " + playerNumber + " : Attendez que votre bombe explose avant d'en placer une nouvelle !");
-                return;
+                activeBombsCount++;
             }
+        }
+
+        // Vérifier si le joueur a atteint sa limite de bombes
+        if (activeBombsCount >= playerMaxBombs) {
+            System.out.println("❌ Joueur " + playerNumber + " : Limite de bombes atteinte (" + activeBombsCount + "/" + playerMaxBombs + ") !");
+            return;
         }
 
         // Vérifier qu'il n'y a pas déjà une bombe à cette position
@@ -401,10 +405,11 @@ public class GameControllerTheme1 implements Initializable {
 
         GridPane.setHalignment(bombSprite, HPos.CENTER);
         GridPane.setValignment(bombSprite, VPos.CENTER);
+
         // Démarrer le minuteur
         bomb.startTimer(this::onBombExplosion, gameBoard);
 
-        System.out.println("💣 Joueur " + playerNumber + " place une bombe : " + bomb);
+        System.out.println("💣 Joueur " + playerNumber + " place une bombe : " + bomb + " (" + (activeBombsCount + 1) + "/" + playerMaxBombs + ")");
     }
 
     private void onBombExplosion(Bomb bomb, List<Bomb.Position> explosionCells) {
@@ -417,17 +422,14 @@ public class GameControllerTheme1 implements Initializable {
             bombSprites.remove(bomb);
         }
 
-
         // Détruire les murs destructibles dans la zone d'explosion
         destroyWallsInExplosion(explosionCells);
 
         // Créer l'animation d'explosion
         createExplosionAnimation(explosionCells);
 
-
         // Vérifier si les joueurs sont touchés
         checkPlayersInExplosion(explosionCells);
-
 
         // Retirer la bombe de la liste active
         activeBombs.remove(bomb);
@@ -450,12 +452,10 @@ public class GameControllerTheme1 implements Initializable {
     }
 
     private void updateBoardDisplay() {
-
         // Supprimer seulement les rectangles qui représentent les cellules du plateau
         gameGrid.getChildren().removeIf(node -> {
             if (node instanceof Rectangle) {
                 Rectangle rect = (Rectangle) node;
-
                 return rect.getWidth() == CELL_SIZE && rect.getHeight() == CELL_SIZE &&
                         !explosionSprites.contains(rect);
             }
@@ -470,7 +470,6 @@ public class GameControllerTheme1 implements Initializable {
             }
         }
 
-
         // S'assurer que les joueurs restent au premier plan
         if (player1Sprite != null) {
             player1Sprite.toFront();
@@ -478,7 +477,6 @@ public class GameControllerTheme1 implements Initializable {
 
         if (player2Sprite != null) {
             player2Sprite.toFront();
-
         }
 
         // S'assurer que les bombes restent au premier plan
@@ -567,7 +565,6 @@ public class GameControllerTheme1 implements Initializable {
             for (Bomb bomb : activeBombs) {
                 bomb.stopTimer();
             }
-
         }
     }
 
@@ -579,9 +576,7 @@ public class GameControllerTheme1 implements Initializable {
             startButton.setText("Reprendre");
             pauseButton.setDisable(false);
 
-
             // Donner le focus pour les contrôles clavier
-
             gameArea.requestFocus();
         } else if (gamePaused) {
             System.out.println("Reprise du jeu...");
@@ -590,7 +585,6 @@ public class GameControllerTheme1 implements Initializable {
             pauseButton.setText("Pause");
 
             // Redonner le focus
-
             gameArea.requestFocus();
         }
     }
@@ -617,11 +611,9 @@ public class GameControllerTheme1 implements Initializable {
         scoreLabel.setText("0");
 
         // Arrêter toutes les bombes actives
-
         for (Bomb bomb : activeBombs) {
             bomb.stopTimer();
         }
-
 
         player1BombsActive = 0;
         player2BombsActive = 0;
