@@ -9,7 +9,9 @@ public class GameBoard {
     public enum CellType {
         EMPTY,              // Passage libre
         INDESTRUCTIBLE_WALL, // Mur indestructible
-        DESTRUCTIBLE_WALL   // Mur destructible
+        DESTRUCTIBLE_WALL,   // Mur destructible
+        BOMB_BONUS,         // Bonus nombre de bombes
+        RANGE_BONUS         // Bonus portée d'explosion
     }
 
     private CellType[][] board;
@@ -48,9 +50,14 @@ public class GameBoard {
             for (int col = 1; col < BOARD_WIDTH - 1; col++) {
                 // Ne placer que sur les cases vides
                 if (board[row][col] == CellType.EMPTY) {
-                    // Éviter les positions de départ (coin supérieur gauche)
-                    if ((row == 1 && col == 1) || (row == 1 && col == 2) || (row == 2 && col == 1)) {
-                        continue; // Laisser libre pour le spawn du joueur
+                    // Éviter les positions de départ du joueur 1 (coin supérieur gauche)
+                    if ((row <= 2 && col <= 2)) {
+                        continue; // Laisser libre pour le spawn du joueur 1
+                    }
+
+                    // Éviter les positions de départ du joueur 2 (coin inférieur droit)
+                    if ((row >= BOARD_HEIGHT - 3 && col >= BOARD_WIDTH - 3)) {
+                        continue; // Laisser libre pour le spawn du joueur 2
                     }
 
                     // 60% de chance de placer un mur destructible
@@ -66,7 +73,14 @@ public class GameBoard {
      * Vérifie si une position est valide et accessible
      */
     public boolean isValidMove(int row, int col) {
-        return isInBounds(row, col) && board[row][col] == CellType.EMPTY;
+        if (!isInBounds(row, col)) {
+            return false;
+        }
+
+        CellType cellType = board[row][col];
+        return cellType == CellType.EMPTY ||
+                cellType == CellType.BOMB_BONUS ||
+                cellType == CellType.RANGE_BONUS;
     }
 
     /**
@@ -96,12 +110,27 @@ public class GameBoard {
     }
 
     /**
-     * Détruit un mur destructible à la position donnée
+     * Détruit un mur destructible à la position donnée et peut générer un bonus
      * @return true si un mur a été détruit, false sinon
      */
     public boolean destroyWall(int row, int col) {
         if (isInBounds(row, col) && board[row][col] == CellType.DESTRUCTIBLE_WALL) {
-            board[row][col] = CellType.EMPTY;
+            // Générer un bonus aléatoirement
+            double random = Math.random();
+
+            if (random < 0.15) {
+                // 15% chance de bonus nombre de bombes
+                board[row][col] = CellType.BOMB_BONUS;
+                System.out.println("💣 Bonus nombre de bombes généré en (" + row + ", " + col + ")");
+            } else if (random < 0.30) {
+                // 15% chance de bonus portée (0.15 + 0.15 = 0.30)
+                board[row][col] = CellType.RANGE_BONUS;
+                System.out.println("🔥 Bonus portée généré en (" + row + ", " + col + ")");
+            } else {
+                // 70% chance de case vide
+                board[row][col] = CellType.EMPTY;
+            }
+
             return true;
         }
         return false;
