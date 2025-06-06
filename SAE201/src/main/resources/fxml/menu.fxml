@@ -45,7 +45,7 @@
         <!-- Sous-titre -->
         <Label fx:id="gameSubtitle"
                styleClass="game-subtitle"
-               text="SELECT OPTION"
+               text="Choisi un option"
                alignment="CENTER" />
 
         <!-- Container des boutons -->
@@ -66,7 +66,7 @@
                         mnemonicParsing="false"
                         onAction="#handlePlayButton"
                         styleClass="menu-btn,selected"
-                        text="PLAY"
+                        text="JOUER"
                         focusTraversable="false" />
             </HBox>
 
@@ -82,7 +82,7 @@
                         mnemonicParsing="false"
                         onAction="#handleSettingsButton"
                         styleClass="menu-btn"
-                        text="SETTINGS"
+                        text="PARAMETRE"
                         focusTraversable="false" />
             </HBox>
 
@@ -114,7 +114,7 @@
                         mnemonicParsing="false"
                         onAction="#handleExitButton"
                         styleClass="menu-btn"
-                        text="EXIT"
+                        text="QUITTER"
                         focusTraversable="false" />
             </HBox>
         </VBox>

@@ -309,38 +309,18 @@ public class MenuController implements Initializable {
                 musicManager.getVolume() * 100,
                 musicManager.getCurrentTrackName());
 
-        // "Settings",
-        //                "Parametre du jeux",
-        //                "Resolution: 800x600\n" +
-        //                        musicInfo + "\n" +
-        //                        "Controles: Fleche + Espace\n" +
-        //                        "Difficulté: Normal\n\n" +
-        //                        "Controles musique:\n" +
-        //                        "M = Pause/Reprise\n" +
-        //                        "N = Piste suivante\n" +
-        //                        "P = Piste précédente\n\n" +
-        //                        "Parametre configuration prochaine!"
-        try {
-            // Load the game scene
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/settings.fxml"));
-            Parent gameRoot = loader.load();
-
-            Scene gameScene = new Scene(gameRoot, 800, 600);
-            gameScene.getStylesheets().add(getClass().getResource("/css/settings.css").toExternalForm());
-
-            Stage stage = (Stage) playButton.getScene().getWindow();
-            stage.setScene(gameScene);
-            stage.setTitle("Super Bomberman - Settings");
-
-            // Stop menu animations but keep music playing
-            shutdown();
-            // La musique continue à jouer dans le jeu !
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            showErrorDialog("Erreur au niveau du Parametre", "Impossible de charger le Parametre.",
-                    "Verifie que le settings.fxml existes belle est bien dans le resources/fxml.");
-        }
+        Alert alert = createStyledAlert( "Settings",
+                        "Parametre du jeux",
+                        "Resolution: 800x600\n" +
+                                musicInfo + "\n" +
+                                "Controles: Fleche + Espace\n" +
+                                "Difficulté: Normal\n" +
+                                "Controles musique:\n" +
+                                "M = Pause/Reprise\n" +
+                                "N = Piste suivante\n" +
+                                "P = Piste précédente\n\n" +
+                                "Parametre configuration prochainement!");
+        alert.showAndWait();
     }
 
     @FXML
@@ -349,10 +329,10 @@ public class MenuController implements Initializable {
 
         Alert alert = createStyledAlert("Credits",
                 "Super Bomberman - IUT edition",
-                "Developper avec JavaFx\n\n" +
-                        "Programmation: Adam Kuropatwa-BUtté, Theo gheux, Simon El Kassouf, Amir Taha Chaoui\n" +
+                "Developper avec JavaFx\n" +
+                        "Programmation: Adam Kuropatwa-Butté, Theo gheux, Simon El Kassouf, Amir Taha Chaoui\n" +
                         "Graphiques: Style Retro (originelle)\n" +
-                        "Music: Pixibay free copiright (10 pistes)\n" +
+                        "Musiques: Super Bomberman\n" +
                         "Font: Press Start 2P\n\n" +
                         "Merci de jouer !");
         alert.showAndWait();
