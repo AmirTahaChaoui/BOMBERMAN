@@ -128,7 +128,7 @@
     <!-- Version en bas à droite -->
     <Label fx:id="versionLabel"
            styleClass="version"
-           text="V1.0 - RETRO EDITION"
+           text="V1.0 - IUT EDTION"
            StackPane.alignment="BOTTOM_RIGHT">
         <StackPane.margin>
             <Insets bottom="15.0" right="15.0" />
@@ -138,7 +138,7 @@
     <!-- Instructions de contrôle en bas à gauche -->
     <Label fx:id="controlsLabel"
            styleClass="version"
-           text="USE ARROW KEYS + ENTER"
+           text="UTILISER LES FLECHES + ENTREE"
            StackPane.alignment="BOTTOM_LEFT">
         <StackPane.margin>
             <Insets bottom="15.0" left="15.0" />

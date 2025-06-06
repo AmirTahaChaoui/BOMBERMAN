@@ -1,5 +1,6 @@
 package com.bomberman.controller;
 
+import com.bomberman.controller.MusicManager;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -23,7 +24,6 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
-
 
 import java.io.IOException;
 import java.net.URL;
@@ -68,6 +68,9 @@ public class MenuController implements Initializable {
     private Timeline cursorBlinkAnimation;
     private boolean isAnimationRunning = false;
 
+    // Gestionnaire de musique
+    private MusicManager musicManager;
+
     // Menu option class to hold button and cursor references
     private static class MenuOption {
         final Button button;
@@ -87,6 +90,7 @@ public class MenuController implements Initializable {
         setupKeyboardNavigation();
         setupCursorAnimation();
         setupImageFallback();
+        setupMusic();
 
         // Set initial selection
         updateSelection();
@@ -95,6 +99,12 @@ public class MenuController implements Initializable {
         Platform.runLater(() -> {
             root.requestFocus();
         });
+    }
+
+    private void setupMusic() {
+        musicManager = MusicManager.getInstance();
+        musicManager.setVolume(0.3);
+        musicManager.startBackgroundMusic();
     }
 
     private void setupMenuOptions() {
@@ -163,10 +173,33 @@ public class MenuController implements Initializable {
                 handleExitButton();
                 event.consume();
                 break;
+            // Contrôles de musique (optionnel)
+            case M:
+                toggleMusic();
+                event.consume();
+                break;
+            case N:
+                musicManager.nextTrack();
+                event.consume();
+                break;
+            case P:
+                musicManager.previousTrack();
+                event.consume();
+                break;
         }
     }
 
-    // Méthode générique pour jouer un son
+    private void toggleMusic() {
+        if (musicManager.isPlaying()) {
+            musicManager.pauseBackgroundMusic();
+            System.out.println("♪ Musique en pause");
+        } else {
+            musicManager.resumeBackgroundMusic();
+            System.out.println("♪ Musique reprise");
+        }
+    }
+
+    // Méthode générique pour jouer un son (effets sonores)
     private void playSound(String soundFileName) {
         try {
             URL soundUrl = getClass().getResource("/Sound/" + soundFileName);
@@ -178,6 +211,7 @@ public class MenuController implements Initializable {
             String musicFile = soundUrl.toExternalForm();
             Media media = new Media(musicFile);
             MediaPlayer mediaPlayer = new MediaPlayer(media);
+            mediaPlayer.setVolume(0.7); // Volume plus fort pour les effets sonores
             mediaPlayer.play();
 
         } catch (Exception e) {
@@ -185,9 +219,9 @@ public class MenuController implements Initializable {
         }
     }
 
-    // Méthode publique pour compatibility (si utilisée ailleurs)
+    // Méthode publique pour compatibility
     public void playSound() {
-        playSound("select.mp3"); // Utilise un fichier par défaut
+        playSound("select.mp3");
     }
 
     private void navigateUp() {
@@ -255,8 +289,9 @@ public class MenuController implements Initializable {
             stage.setScene(gameScene);
             stage.setTitle("Super Bomberman - Jeux");
 
-            // Stop menu animations
+            // Stop menu animations but keep music playing
             shutdown();
+            // La musique continue à jouer dans le jeu !
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -265,19 +300,47 @@ public class MenuController implements Initializable {
         }
     }
 
-
     @FXML
     private void handleSettingsButton() {
         System.out.println("Opening settings...");
 
-        Alert alert = createStyledAlert("Settings",
-                "Parametre du jeux",
-                "Resolution: 800x600\n" +
-                        "Son: Activé\n" +
-                        "Controles: Fleche + Espace\n" +
-                        "Difficulté: Normal\n\n" +
-                        "Parametre configuration prochaine!");
-        alert.showAndWait();
+        String musicInfo = String.format("Musique: %s (Vol: %.0f%%)\nPiste actuelle: %s",
+                musicManager.isPlaying() ? "Activée" : "Désactivée",
+                musicManager.getVolume() * 100,
+                musicManager.getCurrentTrackName());
+
+        // "Settings",
+        //                "Parametre du jeux",
+        //                "Resolution: 800x600\n" +
+        //                        musicInfo + "\n" +
+        //                        "Controles: Fleche + Espace\n" +
+        //                        "Difficulté: Normal\n\n" +
+        //                        "Controles musique:\n" +
+        //                        "M = Pause/Reprise\n" +
+        //                        "N = Piste suivante\n" +
+        //                        "P = Piste précédente\n\n" +
+        //                        "Parametre configuration prochaine!"
+        try {
+            // Load the game scene
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/settings.fxml"));
+            Parent gameRoot = loader.load();
+
+            Scene gameScene = new Scene(gameRoot, 800, 600);
+            gameScene.getStylesheets().add(getClass().getResource("/css/settings.css").toExternalForm());
+
+            Stage stage = (Stage) playButton.getScene().getWindow();
+            stage.setScene(gameScene);
+            stage.setTitle("Super Bomberman - Settings");
+
+            // Stop menu animations but keep music playing
+            shutdown();
+            // La musique continue à jouer dans le jeu !
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            showErrorDialog("Erreur au niveau du Parametre", "Impossible de charger le Parametre.",
+                    "Verifie que le settings.fxml existes belle est bien dans le resources/fxml.");
+        }
     }
 
     @FXML
@@ -289,7 +352,7 @@ public class MenuController implements Initializable {
                 "Developper avec JavaFx\n\n" +
                         "Programmation: Adam Kuropatwa-BUtté, Theo gheux, Simon El Kassouf, Amir Taha Chaoui\n" +
                         "Graphiques: Style Retro (originelle)\n" +
-                        "Music: Pixibay free copiright\n" +
+                        "Music: Pixibay free copiright (10 pistes)\n" +
                         "Font: Press Start 2P\n\n" +
                         "Merci de jouer !");
         alert.showAndWait();
@@ -313,6 +376,7 @@ public class MenuController implements Initializable {
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
             shutdown();
+            musicManager.shutdown(); // Arrêter la musique à la fermeture
             Platform.exit();
         }
     }
@@ -348,16 +412,22 @@ public class MenuController implements Initializable {
 
     // Sound effect methods
     private void playNavigationSound() {
-        // Essaye d'abord navigation.mp3, sinon utilise select.mp3 comme fallback
         URL navigationSound = getClass().getResource("/Sound/navigation.mp3");
-        playSound("navigation.mp3");
+        if (navigationSound != null) {
+            playSound("navigation.mp3");
+        } else {
+            playSound("select.mp3");
+        }
         System.out.println("♪ Son de navigation menu");
     }
 
     private void playSelectionSound() {
-        // Essaye d'abord select.mp3, sinon utilise navigation.mp3 comme fallback
         URL selectionSound = getClass().getResource("/Sound/select.mp3");
-        playSound("select.mp3");
+        if (selectionSound != null) {
+            playSound("select.mp3");
+        } else {
+            playSound("navigation.mp3");
+        }
         System.out.println("♪ Son de selection menu");
     }
 
@@ -374,6 +444,7 @@ public class MenuController implements Initializable {
             cursorBlinkAnimation.stop();
             isAnimationRunning = false;
         }
+        // Ne pas arrêter la musique ici pour qu'elle continue dans le jeu
     }
 
     // Getters for testing or external access
