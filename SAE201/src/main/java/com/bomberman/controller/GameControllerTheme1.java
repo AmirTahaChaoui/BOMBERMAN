@@ -77,7 +77,7 @@ public class GameControllerTheme1 implements Initializable {
     // Taille des cellules en pixels
     private static final int CELL_SIZE = 30;
     private static final int DEFAULT_EXPLOSION_RANGE = 1;
-    private static final int DEFAULT_MAX_BOMBS = 1;
+    private static final int DEFAULT_MAX_BOMBS = 100;
 
     // Images perso 1
     private Image persoUp ;
@@ -351,52 +351,38 @@ public class GameControllerTheme1 implements Initializable {
             updateBoardDisplay();
         }
     }
-
     private void placeBomb(int playerNumber) {
         Player currentPlayer;
-        int playerBombsActive;
-        int playerMaxBombs;
         int playerExplosionRange;
 
         if (playerNumber == 1) {
             currentPlayer = player1;
-            playerBombsActive = player1BombsActive;
-            playerMaxBombs = player1MaxBombs;
             playerExplosionRange = player1ExplosionRange;
         } else {
             currentPlayer = player2;
-            playerBombsActive = player2BombsActive;
-            playerMaxBombs = player2MaxBombs;
             playerExplosionRange = player2ExplosionRange;
         }
 
-        // Vérifier si le joueur peut poser une bombe
-        if (playerBombsActive >= playerMaxBombs) {
-            System.out.println("❌ Joueur " + playerNumber + " : Impossible de poser une bombe : limite atteinte (" + playerMaxBombs + " bombe(s) max)");
-            return;
+        // Vérifier si le joueur a déjà une bombe active
+        for (Bomb bomb : activeBombs) {
+            if (bomb.getOwner() == playerNumber) {
+                System.out.println("❌ Joueur " + playerNumber + " : Attendez que votre bombe explose avant d'en placer une nouvelle !");
+                return;
+            }
         }
 
         // Vérifier qu'il n'y a pas déjà une bombe à cette position
         for (Bomb bomb : activeBombs) {
             if (bomb.getRow() == currentPlayer.getRow() && bomb.getCol() == currentPlayer.getCol()) {
                 System.out.println("❌ Il y a déjà une bombe ici !");
-
                 return;
             }
         }
 
         // Créer une nouvelle bombe
-
         Bomb bomb = new Bomb(currentPlayer.getRow(), currentPlayer.getCol(), playerExplosionRange);
         bomb.setOwner(playerNumber);
         activeBombs.add(bomb);
-
-        // Incrémenter le compteur du bon joueur
-        if (playerNumber == 1) {
-            player1BombsActive++;
-        } else {
-            player2BombsActive++;
-        }
 
         // Créer le sprite visuel de la bombe
         Circle bombSprite = new Circle(CELL_SIZE / 4.0);
@@ -415,7 +401,6 @@ public class GameControllerTheme1 implements Initializable {
         bomb.startTimer(this::onBombExplosion, gameBoard);
 
         System.out.println("💣 Joueur " + playerNumber + " place une bombe : " + bomb);
-
     }
 
     private void onBombExplosion(Bomb bomb, List<Bomb.Position> explosionCells) {

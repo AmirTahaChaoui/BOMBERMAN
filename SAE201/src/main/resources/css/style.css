@@ -25,11 +25,6 @@
 
 .game-grid {
     -fx-background-color: #2ecc71;
-    -fx-border-color: #27ae60;
-    -fx-border-width: 2px;
-    -fx-padding: 10px;
-    -fx-hgap: 1px;
-    -fx-vgap: 1px;
 
 }
 
