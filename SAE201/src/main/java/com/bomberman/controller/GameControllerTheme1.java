@@ -96,6 +96,11 @@ public class GameControllerTheme1 implements Initializable {
     private Image perso2Right ;
     private Image perso2Death ;
 
+    // Images bomb
+    private Image bombImage;
+    private Image bombBonusImage;
+    private Image rangeBonusImage;
+
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -112,6 +117,11 @@ public class GameControllerTheme1 implements Initializable {
         perso2Right = new Image(getClass().getResource("/images/perso2Right.png").toExternalForm());
         perso2Up = new Image(getClass().getResource("/images/perso2Up.png").toExternalForm());
         perso2Death = new Image(getClass().getResource("/images/death2.png").toExternalForm());
+
+        // Images bonus et bomb
+        bombImage = new Image(getClass().getResource("/images/bomb.png").toExternalForm());
+        bombBonusImage = new Image(getClass().getResource("/images/bomb-bonus.png").toExternalForm());
+        rangeBonusImage = new Image(getClass().getResource("/images/range-bonus.png").toExternalForm());
 
         System.out.println("GameController initialisé");
         initializeGameArea();
@@ -184,10 +194,10 @@ public class GameControllerTheme1 implements Initializable {
                 break;
 
             case BOMB_BONUS:
-                cell.getStyleClass().add("bomb-bonus");
+                cell.setFill(new ImagePattern(bombBonusImage));
                 break;
             case RANGE_BONUS:
-                cell.getStyleClass().add("range-bonus");
+                cell.setFill(new ImagePattern(rangeBonusImage));
                 break;
 
         }
@@ -387,12 +397,8 @@ public class GameControllerTheme1 implements Initializable {
         activeBombs.add(bomb);
 
         // Créer le sprite visuel de la bombe
-        Circle bombSprite = new Circle(CELL_SIZE / 4.0);
-        if (playerNumber == 1) {
-            bombSprite.getStyleClass().add("bomb1");
-        } else {
-            bombSprite.getStyleClass().add("bomb2");
-        }
+        Circle bombSprite = new Circle(CELL_SIZE / 2.1);
+        bombSprite.setFill(new ImagePattern(bombImage));
 
         bombSprites.put(bomb, bombSprite);
 
