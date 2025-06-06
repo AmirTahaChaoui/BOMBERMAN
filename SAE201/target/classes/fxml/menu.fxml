@@ -16,6 +16,21 @@
            styleClass="root"
            focusTraversable="true">
 
+    <!-- Image de fond -->
+    <ImageView fx:id="backgroundImage"
+               fitHeight="600"
+               fitWidth="800"
+               preserveRatio="false"
+               smooth="true"
+               pickOnBounds="false">
+        <image>
+            <Image url="@../images/background_bomberman.png" />
+        </image>
+    </ImageView>
+
+    <!-- Overlay semi-transparent pour améliorer la lisibilité -->
+    <StackPane styleClass="overlay" />
+
     <!-- Container principal du menu -->
     <VBox fx:id="menuContainer"
           alignment="CENTER"
@@ -23,11 +38,10 @@
           spacing="20">
 
         <!-- Titre du jeu -->
-        <VBox alignment="CENTER" spacing="10">
+        <VBox alignment="CENTER">
             <!-- Logo/Image du jeu -->
             <ImageView fx:id="titleImage"
-                       fitHeight="120"
-                       fitWidth="400"
+                       fitWidth="300"
                        preserveRatio="true"
                        smooth="true">
                 <image>
