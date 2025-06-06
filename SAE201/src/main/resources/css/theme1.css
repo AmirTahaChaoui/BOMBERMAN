@@ -19,17 +19,12 @@
 
 /* Zone de jeu */
 .game-area {
-    -fx-background-color: #27ae60;
-    -fx-padding: 20px;
+    -fx-background-color: black;
+    -fx-padding: 20px 40px 20px 40px;
 }
 
 .game-grid {
-    -fx-background-color: #2ecc71;
-    -fx-border-color: #27ae60;
-    -fx-border-width: 2px;
-    -fx-padding: 10px;
-    -fx-hgap: 1px;
-    -fx-vgap: 1px;
+    -fx-background-color: black;
 }
 
 /* Contrôles */
@@ -75,30 +70,6 @@
     -fx-min-height: 30px;
     -fx-max-width: 30px;
     -fx-max-height: 30px;
-}
-
-.floor {
-    -fx-fill: #2ecc71;
-    -fx-stroke: #27ae60;
-    -fx-stroke-width: 0.5px;
-}
-
-.wall {
-    -fx-fill: #34495e;
-    -fx-stroke: #2c3e50;
-    -fx-stroke-width: 1px;
-}
-
-.destructible-wall {
-    -fx-fill: #e67e22;
-    -fx-stroke: #d35400;
-    -fx-stroke-width: 1px;
-}
-
-.destructible-wall {
-    -fx-background-color: #e67e22;
-    -fx-border-color: #d35400;
-    -fx-border-width: 1px;
 }
 
 .player {

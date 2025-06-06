@@ -16,14 +16,14 @@ public class Main extends Application {
     public void start(Stage primaryStage) {
         try {
             // Charger le fichier FXML
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/game.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/theme1.fxml"));
             Parent root = loader.load();
 
             // Créer la scène
             Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
 
             // Charger le CSS (optionnel pour l'instant)
-            scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
+            scene.getStylesheets().add(getClass().getResource("/css/theme1.css").toExternalForm());
 
             // Configurer la fenêtre
             primaryStage.setTitle(TITLE);

@@ -7,12 +7,16 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.HPos;
+import javafx.geometry.VPos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
@@ -24,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-public class GameController implements Initializable {
+public class GameControllerTheme1 implements Initializable {
 
     @FXML
     private StackPane gameArea;
@@ -64,8 +68,17 @@ public class GameController implements Initializable {
     private static final int CELL_SIZE = 30;
     private static final int BOMB_EXPLOSION_RANGE = 2;
 
+
+    private Image wallImage;
+    private Image blockImage;
+    private Image floorImage;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        wallImage = new Image(getClass().getResource("/images/images_theme1/wall.png").toExternalForm());
+        blockImage = new Image(getClass().getResource("/images/images_theme1/block.png").toExternalForm());
+        floorImage = new Image(getClass().getResource("/images/images_theme1/floor.png").toExternalForm());
+
         System.out.println("GameController initialisé");
         initializeGameArea();
         setupKeyboardControls();
@@ -109,17 +122,18 @@ public class GameController implements Initializable {
     private Rectangle createCell(int row, int col) {
         Rectangle cell = new Rectangle(CELL_SIZE, CELL_SIZE);
 
-        // Définir le style selon le type de cellule
         GameBoard.CellType cellType = gameBoard.getCellType(row, col);
         switch (cellType) {
             case EMPTY:
-                cell.getStyleClass().add("floor");
+                cell.setFill(new ImagePattern(floorImage));
                 break;
             case INDESTRUCTIBLE_WALL:
-                cell.getStyleClass().add("wall");
+                // Appliquer l'image comme fond
+                cell.setFill(new ImagePattern(wallImage));
                 break;
             case DESTRUCTIBLE_WALL:
-                cell.getStyleClass().add("destructible-wall");
+                //cell.getStyleClass().add("wall");
+                cell.setFill(new ImagePattern(blockImage));
                 break;
         }
 
@@ -133,6 +147,10 @@ public class GameController implements Initializable {
 
         // Placer le joueur sur la grille
         gameGrid.add(playerSprite, player.getCol(), player.getRow());
+
+        GridPane.setHalignment(playerSprite, HPos.CENTER);
+        GridPane.setValignment(playerSprite, VPos.CENTER);
+
     }
 
     private void setupKeyboardControls() {
@@ -211,6 +229,9 @@ public class GameController implements Initializable {
 
         // Placer la bombe sur la grille
         gameGrid.add(bombSprite, bomb.getCol(), bomb.getRow());
+
+        GridPane.setHalignment(bombSprite, HPos.CENTER);
+        GridPane.setValignment(bombSprite, VPos.CENTER);
 
         // Démarrer le minuteur
         bomb.startTimer(this::onBombExplosion, gameBoard);
@@ -295,11 +316,13 @@ public class GameController implements Initializable {
         // Créer les sprites d'explosion
         for (Bomb.Position pos : explosionCells) {
             Rectangle explosionSprite = new Rectangle(CELL_SIZE * 0.8, CELL_SIZE * 0.8);
-            explosionSprite.getStyleClass().add("explosion");
-            explosionSprites.add(explosionSprite);
+            explosionSprite.getStyleClass().add("explosion");explosionSprites.add(explosionSprite);
 
             // Placer l'explosion sur la grille
             gameGrid.add(explosionSprite, pos.col, pos.row);
+
+            GridPane.setHalignment(explosionSprite, HPos.CENTER);
+            GridPane.setValignment(explosionSprite, VPos.CENTER);
         }
 
         // Programmer la suppression de l'explosion après 1 seconde
