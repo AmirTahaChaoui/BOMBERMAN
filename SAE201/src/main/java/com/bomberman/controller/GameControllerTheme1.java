@@ -15,6 +15,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
@@ -43,14 +44,19 @@ public class GameControllerTheme1 implements Initializable {
     private GridPane gameGrid;
 
     // Variables pour le menu de pause (maintenant dans FXML)
-    @FXML private StackPane pauseMenu;
-    @FXML private VBox pauseMenuContent;
-    @FXML private Button resumeButton;
-    @FXML private Button backToMenuButton;
+    @FXML
+    private StackPane pauseMenu;
+    @FXML
+    private VBox pauseMenuContent;
+    @FXML
+    private Button resumeButton;
+    @FXML
+    private Button backToMenuButton;
     private boolean isPauseMenuVisible = false;
 
     private boolean gameStarted = true; // Démarrage automatique
     private boolean gamePaused = false;
+    private boolean gameEnded = false;
 
     // Modèle du jeu
     private GameBoard gameBoard;
@@ -80,7 +86,6 @@ public class GameControllerTheme1 implements Initializable {
     private static final int CELL_SIZE = 40;
     private static final int DEFAULT_EXPLOSION_RANGE = 1;
     private static final int DEFAULT_MAX_BOMBS = 1;
-
 
 
     // Images perso 1
@@ -113,6 +118,12 @@ public class GameControllerTheme1 implements Initializable {
     private Image explosionMiddleDownImage;
     private Image explosionMiddleLeftImage;
     private Image explosionMiddleRightImage;
+
+    //Image de fin de partie
+    private Image victoire1;
+    private Image victoire2;
+    private Image egalite;
+    private ImageView resultImageView;
 
     @FXML
     private Label timerLabel;
@@ -164,6 +175,10 @@ public class GameControllerTheme1 implements Initializable {
         explosionMiddleLeftImage = new Image(getClass().getResource("/images/explosion_gauche.png").toExternalForm());
         explosionMiddleRightImage = new Image(getClass().getResource("/images/explosion_droite.png").toExternalForm());
 
+        victoire1 = new Image(getClass().getResource("/images/victoire1.png").toExternalForm());
+        victoire2 = new Image(getClass().getResource("/images/victoire2.png").toExternalForm());
+        egalite = new Image(getClass().getResource("/images/egalite.png").toExternalForm());
+
         System.out.println("GameController initialisé");
         initializeGameArea();
         setupKeyboardControls();
@@ -206,18 +221,14 @@ public class GameControllerTheme1 implements Initializable {
     }
 
     private void handleTimeUp() {
+        gameEnded = true;
         System.out.println("⏰ TEMPS ÉCOULÉ !");
 
-        if (player1Alive && player2Alive) {
-            System.out.println("🤝 MATCH NUL - TEMPS ÉCOULÉ !");
-        } else if (player1Alive) {
-            System.out.println("🏆 JOUEUR 1 GAGNE - TEMPS ÉCOULÉ !");
-        } else if (player2Alive) {
-            System.out.println("🏆 JOUEUR 2 GAGNE - TEMPS ÉCOULÉ !");
-        } else {
-            System.out.println("🤝 MATCH NUL - TOUS MORTS !");
+        for (Bomb bomb : activeBombs) {
+            bomb.stopTimer();
         }
 
+        checkGameEnd();
         gamePaused = true;
     }
 
@@ -770,24 +781,36 @@ public class GameControllerTheme1 implements Initializable {
     }
 
     private void checkGameEnd() {
+        if (gameEnded) return;  // si la fin du jeu a déjà été gérée, on ne fait rien
+        gameEnded = true;
         if (!player1Alive && !player2Alive) {
             System.out.println("🤝 MATCH NUL ! Les deux joueurs sont morts !");
+            gameTimer.stop();
+            showResult("🤝 MATCH NUL ! Les deux joueurs sont morts !", egalite);
         } else if (!player1Alive) {
             System.out.println("🏆 JOUEUR 2 GAGNE !");
+            gameTimer.stop();
+            showResult("🏆 JOUEUR 2 GAGNE !", victoire2);
         } else if (!player2Alive) {
             System.out.println("🏆 JOUEUR 1 GAGNE !");
-        }
-
-        if (!player1Alive || !player2Alive) {
-            gamePaused = true;
-
-            for (Bomb bomb : activeBombs) {
-                bomb.stopTimer();
-            }
+            gameTimer.stop();
+            showResult("🏆 JOUEUR 1 GAGNE !", victoire1);
+        } else if (timeRemainingSeconds <= 0) {
+            System.out.println("⏰ TEMPS ÉCOULÉ ! MATCH NUL !");
+            gameTimer.stop();
+            showResult("⏰ TEMPS ÉCOULÉ ! MATCH NUL !", egalite);
         }
     }
 
-    public boolean canMoveTo(int row, int col) {
-        return gameBoard != null && gameBoard.isValidMove(row, col);
+
+    private void showResult(String consoleMessage, Image image) {
+        System.out.println(consoleMessage);
+        if (resultImageView != null) {
+            return;
+        }
+        resultImageView = new ImageView(image);
+        resultImageView.setPreserveRatio(true);
+        resultImageView.setFitWidth(500);
+        gameArea.getChildren().add(resultImageView);
     }
 }
