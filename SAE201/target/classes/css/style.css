@@ -67,10 +67,11 @@
     -fx-text-fill: white;
     -fx-font-size: 30px;
     -fx-background-color: black;
-    -fx-padding: 5px 10px;
+    -fx-padding: 10px 10px;
     -fx-background-radius: 3px;
     -fx-border-color: #861E04;
     -fx-border-width: 3px 0 3px 0;
+    -fx-font-family: 'Press Start 2P', 'Courier New', monospace;
 
 }
 
@@ -82,13 +83,14 @@
 }
 
 .pause-menu-content {
-    -fx-background-color: #2c3e50;
-    -fx-border-color: #3498db;
+    -fx-background-color: #F68400;
+    -fx-border-color: #861E04;
     -fx-border-width: 3px;
-    -fx-background-radius: 10px;
-    -fx-border-radius: 10px;
+    -fx-background-radius: 3px;
+    -fx-border-radius: 4px;
     -fx-max-width: 300px;
     -fx-max-height: 250px;
+    -fx-font-family: 'Press Start 2P', 'Courier New', monospace;
 }
 
 .pause-title {
