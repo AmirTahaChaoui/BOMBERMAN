@@ -1,38 +1,34 @@
 package com.bomberman.controller;
 
-import com.bomberman.model.GameBoard;
-import com.bomberman.model.Player;
-import com.bomberman.model.Bomb;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
-import javafx.geometry.HPos;
-import javafx.geometry.VPos;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.ImagePattern;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Rectangle;
-import javafx.stage.Stage;
-import javafx.util.Duration;
-
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+
+import com.bomberman.model.Bomb;
+import com.bomberman.model.GameBoard;
+import com.bomberman.model.Player;
+
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.geometry.HPos;
+import javafx.geometry.VPos;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
+import javafx.util.Duration;
 
 public class GameControllerTheme1 implements Initializable {
 
@@ -42,18 +38,22 @@ public class GameControllerTheme1 implements Initializable {
     @FXML
     private GridPane gameGrid;
 
-    // Variables pour le menu de pause (maintenant dans FXML)
-    @FXML private StackPane pauseMenu;
-    @FXML private VBox pauseMenuContent;
-    @FXML private Button resumeButton;
-    @FXML private Button backToMenuButton;
-    private boolean isPauseMenuVisible = false;
+    @FXML
+    private Button startButton;
 
-    private boolean gameStarted = true; // Démarrage automatique
+    @FXML
+    private Button pauseButton;
+
+    @FXML
+    private Button resetButton;
+
+    private boolean gameStarted = false;
     private boolean gamePaused = false;
+    private boolean gameEnded = false;
 
     // Modèle du jeu
     private GameBoard gameBoard;
+
     private Player player1;
     private Player player2;
     private List<Bomb> activeBombs;
@@ -77,11 +77,9 @@ public class GameControllerTheme1 implements Initializable {
     private int player2MaxBombs;
 
     // Taille des cellules en pixels
-    private static final int CELL_SIZE = 40;
+    private static final int CELL_SIZE = 30;
     private static final int DEFAULT_EXPLOSION_RANGE = 1;
-    private static final int DEFAULT_MAX_BOMBS = 1;
-
-
+    private static final int DEFAULT_MAX_BOMBS = 1; // Au début, on peut poser qu'une seule bombe
 
     // Images perso 1
     private Image persoUp;
@@ -97,105 +95,51 @@ public class GameControllerTheme1 implements Initializable {
     private Image perso2Right;
     private Image perso2Death;
 
-    // Images des cellules
-    private Image wallImage;
-    private Image blockImage;
-    private Image floorImage;
-    private Image floorShadowImage;
+    private Image wallImage ;
+    private Image blockImage ;
 
-    // Images des explosions
-    private Image explosionCenterImage;
-    private Image explosionEndUpImage;
-    private Image explosionEndDownImage;
-    private Image explosionEndLeftImage;
-    private Image explosionEndRightImage;
-    private Image explosionMiddleUpImage;
-    private Image explosionMiddleDownImage;
-    private Image explosionMiddleLeftImage;
-    private Image explosionMiddleRightImage;
+    private ImageView victoire1 ;
+    private Image victoire2 ;
+    private ImageView egalite ;
+    private ImageView resultImageView ;
+
 
     @FXML
     private Label timerLabel;
 
     // Variables pour le timer
     private Timeline gameTimer;
-    private int timeRemainingSeconds = 120;
+    private int timeRemainingSeconds = 120; // 2 minutes = 120 secondes
     private static final int GAME_DURATION_SECONDS = 120;
 
-    // Images Bomb et bonus
-    private Image bombImage;
-    private Image bombBonusImage;
-    private Image rangeBonusImage;
-
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        // Images perso 1
-        persoDown = new Image(getClass().getResource("/images/persoDown.png").toExternalForm());
-        persoLeft = new Image(getClass().getResource("/images/persoLeft.png").toExternalForm());
-        persoRight = new Image(getClass().getResource("/images/persoRight.png").toExternalForm());
-        persoUp = new Image(getClass().getResource("/images/persoUp.png").toExternalForm());
-        persoDeath = new Image(getClass().getResource("/images/death.png").toExternalForm());
-
-        // Images perso 2
-        perso2Down = new Image(getClass().getResource("/images/perso2Down.png").toExternalForm());
-        perso2Left = new Image(getClass().getResource("/images/perso2Left.png").toExternalForm());
-        perso2Right = new Image(getClass().getResource("/images/perso2Right.png").toExternalForm());
-        perso2Up = new Image(getClass().getResource("/images/perso2Up.png").toExternalForm());
-        perso2Death = new Image(getClass().getResource("/images/death2.png").toExternalForm());
-
-        wallImage = new Image(getClass().getResource("/images/wall.png").toExternalForm());
-        blockImage = new Image(getClass().getResource("/images/block.png").toExternalForm());
-        floorImage = new Image(getClass().getResource("/images/floor.png").toExternalForm());
-        floorShadowImage = new Image(getClass().getResource("/images/floor_shadow.png").toExternalForm());
-
-        // Bombe et bonus image
-        bombImage = new Image(this.getClass().getResource("/images/bomb.png").toExternalForm());
-        bombBonusImage = new Image(this.getClass().getResource("/images/bomb-bonus.png").toExternalForm());
-        rangeBonusImage = new Image(this.getClass().getResource("/images/range-bonus.png").toExternalForm());
-
-        // Image explosion
-        explosionCenterImage = new Image(getClass().getResource("/images/explosion_milieu.png").toExternalForm());
-        explosionEndUpImage = new Image(getClass().getResource("/images/bout_explosion_haut.png").toExternalForm());
-        explosionEndDownImage = new Image(getClass().getResource("/images/bout_explosion_bas.png").toExternalForm());
-        explosionEndLeftImage = new Image(getClass().getResource("/images/bout_explosion_gauche.png").toExternalForm());
-        explosionEndRightImage = new Image(getClass().getResource("/images/bout_explosion_droite.png").toExternalForm());
-        explosionMiddleUpImage = new Image(getClass().getResource("/images/explosion_haut.png").toExternalForm());
-        explosionMiddleDownImage = new Image(getClass().getResource("/images/explosion_bas.png").toExternalForm());
-        explosionMiddleLeftImage = new Image(getClass().getResource("/images/explosion_gauche.png").toExternalForm());
-        explosionMiddleRightImage = new Image(getClass().getResource("/images/explosion_droite.png").toExternalForm());
-
-        System.out.println("GameController initialisé");
-        initializeGameArea();
-        setupKeyboardControls();
-        initializeTimer();
-
-        // Démarrer automatiquement le jeu
-        gameTimer.play();
-    }
-
-    // Méthodes timer
+    // À ajouter dans la méthode initialize()
     private void initializeTimer() {
+        // Initialiser le timer de jeu
         gameTimer = new Timeline(new KeyFrame(Duration.seconds(1), e -> updateTimer()));
         gameTimer.setCycleCount(Timeline.INDEFINITE);
         updateTimerDisplay();
     }
 
+    // Nouvelle méthode pour mettre à jour le timer
     private void updateTimer() {
         timeRemainingSeconds--;
         updateTimerDisplay();
 
         if (timeRemainingSeconds <= 0) {
+            // Temps écoulé - fin de partie
             gameTimer.stop();
             handleTimeUp();
         }
     }
 
+    // Méthode pour mettre à jour l'affichage du timer
     private void updateTimerDisplay() {
         int minutes = timeRemainingSeconds / 60;
         int seconds = timeRemainingSeconds % 60;
         String timeText = String.format("%02d:%02d", minutes, seconds);
         timerLabel.setText(timeText);
 
+        // Changer la couleur du timer quand il reste moins de 30 secondes
         if (timeRemainingSeconds <= 30) {
             timerLabel.setStyle("-fx-text-fill: red;");
         } else if (timeRemainingSeconds <= 60) {
@@ -205,44 +149,92 @@ public class GameControllerTheme1 implements Initializable {
         }
     }
 
+    // Méthode appelée quand le temps est écoulé
     private void handleTimeUp() {
+        gameEnded = true;
         System.out.println("⏰ TEMPS ÉCOULÉ !");
 
-        if (player1Alive && player2Alive) {
-            System.out.println("🤝 MATCH NUL - TEMPS ÉCOULÉ !");
-        } else if (player1Alive) {
-            System.out.println("🏆 JOUEUR 1 GAGNE - TEMPS ÉCOULÉ !");
-        } else if (player2Alive) {
-            System.out.println("🏆 JOUEUR 2 GAGNE - TEMPS ÉCOULÉ !");
-        } else {
-            System.out.println("🤝 MATCH NUL - TOUS MORTS !");
+        // Arrêter toutes les bombes actives
+        for (Bomb bomb : activeBombs) {
+            bomb.stopTimer();
         }
 
+        // Déterminer le gagnant selon les règles de votre jeu
+        // Par exemple, le joueur qui a survécu gagne, ou match nul si les deux sont vivants
+        checkGameEnd();
+
         gamePaused = true;
+        startButton.setDisable(true);
+    }
+
+    // Images Bomb et bonus
+    private Image bombImage;
+    private Image bombBonusImage;
+    private Image rangeBonusImage;
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        // Init des images perso 1 :
+        persoDown = new Image(getClass().getResource("/images/persoDown.png").toExternalForm());
+        persoLeft = new Image(getClass().getResource("/images/persoLeft.png").toExternalForm());
+        persoRight = new Image(getClass().getResource("/images/persoRight.png").toExternalForm());
+        persoUp = new Image(getClass().getResource("/images/persoUp.png").toExternalForm());
+        persoDeath = new Image(getClass().getResource("/images/death.png").toExternalForm());
+
+        // Init des images perso 2 :
+        perso2Down = new Image(getClass().getResource("/images/perso2Down.png").toExternalForm());
+        perso2Left = new Image(getClass().getResource("/images/perso2Left.png").toExternalForm());
+        perso2Right = new Image(getClass().getResource("/images/perso2Right.png").toExternalForm());
+        perso2Up = new Image(getClass().getResource("/images/perso2Up.png").toExternalForm());
+        perso2Death = new Image(getClass().getResource("/images/death2.png").toExternalForm());
+
+        wallImage = new Image(getClass().getResource("/images/wall.png").toExternalForm());
+        blockImage = new Image(getClass().getResource("/images/block.png").toExternalForm());
+
+
+        // Bomb et bonus image
+        bombImage = new Image(this.getClass().getResource("/images/bomb.png").toExternalForm());
+        bombBonusImage = new Image(this.getClass().getResource("/images/bomb-bonus.png").toExternalForm());
+        rangeBonusImage = new Image(this.getClass().getResource("/images/range-bonus.png").toExternalForm());
+
+        System.out.println("GameController initialisé");
+        initializeGameArea();
+        setupKeyboardControls();
+        initializeTimer();
     }
 
     private void initializeGameArea() {
+        // Créer le plateau de jeu
         gameBoard = new GameBoard();
 
+        // Créer les joueurs aux coins opposés
         player1 = new Player("Player 1", 1, 1);
         player2 = new Player("Player 2", gameBoard.getHeight() - 2, gameBoard.getWidth() - 2);
 
+        // État des joueurs
         player1Alive = true;
         player2Alive = true;
         player1BombsActive = 0;
         player2BombsActive = 0;
 
+        // Statistiques initiales des joueurs
         player1ExplosionRange = DEFAULT_EXPLOSION_RANGE;
         player2ExplosionRange = DEFAULT_EXPLOSION_RANGE;
         player1MaxBombs = DEFAULT_MAX_BOMBS;
         player2MaxBombs = DEFAULT_MAX_BOMBS;
 
+        // Initialiser les listes
         activeBombs = new ArrayList<>();
         bombSprites = new HashMap<>();
         explosionSprites = new ArrayList<>();
 
+        // Vider la grille actuelle
         gameGrid.getChildren().clear();
+
+        // Créer la représentation visuelle du plateau
         createVisualBoard();
+
+        // Créer et placer les joueurs
         createPlayersSprites();
 
         System.out.println("Plateau de jeu " + gameBoard.getWidth() + "x" + gameBoard.getHeight() + " créé");
@@ -261,21 +253,12 @@ public class GameControllerTheme1 implements Initializable {
 
     private Rectangle createCell(int row, int col) {
         Rectangle cell = new Rectangle(CELL_SIZE, CELL_SIZE);
+
+        // Définir le style selon le type de cellule
         GameBoard.CellType cellType = gameBoard.getCellType(row, col);
         switch (cellType) {
             case EMPTY:
-                boolean hasWallAbove = false;
-                if (row > 0) {
-                    GameBoard.CellType cellAbove = gameBoard.getCellType(row - 1, col);
-                    hasWallAbove = (cellAbove == GameBoard.CellType.INDESTRUCTIBLE_WALL ||
-                            cellAbove == GameBoard.CellType.DESTRUCTIBLE_WALL);
-                }
-
-                if (hasWallAbove) {
-                    cell.setFill(new ImagePattern(floorShadowImage));
-                } else {
-                    cell.setFill(new ImagePattern(floorImage));
-                }
+                cell.getStyleClass().add("floor");
                 break;
             case INDESTRUCTIBLE_WALL:
                 cell.setFill(new ImagePattern(wallImage));
@@ -295,37 +278,34 @@ public class GameControllerTheme1 implements Initializable {
     }
 
     private void createPlayersSprites() {
+        // Créer le sprite du joueur 1 (cercle rouge)
         player1Sprite = new Circle(CELL_SIZE / 2.1);
+        //player1Sprite.getStyleClass().add("player1");
         player1Sprite.setFill(new ImagePattern(persoDown));
 
+        // Créer le sprite du joueur 2 (cercle bleu)
         player2Sprite = new Circle(CELL_SIZE / 2.1);
+        //player2Sprite.getStyleClass().add("player2");
         player2Sprite.setFill(new ImagePattern(perso2Down));
 
+        // Placer les joueurs sur la grille
         gameGrid.add(player1Sprite, player1.getCol(), player1.getRow());
         gameGrid.add(player2Sprite, player2.getCol(), player2.getRow());
     }
 
     private void setupKeyboardControls() {
+        // Rendre la scène focusable pour capturer les événements clavier
         gameArea.setFocusTraversable(true);
         gameArea.setOnKeyPressed(this::handleKeyPress);
+
+        // Demander le focus
         gameArea.requestFocus();
     }
 
     @FXML
     private void handleKeyPress(KeyEvent event) {
-        // Gestion de la pause avec Échap
-        if (event.getCode() == KeyCode.ESCAPE) {
-            if (isPauseMenuVisible) {
-                resumeGame();
-            } else {
-                showPauseMenu();
-            }
-            event.consume();
-            return;
-        }
 
-        // Le reste du code (mouvement des joueurs)
-        if (!gameStarted || (!player1Alive && !player2Alive) || isPauseMenuVisible) return;
+        if (!gameStarted || (!player1Alive && !player2Alive)) return;
 
         // Contrôles du joueur 1 (ZQSD + ESPACE)
         if (player1Alive) {
@@ -401,83 +381,23 @@ public class GameControllerTheme1 implements Initializable {
             }
         }
 
+        // Conserver le focus
         gameArea.requestFocus();
-    }
-
-    private void showPauseMenu() {
-        if (gameStarted && !gamePaused) {
-            gamePaused = true;
-            isPauseMenuVisible = true;
-            pauseMenu.setVisible(true);
-
-            if (gameTimer != null) {
-                gameTimer.pause();
-            }
-
-            for (Bomb bomb : activeBombs) {
-                bomb.stopTimer();
-            }
-
-            System.out.println("⏸️ Jeu en pause");
-        }
-    }
-
-    @FXML
-    private void resumeGame() {
-        if (gamePaused) {
-            gamePaused = false;
-            isPauseMenuVisible = false;
-            pauseMenu.setVisible(false);
-
-            if (gameTimer != null) {
-                gameTimer.play();
-            }
-
-            for (Bomb bomb : activeBombs) {
-                bomb.startTimer(this::onBombExplosion, gameBoard);
-            }
-
-            gameArea.requestFocus();
-            System.out.println("▶️ Jeu repris");
-        }
-    }
-
-    @FXML
-    private void backToMainMenu() {
-        try {
-            if (gameTimer != null) {
-                gameTimer.stop();
-            }
-            for (Bomb bomb : activeBombs) {
-                bomb.stopTimer();
-            }
-
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/menu.fxml"));
-            Parent menuRoot = loader.load();
-
-            Scene menuScene = new Scene(menuRoot, 800, 600);
-            menuScene.getStylesheets().add(getClass().getResource("/css/menu.css").toExternalForm());
-
-            Stage stage = (Stage) gameArea.getScene().getWindow();
-            stage.setScene(menuScene);
-            stage.setTitle("Super Bomberman - Menu");
-
-            System.out.println("🏠 Retour au menu principal");
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     private void updatePlayer1Position() {
         gameGrid.getChildren().remove(player1Sprite);
         gameGrid.add(player1Sprite, player1.getCol(), player1.getRow());
+
+        // Vérifier et collecter les bonus
         checkBonusCollection(1);
     }
 
     private void updatePlayer2Position() {
         gameGrid.getChildren().remove(player2Sprite);
         gameGrid.add(player2Sprite, player2.getCol(), player2.getRow());
+
+        // Vérifier et collecter les bonus
         checkBonusCollection(2);
     }
 
@@ -486,6 +406,7 @@ public class GameControllerTheme1 implements Initializable {
         GameBoard.CellType cellType = gameBoard.getCellType(currentPlayer.getRow(), currentPlayer.getCol());
 
         if (cellType == GameBoard.CellType.BOMB_BONUS) {
+            // Collecter bonus nombre de bombes
             if (playerNumber == 1) {
                 player1MaxBombs++;
                 System.out.println("💣 Joueur 1 collecte un bonus bombes ! Nouvelles bombes max: " + player1MaxBombs);
@@ -494,10 +415,12 @@ public class GameControllerTheme1 implements Initializable {
                 System.out.println("💣 Joueur 2 collecte un bonus bombes ! Nouvelles bombes max: " + player2MaxBombs);
             }
 
+            // Supprimer le bonus de la carte
             gameBoard.setCellType(currentPlayer.getRow(), currentPlayer.getCol(), GameBoard.CellType.EMPTY);
             updateBoardDisplay();
 
         } else if (cellType == GameBoard.CellType.RANGE_BONUS) {
+            // Collecter bonus portée
             if (playerNumber == 1) {
                 player1ExplosionRange++;
                 System.out.println("🔥 Joueur 1 collecte un bonus portée ! Nouvelle portée: " + player1ExplosionRange);
@@ -506,6 +429,7 @@ public class GameControllerTheme1 implements Initializable {
                 System.out.println("🔥 Joueur 2 collecte un bonus portée ! Nouvelle portée: " + player2ExplosionRange);
             }
 
+            // Supprimer le bonus de la carte
             gameBoard.setCellType(currentPlayer.getRow(), currentPlayer.getCol(), GameBoard.CellType.EMPTY);
             updateBoardDisplay();
         }
@@ -526,6 +450,7 @@ public class GameControllerTheme1 implements Initializable {
             playerMaxBombs = player2MaxBombs;
         }
 
+        // Compter le nombre de bombes actives pour ce joueur
         int activeBombsCount = 0;
         for (Bomb bomb : activeBombs) {
             if (bomb.getOwner() == playerNumber) {
@@ -533,11 +458,13 @@ public class GameControllerTheme1 implements Initializable {
             }
         }
 
+        // Vérifier si le joueur a atteint sa limite de bombes
         if (activeBombsCount >= playerMaxBombs) {
             System.out.println("❌ Joueur " + playerNumber + " : Limite de bombes atteinte (" + activeBombsCount + "/" + playerMaxBombs + ") !");
             return;
         }
 
+        // Vérifier qu'il n'y a pas déjà une bombe à cette position
         for (Bomb bomb : activeBombs) {
             if (bomb.getRow() == currentPlayer.getRow() && bomb.getCol() == currentPlayer.getCol()) {
                 System.out.println("❌ Il y a déjà une bombe ici !");
@@ -545,20 +472,24 @@ public class GameControllerTheme1 implements Initializable {
             }
         }
 
+        // Créer une nouvelle bombe
         Bomb bomb = new Bomb(currentPlayer.getRow(), currentPlayer.getCol(), playerExplosionRange);
         bomb.setOwner(playerNumber);
         activeBombs.add(bomb);
 
+        // Créer le sprite visuel de la bombe
         Circle bombSprite = new Circle(CELL_SIZE / 2.1);
         bombSprite.setFill(new ImagePattern(bombImage));
 
         bombSprites.put(bomb, bombSprite);
 
+        // Placer la bombe sur la grille
         gameGrid.add(bombSprite, bomb.getCol(), bomb.getRow());
 
         GridPane.setHalignment(bombSprite, HPos.CENTER);
         GridPane.setValignment(bombSprite, VPos.CENTER);
 
+        // Démarrer le minuteur
         bomb.startTimer(this::onBombExplosion, gameBoard);
 
         System.out.println("💣 Joueur " + playerNumber + " place une bombe : " + bomb + " (" + (activeBombsCount + 1) + "/" + playerMaxBombs + ")");
@@ -567,15 +498,23 @@ public class GameControllerTheme1 implements Initializable {
     private void onBombExplosion(Bomb bomb, List<Bomb.Position> explosionCells) {
         System.out.println("💥 EXPLOSION ! " + bomb);
 
+        // Supprimer le sprite de la bombe
         Circle bombSprite = bombSprites.get(bomb);
         if (bombSprite != null) {
             gameGrid.getChildren().remove(bombSprite);
             bombSprites.remove(bomb);
         }
 
+        // Détruire les murs destructibles dans la zone d'explosion
         destroyWallsInExplosion(explosionCells);
+
+        // Créer l'animation d'explosion
         createExplosionAnimation(explosionCells);
+
+        // Vérifier si les joueurs sont touchés
         checkPlayersInExplosion(explosionCells);
+
+        // Retirer la bombe de la liste active
         activeBombs.remove(bomb);
     }
 
@@ -583,21 +522,9 @@ public class GameControllerTheme1 implements Initializable {
         boolean needsUpdate = false;
 
         for (Bomb.Position pos : explosionCells) {
-            GameBoard.CellType cellType = gameBoard.getCellType(pos.row, pos.col);
-
             boolean wallDestroyed = gameBoard.destroyWall(pos.row, pos.col);
             if (wallDestroyed) {
                 System.out.println("🧱 Mur détruit en (" + pos.row + ", " + pos.col + ")");
-                needsUpdate = true;
-            }
-
-            if (cellType == GameBoard.CellType.BOMB_BONUS) {
-                gameBoard.setCellType(pos.row, pos.col, GameBoard.CellType.EMPTY);
-                System.out.println("💣 Bonus bombes détruit en (" + pos.row + ", " + pos.col + ")");
-                needsUpdate = true;
-            } else if (cellType == GameBoard.CellType.RANGE_BONUS) {
-                gameBoard.setCellType(pos.row, pos.col, GameBoard.CellType.EMPTY);
-                System.out.println("🔥 Bonus portée détruit en (" + pos.row + ", " + pos.col + ")");
                 needsUpdate = true;
             }
         }
@@ -608,6 +535,7 @@ public class GameControllerTheme1 implements Initializable {
     }
 
     private void updateBoardDisplay() {
+        // Supprimer seulement les rectangles qui représentent les cellules du plateau
         gameGrid.getChildren().removeIf(node -> {
             if (node instanceof Rectangle) {
                 Rectangle rect = (Rectangle) node;
@@ -617,6 +545,7 @@ public class GameControllerTheme1 implements Initializable {
             return false;
         });
 
+        // Recréer seulement les cellules du plateau
         for (int row = 0; row < gameBoard.getHeight(); row++) {
             for (int col = 0; col < gameBoard.getWidth(); col++) {
                 Rectangle cell = createCell(row, col);
@@ -624,6 +553,7 @@ public class GameControllerTheme1 implements Initializable {
             }
         }
 
+        // S'assurer que les joueurs restent au premier plan
         if (player1Sprite != null) {
             player1Sprite.toFront();
         }
@@ -632,25 +562,24 @@ public class GameControllerTheme1 implements Initializable {
             player2Sprite.toFront();
         }
 
+        // S'assurer que les bombes restent au premier plan
         for (Circle bombSprite : bombSprites.values()) {
             bombSprite.toFront();
         }
     }
 
     private void createExplosionAnimation(List<Bomb.Position> explosionCells) {
-        if (explosionCells.isEmpty()) return;
-
-        Bomb.Position center = explosionCells.get(0);
-
+        // Créer les sprites d'explosion
         for (Bomb.Position pos : explosionCells) {
-            Rectangle explosionSprite = new Rectangle(CELL_SIZE, CELL_SIZE);
-            Image explosionImage = getExplosionImageForPosition(pos, center, explosionCells);
-            explosionSprite.setFill(new ImagePattern(explosionImage));
+            Rectangle explosionSprite = new Rectangle(CELL_SIZE * 0.8, CELL_SIZE * 0.8);
+            explosionSprite.getStyleClass().add("explosion");
             explosionSprites.add(explosionSprite);
 
+            // Placer l'explosion sur la grille
             gameGrid.add(explosionSprite, pos.col, pos.row);
         }
 
+        // Programmer la suppression de l'explosion après 1 seconde
         Timeline explosionTimer = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
             for (Rectangle sprite : explosionSprites) {
                 gameGrid.getChildren().remove(sprite);
@@ -660,78 +589,8 @@ public class GameControllerTheme1 implements Initializable {
         explosionTimer.play();
     }
 
-    private Image getExplosionImageForPosition(Bomb.Position pos, Bomb.Position center, List<Bomb.Position> allCells) {
-        if (pos.row == center.row && pos.col == center.col) {
-            return explosionCenterImage;
-        }
-
-        int deltaRow = pos.row - center.row;
-        int deltaCol = pos.col - center.col;
-
-        if (deltaCol == 0 && deltaRow < 0) {
-            if (isExplosionEnd(pos, center, allCells, 1)) {
-                return explosionEndUpImage;
-            } else {
-                return explosionMiddleUpImage;
-            }
-        }
-
-        if (deltaCol == 0 && deltaRow > 0) {
-            if (isExplosionEnd(pos, center, allCells, 0)) {
-                return explosionEndDownImage;
-            } else {
-                return explosionMiddleDownImage;
-            }
-        }
-
-        if (deltaRow == 0 && deltaCol < 0) {
-            if (isExplosionEnd(pos, center, allCells, 3)) {
-                return explosionEndLeftImage;
-            } else {
-                return explosionMiddleLeftImage;
-            }
-        }
-
-        if (deltaRow == 0 && deltaCol > 0) {
-            if (isExplosionEnd(pos, center, allCells, 2)) {
-                return explosionEndRightImage;
-            } else {
-                return explosionMiddleRightImage;
-            }
-        }
-
-        return explosionCenterImage;
-    }
-
-    private boolean isExplosionEnd(Bomb.Position pos, Bomb.Position center, List<Bomb.Position> allCells, int direction) {
-        int nextRow = pos.row;
-        int nextCol = pos.col;
-
-        switch (direction) {
-            case 0: // Bas
-                nextRow = pos.row + 1;
-                break;
-            case 1: // Haut
-                nextRow = pos.row - 1;
-                break;
-            case 2: // Droite
-                nextCol = pos.col + 1;
-                break;
-            case 3: // Gauche
-                nextCol = pos.col - 1;
-                break;
-        }
-
-        for (Bomb.Position cell : allCells) {
-            if (cell.row == nextRow && cell.col == nextCol) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
     private void checkPlayersInExplosion(List<Bomb.Position> explosionCells) {
+        // Vérifier le joueur 1
         if (player1Alive) {
             Bomb.Position player1Pos = new Bomb.Position(player1.getRow(), player1.getCol());
             for (Bomb.Position explosionPos : explosionCells) {
@@ -743,6 +602,7 @@ public class GameControllerTheme1 implements Initializable {
             }
         }
 
+        // Vérifier le joueur 2
         if (player2Alive) {
             Bomb.Position player2Pos = new Bomb.Position(player2.getRow(), player2.getCol());
             for (Bomb.Position explosionPos : explosionCells) {
@@ -770,21 +630,97 @@ public class GameControllerTheme1 implements Initializable {
     }
 
     private void checkGameEnd() {
+        if (gameEnded) return;  // si la fin du jeu a déjà été gérée, on ne fait rien
+        gameEnded = true;
+        
         if (!player1Alive && !player2Alive) {
-            System.out.println("🤝 MATCH NUL ! Les deux joueurs sont morts !");
+            showResult("🤝 MATCH NUL ! Les deux joueurs sont morts !", "MATCH NUL", "/images/egalite.png");
         } else if (!player1Alive) {
-            System.out.println("🏆 JOUEUR 2 GAGNE !");
+            showResult("🏆 JOUEUR 2 GAGNE !", "JOUEUR 2 GAGNE", "/images/victoire2.png");
         } else if (!player2Alive) {
-            System.out.println("🏆 JOUEUR 1 GAGNE !");
+            showResult("🏆 JOUEUR 1 GAGNE !", "JOUEUR 1 GAGNE", "/images/victoire1.png");
         }
+    }
 
-        if (!player1Alive || !player2Alive) {
+    private void showResult(String consoleMessage, String buttonText, String imagePath) {
+        System.out.println(consoleMessage);
+        startButton.setText(buttonText);
+
+        if (resultImageView != null) {
+            return;
+        }
+        Image image = new Image(getClass().getResource(imagePath).toExternalForm());
+        resultImageView = new ImageView(image);
+        resultImageView.setPreserveRatio(true);
+        resultImageView.setFitWidth(500);
+        gameArea.getChildren().add(resultImageView);
+    }
+
+
+    @FXML
+    private void startGame() {
+        if (!gameStarted) {
+            System.out.println("Démarrage du jeu...");
+            gameStarted = true;
+            startButton.setText("Reprendre");
+            pauseButton.setDisable(false);
+            gameTimer.play();
+
+            // Donner le focus pour les contrôles clavier
+            gameArea.requestFocus();
+        } else if (gamePaused) {
+            System.out.println("Reprise du jeu...");
+            gamePaused = false;
+            startButton.setText("Reprendre");
+            pauseButton.setText("Pause");
+            gameTimer.play();
+
+            // Redonner le focus
+            gameArea.requestFocus();
+        }
+    }
+
+    @FXML
+    private void pauseGame() {
+        if (gameStarted && !gamePaused) {
+            System.out.println("Pause du jeu...");
             gamePaused = true;
-
-            for (Bomb bomb : activeBombs) {
-                bomb.stopTimer();
-            }
+            pauseButton.setText("Reprendre");
+            startButton.setText("Reprendre");
+            gameTimer.pause();
         }
+    }
+
+    @FXML
+    private void resetGame() {
+        System.out.println("Reset du jeu...");
+        gameStarted = false;
+        gamePaused = false;
+        startButton.setText("Démarrer");
+        startButton.setDisable(false);
+        pauseButton.setText("Pause");
+        pauseButton.setDisable(true);
+
+        // Reset du timer
+        gameTimer.stop();
+        timeRemainingSeconds = GAME_DURATION_SECONDS;
+        updateTimerDisplay();
+
+        // Arrêter toutes les bombes actives
+        for (Bomb bomb : activeBombs) {
+            bomb.stopTimer();
+        }
+
+        player1BombsActive = 0;
+        player2BombsActive = 0;
+
+        // Enlever l'image résultat si elle est affichée
+        if (resultImageView != null) {
+            gameArea.getChildren().remove(resultImageView);
+            resultImageView = null;
+        }
+
+        initializeGameArea();
     }
 
     public boolean canMoveTo(int row, int col) {
