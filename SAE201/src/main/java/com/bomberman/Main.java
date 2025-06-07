@@ -43,7 +43,7 @@ public class    Main extends Application {
             primaryStage.setResizable(false);
             primaryStage.centerOnScreen();
 
-            // Gérer la fermeture propre
+            // Gérer la fermeture propre    
             primaryStage.setOnCloseRequest(event -> {
                 try {
                     com.bomberman.controller.MenuController controller = loader.getController();

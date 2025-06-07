@@ -17,7 +17,8 @@ public class MusicManager {
     private int currentTrackIndex = 0;
     private boolean isPlaying = false;
     private boolean isShuffle = true;
-    private double volume = 0.5; // Volume par défaut (50%)
+    private double volume = 0.5;
+    private boolean musicFailed = false; // Nouvelle variable pour arrêter sur erreur
 
     private MusicManager() {
         initializeMusicFiles();
@@ -47,7 +48,7 @@ public class MusicManager {
     }
 
     public void startBackgroundMusic() {
-        if (!isPlaying && !shuffledPlaylist.isEmpty()) {
+        if (!musicFailed && !isPlaying && !shuffledPlaylist.isEmpty()) {
             playCurrentTrack();
         }
     }
@@ -62,37 +63,43 @@ public class MusicManager {
     }
 
     public void pauseBackgroundMusic() {
-        if (currentPlayer != null && isPlaying) {
+        if (currentPlayer != null && isPlaying && !musicFailed) {
             currentPlayer.pause();
             isPlaying = false;
         }
     }
 
     public void resumeBackgroundMusic() {
-        if (currentPlayer != null && !isPlaying) {
+        if (currentPlayer != null && !isPlaying && !musicFailed) {
             currentPlayer.play();
             isPlaying = true;
         }
     }
 
     private void playCurrentTrack() {
+        // Si la musique a déjà échoué, ne plus essayer
+        if (musicFailed) {
+            return;
+        }
+
         if (currentTrackIndex >= shuffledPlaylist.size()) {
-            // Playlist terminée, recommencer
             createShuffledPlaylist();
         }
 
         String currentTrack = shuffledPlaylist.get(currentTrackIndex);
+        System.out.println("🎵 Tentative de lecture : " + currentTrack);
+
         URL musicUrl = getClass().getResource("/Music/" + currentTrack);
 
         if (musicUrl == null) {
-            System.out.println("Fichier musique non trouvé: /Music/" + currentTrack);
-            // Essayer la piste suivante
-            nextTrack();
+            System.out.println("❌ Musique désactivée - Fichier non trouvé");
+            musicFailed = true;
             return;
         }
 
+        System.out.println("✅ URL trouvée : " + musicUrl);
+
         try {
-            // Arrêter la musique actuelle si elle existe
             if (currentPlayer != null) {
                 currentPlayer.stop();
                 currentPlayer.dispose();
@@ -102,32 +109,34 @@ public class MusicManager {
             currentPlayer = new MediaPlayer(media);
             currentPlayer.setVolume(volume);
 
-            // Quand la piste se termine, passer à la suivante
             currentPlayer.setOnEndOfMedia(() -> {
-                nextTrack();
+                if (!musicFailed) {
+                    nextTrack();
+                }
             });
 
-            // Gérer les erreurs
             currentPlayer.setOnError(() -> {
-                System.out.println("Erreur lors de la lecture de: " + currentTrack);
-                nextTrack();
+                System.out.println("❌ Musique désactivée - Erreur de lecture");
+                musicFailed = true;
+                isPlaying = false;
             });
 
             currentPlayer.play();
             isPlaying = true;
-
             System.out.println("♪ Lecture de: " + currentTrack);
 
         } catch (Exception e) {
-            System.out.println("Erreur lors du chargement de la musique " + currentTrack + ": " + e.getMessage());
-            nextTrack();
+            System.out.println("❌ Musique désactivée - Erreur : " + e.getMessage());
+            musicFailed = true;
+            isPlaying = false;
         }
     }
 
     public void nextTrack() {
+        if (musicFailed) return;
+
         currentTrackIndex++;
         if (currentTrackIndex >= shuffledPlaylist.size()) {
-            // Recommencer la playlist
             createShuffledPlaylist();
         }
 
@@ -137,6 +146,8 @@ public class MusicManager {
     }
 
     public void previousTrack() {
+        if (musicFailed) return;
+
         currentTrackIndex--;
         if (currentTrackIndex < 0) {
             currentTrackIndex = shuffledPlaylist.size() - 1;
@@ -148,8 +159,8 @@ public class MusicManager {
     }
 
     public void setVolume(double volume) {
-        this.volume = Math.max(0.0, Math.min(1.0, volume)); // Entre 0 et 1
-        if (currentPlayer != null) {
+        this.volume = Math.max(0.0, Math.min(1.0, volume));
+        if (currentPlayer != null && !musicFailed) {
             currentPlayer.setVolume(this.volume);
         }
     }
@@ -159,8 +170,10 @@ public class MusicManager {
     }
 
     public void setShuffle(boolean shuffle) {
-        this.isShuffle = shuffle;
-        createShuffledPlaylist();
+        if (!musicFailed) {
+            this.isShuffle = shuffle;
+            createShuffledPlaylist();
+        }
     }
 
     public boolean isShuffle() {
@@ -168,10 +181,13 @@ public class MusicManager {
     }
 
     public boolean isPlaying() {
-        return isPlaying;
+        return isPlaying && !musicFailed;
     }
 
     public String getCurrentTrackName() {
+        if (musicFailed) {
+            return "Musique désactivée";
+        }
         if (currentTrackIndex < shuffledPlaylist.size()) {
             return shuffledPlaylist.get(currentTrackIndex);
         }
@@ -179,6 +195,8 @@ public class MusicManager {
     }
 
     public void playSpecificTrack(int trackNumber) {
+        if (musicFailed) return;
+
         if (trackNumber >= 1 && trackNumber <= 10) {
             String trackName = String.format("%02d.mp3", trackNumber);
             int index = shuffledPlaylist.indexOf(trackName);
@@ -189,7 +207,6 @@ public class MusicManager {
         }
     }
 
-    // Méthode pour nettoyer les ressources
     public void shutdown() {
         stopBackgroundMusic();
         instance = null;

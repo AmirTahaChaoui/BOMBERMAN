@@ -13,6 +13,7 @@ public class Bomb {
     private int col;
     private int explosionRange;
     private Timeline timer;
+    private Duration remainingTime;
     private boolean hasExploded;
     private int owner; // ID du joueur propriétaire (1 ou 2)
 
@@ -54,8 +55,19 @@ public class Bomb {
      * Démarre le minuteur de la bombe
      */
     public void startTimer(ExplosionCallback callback, GameBoard gameBoard) {
-        timer = new Timeline(new KeyFrame(Duration.seconds(2), e -> explode(callback, gameBoard)));
-        timer.play();
+        if (timer == null) {
+            timer = new Timeline(new KeyFrame(Duration.seconds(2), e -> explode(callback, gameBoard)));
+            timer.play();
+        } else {
+            timer.playFrom(remainingTime);
+        }
+    }
+
+    public void stopTimer() {
+        if (timer != null) {
+            remainingTime = timer.getCurrentTime();
+            timer.stop();
+        }
     }
 
     /**
@@ -165,15 +177,6 @@ public class Bomb {
         }
 
         return explosionCells;
-    }
-
-    /**
-     * Arrête le minuteur de la bombe
-     */
-    public void stopTimer() {
-        if (timer != null) {
-            timer.stop();
-        }
     }
 
 

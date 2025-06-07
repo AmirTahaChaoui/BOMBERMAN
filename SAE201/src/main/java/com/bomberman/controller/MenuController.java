@@ -281,7 +281,7 @@ public class MenuController implements Initializable {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/theme1.fxml"));
             Parent gameRoot = loader.load();
 
-            Scene gameScene = new Scene(gameRoot, 800, 600);
+            Scene gameScene = new Scene(gameRoot, 800, 700);
             gameScene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
 
             Stage stage = (Stage) playButton.getScene().getWindow();
