@@ -336,7 +336,7 @@ public class GameControllerTheme1 implements Initializable {
         }
 
         // Le reste du code (mouvement des joueurs)
-        if (!gameStarted || (!player1Alive && !player2Alive) || isPauseMenuVisible) return;
+        if (!gameStarted || (!player1Alive || !player2Alive) || isPauseMenuVisible) return;
 
         // Contrôles du joueur 1 (ZQSD + ESPACE)
         if (player1Alive) {
