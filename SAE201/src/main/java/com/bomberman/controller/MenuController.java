@@ -1,6 +1,8 @@
 package com.bomberman.controller;
 
 import com.bomberman.controller.MusicManager;
+import com.bomberman.controller.UserManager;
+import com.bomberman.model.User;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -10,10 +12,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -34,7 +33,7 @@ import java.util.ResourceBundle;
 
 public class MenuController implements Initializable {
 
-    // FXML Elements
+    // FXML Elements existants
     @FXML private StackPane root;
     @FXML private VBox menuContainer;
     @FXML private VBox menuButtons;
@@ -44,32 +43,56 @@ public class MenuController implements Initializable {
     @FXML private Label versionLabel;
     @FXML private Label controlsLabel;
 
-    // Button containers
+    // Button containers existants
     @FXML private HBox playButtonContainer;
     @FXML private HBox settingsButtonContainer;
-    @FXML private HBox creditsButtonContainer;
+    @FXML private HBox loginButtonContainer;
     @FXML private HBox exitButtonContainer;
 
-    // Buttons
+    // Buttons existants
     @FXML private Button playButton;
     @FXML private Button settingsButton;
-    @FXML private Button creditsButton;
+    @FXML private Button loginButton;
     @FXML private Button exitButton;
 
-    // Cursors
+    // Cursors existants
     @FXML private Label playCursor;
     @FXML private Label settingsCursor;
-    @FXML private Label creditsCursor;
+    @FXML private Label loginCursor;
     @FXML private Label exitCursor;
 
-    // Navigation state
+    // NOUVEAUX ÉLÉMENTS - Système de connexion
+    @FXML private StackPane loginView;
+    @FXML private VBox loginContent;
+    @FXML private TextField usernameField;
+    @FXML private PasswordField passwordField;
+    @FXML private Button connectButton;
+    @FXML private Button cancelButton;
+    @FXML private Button createAccountLink;
+    @FXML private Label loginErrorLabel;
+
+    // NOUVEAUX ÉLÉMENTS - Système d'inscription
+    @FXML private StackPane registerView;
+    @FXML private VBox registerContent;
+    @FXML private TextField firstNameField;
+    @FXML private TextField lastNameField;
+    @FXML private TextField registerUsernameField;
+    @FXML private PasswordField registerPasswordField;
+    @FXML private PasswordField confirmPasswordField;
+    @FXML private ComboBox<String> avatarComboBox;
+    @FXML private Button createAccountButton;
+    @FXML private Button cancelRegisterButton;
+    @FXML private Button backToLoginLink;
+    @FXML private Label registerErrorLabel;
+
+    // Navigation state existante
     private int selectedIndex = 0;
     private List<MenuOption> menuOptions;
     private Timeline cursorBlinkAnimation;
     private boolean isAnimationRunning = false;
 
-    // Gestionnaire de musique
-    private MusicManager musicManager;
+    // NOUVEAU : Gestion des utilisateurs
+    private UserManager userManager;
 
     // Menu option class to hold button and cursor references
     private static class MenuOption {
@@ -84,13 +107,22 @@ public class MenuController implements Initializable {
         }
     }
 
+    // Gestionnaire de musique
+    private MusicManager musicManager;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        // Initialiser le gestionnaire d'utilisateurs
+        userManager = UserManager.getInstance();
+
         setupMenuOptions();
         setupKeyboardNavigation();
         setupCursorAnimation();
         setupImageFallback();
         setupMusic();
+
+        // NOUVEAU : Configurer le système de connexion
+        setupLoginSystem();
 
         // Set initial selection
         updateSelection();
@@ -101,6 +133,287 @@ public class MenuController implements Initializable {
         });
     }
 
+    // NOUVELLE MÉTHODE : Configuration du système de connexion
+    private void setupLoginSystem() {
+        // Mettre à jour l'affichage selon l'état de connexion
+        updateLoginDisplay();
+
+        // Cacher les vues de connexion et inscription par défaut
+        if (loginView != null) {
+            loginView.setVisible(false);
+        }
+        if (registerView != null) {
+            registerView.setVisible(false);
+        }
+
+        // Configurer les avatars disponibles
+        setupAvatarComboBox();
+    }
+
+    // NOUVELLE MÉTHODE : Configurer la liste des avatars
+    private void setupAvatarComboBox() {
+        if (avatarComboBox != null) {
+            avatarComboBox.getItems().addAll(
+                    "🧑‍💼 Avatar Business",
+                    "👨‍🎮 Avatar Gamer",
+                    "👩‍🎨 Avatar Artiste",
+                    "🧑‍🚀 Avatar Astronaute",
+                    "👨‍🔬 Avatar Scientifique",
+                    "👩‍🏫 Avatar Professeur",
+                    "🧑‍🍳 Avatar Chef",
+                    "👨‍⚕️ Avatar Médecin"
+            );
+            avatarComboBox.getSelectionModel().selectFirst(); // Sélectionner le premier par défaut
+        }
+    }
+
+    // NOUVELLE MÉTHODE : Mettre à jour l'affichage de connexion
+    private void updateLoginDisplay() {
+        if (userManager.isLoggedIn()) {
+            User currentUser = userManager.getCurrentUser();
+            loginButton.setText("COMPTE");  // Changé de loginButton à creditsButton
+            // userInfoLabel supprimé
+        } else {
+            loginButton.setText("SE CONNECTER");  // Changé de loginButton à creditsButton
+            // userInfoLabel supprimé
+        }
+    }
+
+
+    @FXML
+    private void handleConnectButton() {
+        String username = usernameField.getText().trim();
+        String password = passwordField.getText();
+
+        // DEBUG : Afficher les infos de connexion
+        System.out.println("=== TENTATIVE DE CONNEXION ===");
+        System.out.println("Username saisi : '" + username + "'");
+        System.out.println("Password saisi : '" + password + "'");
+        System.out.println("Nombre d'utilisateurs : " + userManager.getUserCount());
+
+        // Vider le message d'erreur
+        loginErrorLabel.setVisible(false);
+
+        if (username.isEmpty() || password.isEmpty()) {
+            showLoginError("Veuillez remplir tous les champs");
+            return;
+        }
+
+        // Tentative de connexion
+        boolean success = userManager.login(username, password);
+
+        System.out.println("Résultat connexion : " + success);
+
+        if (success) {
+            System.out.println("✅ Connexion réussie !");
+            hideLoginView();
+            updateLoginDisplay();
+            clearLoginFields();
+        } else {
+            showLoginError("Nom d'utilisateur ou mot de passe incorrect");
+        }
+    }
+
+    @FXML
+    private void handleCancelButton() {
+        hideLoginView();
+        clearLoginFields();
+        loginErrorLabel.setVisible(false);
+    }
+
+    @FXML
+    private void handleCreateAccountLink() {
+        System.out.println("Lien créer un compte cliqué");
+        showRegisterView();
+    }
+
+    // NOUVELLES MÉTHODES : Gestion de l'inscription
+    @FXML
+    private void handleCreateAccountButton() {
+        String firstName = firstNameField.getText().trim();
+        String lastName = lastNameField.getText().trim();
+        String username = registerUsernameField.getText().trim();
+        String password = registerPasswordField.getText();
+        String confirmPassword = confirmPasswordField.getText();
+        String selectedAvatar = avatarComboBox.getSelectionModel().getSelectedItem();
+
+        // DEBUG : Afficher les infos de création
+        System.out.println("=== CRÉATION DE COMPTE ===");
+        System.out.println("Prénom : '" + firstName + "'");
+        System.out.println("Nom : '" + lastName + "'");
+        System.out.println("Username : '" + username + "'");
+        System.out.println("Password : '" + password + "'");
+        System.out.println("Avatar : '" + selectedAvatar + "'");
+
+        // Vider le message d'erreur
+        registerErrorLabel.setVisible(false);
+
+        // Validation des champs
+        if (firstName.isEmpty() || lastName.isEmpty() || username.isEmpty() ||
+                password.isEmpty() || confirmPassword.isEmpty() || selectedAvatar == null) {
+            showRegisterError("Veuillez remplir tous les champs");
+            return;
+        }
+
+        // Vérifier que les mots de passe correspondent
+        if (!password.equals(confirmPassword)) {
+            showRegisterError("Les mots de passe ne correspondent pas");
+            return;
+        }
+
+        // Vérifier la longueur du mot de passe
+        if (password.length() < 4) {
+            showRegisterError("Le mot de passe doit contenir au moins 4 caractères");
+            return;
+        }
+
+        // Extraire l'ID de l'avatar (premier mot après l'emoji)
+        String avatarId = selectedAvatar.split(" ")[1].toLowerCase(); // Ex: "business", "gamer", etc.
+
+        System.out.println("Avatar ID : '" + avatarId + "'");
+
+        // Tentative de création du compte
+        boolean success = userManager.createUser(username, password, firstName, lastName, avatarId);
+
+        System.out.println("Résultat création : " + success);
+        System.out.println("Nombre d'utilisateurs après création : " + userManager.getUserCount());
+
+        if (success) {
+            System.out.println("✅ Compte créé avec succès !");
+
+            // Connexion automatique après création
+            boolean loginSuccess = userManager.login(username, password);
+            System.out.println("Connexion automatique : " + loginSuccess);
+
+            hideRegisterView();
+            updateLoginDisplay();
+            clearRegisterFields();
+
+            // Afficher un message de succès
+            Alert alert = createStyledAlert("Compte créé",
+                    "Bienvenue " + firstName + " !",
+                    "Votre compte a été créé avec succès.\nVous êtes maintenant connecté(e) !");
+            alert.showAndWait();
+
+        } else {
+            showRegisterError("Ce nom d'utilisateur existe déjà");
+        }
+    }
+
+    @FXML
+    private void handleCancelRegisterButton() {
+        hideRegisterView();
+        clearRegisterFields();
+        registerErrorLabel.setVisible(false);
+    }
+
+    @FXML
+    private void handleBackToLoginLink() {
+        hideRegisterView();
+        showLoginView();
+        clearRegisterFields();
+    }
+
+    // NOUVELLES MÉTHODES : Gestion de l'affichage
+    private void showLoginView() {
+        hideRegisterView();
+        loginView.setVisible(true);
+        loginView.toFront();
+        // Désactiver la navigation clavier du menu
+        root.setFocusTraversable(false);
+        Platform.runLater(() -> {
+            usernameField.requestFocus();
+        });
+    }
+
+    private void hideLoginView() {
+        loginView.setVisible(false);
+        // Réactiver la navigation clavier du menu
+        root.setFocusTraversable(true);
+        Platform.runLater(() -> {
+            root.requestFocus();
+        });
+    }
+
+    private void showRegisterView() {
+        hideLoginView();
+        registerView.setVisible(true);
+        registerView.toFront();
+        // Désactiver la navigation clavier du menu
+        root.setFocusTraversable(false);
+        Platform.runLater(() -> {
+            firstNameField.requestFocus();
+        });
+    }
+
+    private void hideRegisterView() {
+        registerView.setVisible(false);
+        // Réactiver la navigation clavier du menu
+        root.setFocusTraversable(true);
+        Platform.runLater(() -> {
+            root.requestFocus();
+        });
+    }
+
+    private void clearLoginFields() {
+        usernameField.clear();
+        passwordField.clear();
+    }
+
+    private void clearRegisterFields() {
+        firstNameField.clear();
+        lastNameField.clear();
+        registerUsernameField.clear();
+        registerPasswordField.clear();
+        confirmPasswordField.clear();
+        if (avatarComboBox.getItems().size() > 0) {
+            avatarComboBox.getSelectionModel().selectFirst();
+        }
+    }
+
+    private void showLoginError(String message) {
+        loginErrorLabel.setText(message);
+        loginErrorLabel.setVisible(true);
+    }
+
+    private void showRegisterError(String message) {
+        registerErrorLabel.setText(message);
+        registerErrorLabel.setVisible(true);
+    }
+
+    private void showUserProfile() {
+        User currentUser = userManager.getCurrentUser();
+
+        // Créer un dialog avec les infos utilisateur
+        Alert alert = createStyledAlert("Profil Utilisateur",
+                "Informations du compte",
+                String.format("Nom: %s %s\n" +
+                                "Nom d'utilisateur: %s\n" +
+                                "Parties jouées: %d\n" +
+                                "Parties gagnées: %d\n" +
+                                "Ratio victoires: %.1f%%\n" +
+                                "Dernière connexion: %s",
+                        currentUser.getFirstName(),
+                        currentUser.getLastName(),
+                        currentUser.getUsername(),
+                        currentUser.getGamesPlayed(),
+                        currentUser.getGamesWon(),
+                        currentUser.getWinRate(),
+                        currentUser.getLastLoginDate()));
+
+        // Ajouter un bouton de déconnexion
+        ButtonType logoutButton = new ButtonType("Se déconnecter");
+        alert.getButtonTypes().add(logoutButton);
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent() && result.get() == logoutButton) {
+            userManager.logout();
+            updateLoginDisplay();
+            System.out.println("👋 Déconnexion réussie");
+        }
+    }
+
+    // Méthodes existantes (inchangées)
     private void setupMusic() {
         musicManager = MusicManager.getInstance();
         musicManager.setVolume(0.3);
@@ -111,7 +424,7 @@ public class MenuController implements Initializable {
         menuOptions = new ArrayList<>();
         menuOptions.add(new MenuOption(playButton, playCursor, playButtonContainer));
         menuOptions.add(new MenuOption(settingsButton, settingsCursor, settingsButtonContainer));
-        menuOptions.add(new MenuOption(creditsButton, creditsCursor, creditsButtonContainer));
+        menuOptions.add(new MenuOption(loginButton, loginCursor, loginButtonContainer));
         menuOptions.add(new MenuOption(exitButton, exitCursor, exitButtonContainer));
     }
 
@@ -119,12 +432,18 @@ public class MenuController implements Initializable {
         root.setOnKeyPressed(this::handleKeyPressed);
         root.setFocusTraversable(true);
 
-        // Ensure root maintains focus
+        // Ensure root maintains focus SEULEMENT si aucune vue n'est ouverte
         root.focusedProperty().addListener((obs, oldVal, newVal) -> {
-            if (!newVal) {
+            if (!newVal && !isAnyViewVisible()) {
                 Platform.runLater(() -> root.requestFocus());
             }
         });
+    }
+
+    // NOUVELLE MÉTHODE : Vérifier si une vue est visible
+    private boolean isAnyViewVisible() {
+        return (loginView != null && loginView.isVisible()) ||
+                (registerView != null && registerView.isVisible());
     }
 
     private void setupCursorAnimation() {
@@ -151,6 +470,19 @@ public class MenuController implements Initializable {
     }
 
     private void handleKeyPressed(KeyEvent event) {
+        // Ne pas traiter les touches si une vue de connexion/inscription est visible
+        if ((loginView != null && loginView.isVisible()) ||
+                (registerView != null && registerView.isVisible())) {
+            if (event.getCode() == KeyCode.ESCAPE) {
+                if (loginView.isVisible()) {
+                    handleCancelButton();
+                } else if (registerView.isVisible()) {
+                    handleCancelRegisterButton();
+                }
+            }
+            return;
+        }
+
         KeyCode code = event.getCode();
 
         switch (code) {
@@ -244,14 +576,14 @@ public class MenuController implements Initializable {
         for (int i = 0; i < menuOptions.size(); i++) {
             MenuOption option = menuOptions.get(i);
             option.cursor.setVisible(false);
-            option.button.getStyleClass().remove("Choisie");
+            option.button.getStyleClass().remove("selected");
         }
 
         // Show selected cursor and add selection style
         MenuOption selected = menuOptions.get(selectedIndex);
         selected.cursor.setVisible(true);
-        if (!selected.button.getStyleClass().contains("Choisie")) {
-            selected.button.getStyleClass().add("Choisie");
+        if (!selected.button.getStyleClass().contains("selected")) {
+            selected.button.getStyleClass().add("selected");
         }
     }
 
@@ -264,14 +596,14 @@ public class MenuController implements Initializable {
             handlePlayButton();
         } else if (selected.button == settingsButton) {
             handleSettingsButton();
-        } else if (selected.button == creditsButton) {
-            handleCreditsButton();
+        } else if (selected.button == loginButton) {
+            handleLoginButton();
         } else if (selected.button == exitButton) {
             handleExitButton();
         }
     }
 
-    // Button action handlers
+    // Button action handlers (inchangés)
     @FXML
     private void handlePlayButton() {
         System.out.println("Demarrage du jeux ...");
@@ -309,34 +641,32 @@ public class MenuController implements Initializable {
                 musicManager.getCurrentTrackName());
 
         Alert alert = createStyledAlert( "Settings",
-                        "Parametre du jeux",
-                        "Resolution: 800x600\n" +
-                                musicInfo + "\n" +
-                                "Controles: Fleche + Espace\n" +
-                                "Difficulté: Normal\n" +
-                                "Controles musique:\n" +
-                                "M = Pause/Reprise\n" +
-                                "N = Piste suivante\n" +
-                                "P = Piste précédente\n\n" +
-                                "Parametre configuration prochainement!");
+                "Parametre du jeux",
+                "Resolution: 800x600\n" +
+                        musicInfo + "\n" +
+                        "Controles: Fleche + Espace\n" +
+                        "Difficulté: Normal\n" +
+                        "Controles musique:\n" +
+                        "M = Pause/Reprise\n" +
+                        "N = Piste suivante\n" +
+                        "P = Piste précédente\n\n" +
+                        "Parametre configuration prochainement!");
         alert.showAndWait();
     }
 
+    // NOUVELLES MÉTHODES : Gestionnaires de connexion
     @FXML
-    private void handleCreditsButton() {
-        System.out.println("Affichage des credits");
+    private void handleLoginButton() {
+        System.out.println("Bouton connexion/compte cliqué");
 
-        Alert alert = createStyledAlert("Credits",
-                "Super Bomberman - IUT edition",
-                "Developper avec JavaFx\n" +
-                        "Programmation: Adam Kuropatwa-Butté, Theo gheux, Simon El Kassouf, Amir Taha Chaoui\n" +
-                        "Graphiques: Style Retro (originelle)\n" +
-                        "Musiques: Super Bomberman\n" +
-                        "Font: Press Start 2P\n\n" +
-                        "Merci de jouer !");
-        alert.showAndWait();
+        if (userManager.isLoggedIn()) {
+            // Si connecté, afficher le profil/déconnexion
+            showUserProfile();
+        } else {
+            // Si pas connecté, afficher la fenêtre de connexion
+            showLoginView();
+        }
     }
-
 
     @FXML
     private void handleExitButton() {

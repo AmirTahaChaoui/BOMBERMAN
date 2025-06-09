@@ -3,6 +3,8 @@ package com.bomberman.controller;
 import com.bomberman.model.GameBoard;
 import com.bomberman.model.Player;
 import com.bomberman.model.Bomb;
+import com.bomberman.controller.UserManager;
+import com.bomberman.model.User;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.fxml.FXML;
@@ -12,7 +14,9 @@ import javafx.geometry.HPos;
 import javafx.geometry.VPos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -33,6 +37,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class GameControllerTheme1 implements Initializable {
@@ -82,11 +87,13 @@ public class GameControllerTheme1 implements Initializable {
     private int player1MaxBombs;
     private int player2MaxBombs;
 
+    // NOUVEAU : Gestion des utilisateurs
+    private UserManager userManager;
+
     // Taille des cellules en pixels
     private static final int CELL_SIZE = 40;
     private static final int DEFAULT_EXPLOSION_RANGE = 1;
     private static final int DEFAULT_MAX_BOMBS = 1;
-
 
     // Images perso 1
     private Image persoUp;
@@ -140,6 +147,9 @@ public class GameControllerTheme1 implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        // NOUVEAU : Initialiser le gestionnaire d'utilisateurs
+        userManager = UserManager.getInstance();
+
         // Images perso 1
         persoDown = new Image(getClass().getResource("/images/persoDown.png").toExternalForm());
         persoLeft = new Image(getClass().getResource("/images/persoLeft.png").toExternalForm());
@@ -780,28 +790,154 @@ public class GameControllerTheme1 implements Initializable {
         checkGameEnd();
     }
 
+    // NOUVELLE MÉTHODE : Gestion de la fin de partie avec statistiques
     private void checkGameEnd() {
-        if (gameEnded) return;  // si la fin du jeu a déjà été gérée, on ne fait rien
-        gameEnded = true;
+        if (gameEnded) return;
+
+        String winner = null;
+        boolean isDraw = false;
+
         if (!player1Alive && !player2Alive) {
             System.out.println("🤝 MATCH NUL ! Les deux joueurs sont morts !");
-            gameTimer.stop();
+            isDraw = true;
             showResult("🤝 MATCH NUL ! Les deux joueurs sont morts !", egalite);
         } else if (!player1Alive) {
             System.out.println("🏆 JOUEUR 2 GAGNE !");
-            gameTimer.stop();
+            winner = "player2";
             showResult("🏆 JOUEUR 2 GAGNE !", victoire2);
         } else if (!player2Alive) {
             System.out.println("🏆 JOUEUR 1 GAGNE !");
-            gameTimer.stop();
+            winner = "player1";
             showResult("🏆 JOUEUR 1 GAGNE !", victoire1);
         } else if (timeRemainingSeconds <= 0) {
             System.out.println("⏰ TEMPS ÉCOULÉ ! MATCH NUL !");
-            gameTimer.stop();
+            isDraw = true;
             showResult("⏰ TEMPS ÉCOULÉ ! MATCH NUL !", egalite);
+        }
+
+        gameEnded = true;
+        gameTimer.stop();
+        updateUserStats(winner, isDraw);
+
+        for (Bomb bomb : activeBombs) {
+            bomb.stopTimer();
         }
     }
 
+    // NOUVELLE MÉTHODE : Mettre à jour les statistiques utilisateur (VERSION CORRIGÉE)
+    private void updateUserStats(String winner, boolean isDraw) {
+        if (!userManager.isLoggedIn()) {
+            System.out.println("⚠️ Aucun utilisateur connecté - pas de mise à jour des stats");
+            return; // Sortir de la méthode si personne n'est connecté
+        }
+
+        try {
+            User currentUser = userManager.getCurrentUser();
+            System.out.println("📊 Mise à jour des statistiques pour : " + currentUser.getUsername());
+
+            // Incrémenter les parties jouées
+            currentUser.incrementGamesPlayed();
+
+            // Ajouter une victoire si nécessaire
+            if (!isDraw) {
+                // Pour l'instant, considérons que l'utilisateur connecté est toujours "player1"
+                // Dans une future version, on pourrait demander qui est qui
+                boolean userWon = "player1".equals(winner);
+
+                if (userWon) {
+                    currentUser.incrementGamesWon();
+                    System.out.println("🏆 Victoire ajoutée ! Total : " + currentUser.getGamesWon() + "/" + currentUser.getGamesPlayed());
+                } else {
+                    System.out.println("😢 Défaite enregistrée. Score : " + currentUser.getGamesWon() + "/" + currentUser.getGamesPlayed());
+                }
+            } else {
+                System.out.println("🤝 Match nul enregistré. Score : " + currentUser.getGamesWon() + "/" + currentUser.getGamesPlayed());
+            }
+
+            // Forcer la sauvegarde via UserManager
+            userManager.updateProfile(null, null, null);
+
+        } catch (Exception e) {
+            System.err.println("❌ Erreur lors de la mise à jour des statistiques : " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    // NOUVELLE MÉTHODE : Dialog de fin de partie
+    private void showEndGameDialog(String winner, boolean isDraw) {
+        Timeline delayedDialog = new Timeline(new KeyFrame(Duration.seconds(3), e -> {
+            String title = isDraw ? "Match Nul" : (winner.equals("player1") ? "Joueur 1 Gagne !" : "Joueur 2 Gagne !");
+
+            String content = "";
+            if (userManager.isLoggedIn()) {
+                User user = userManager.getCurrentUser();
+                content = String.format("✅ Statistiques de %s :\nParties jouées : %d\nParties gagnées : %d\nRatio victoires : %.1f%%\n\n",
+                        user.getUsername(), user.getGamesPlayed(), user.getGamesWon(), user.getWinRate());
+            } else {
+                content = "ℹ️ Connectez-vous pour sauvegarder vos statistiques !\n\n";
+            }
+            content += "Que voulez-vous faire ?";
+
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Fin de Partie");
+            alert.setHeaderText(title);
+            alert.setContentText(content);
+
+            // Personnaliser les boutons
+            ButtonType replayButton = new ButtonType("Rejouer");
+            ButtonType menuButton = new ButtonType("Menu Principal");
+            alert.getButtonTypes().setAll(replayButton, menuButton);
+
+            // Appliquer le style
+            alert.getDialogPane().getStylesheets().add(
+                    getClass().getResource("/css/menu.css").toExternalForm()
+            );
+            alert.getDialogPane().getStyleClass().add("alert");
+
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.isPresent()) {
+                if (result.get() == replayButton) {
+                    restartGame();
+                } else {
+                    backToMainMenu();
+                }
+            } else {
+                backToMainMenu(); // Par défaut
+            }
+        }));
+        delayedDialog.play();
+    }
+
+    // NOUVELLE MÉTHODE : Redémarrer la partie
+    private void restartGame() {
+        try {
+            // Arrêter tous les timers
+            if (gameTimer != null) {
+                gameTimer.stop();
+            }
+            for (Bomb bomb : activeBombs) {
+                bomb.stopTimer();
+            }
+
+            // Recharger la scène de jeu
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/theme1.fxml"));
+            Parent gameRoot = loader.load();
+
+            Scene gameScene = new Scene(gameRoot, 800, 700);
+            gameScene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
+
+            Stage stage = (Stage) gameArea.getScene().getWindow();
+            stage.setScene(gameScene);
+            stage.setTitle("Super Bomberman - Nouvelle Partie");
+
+            System.out.println("🔄 Nouvelle partie démarrée !");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("Erreur lors du redémarrage : " + e.getMessage());
+            backToMainMenu(); // Fallback vers le menu
+        }
+    }
 
     private void showResult(String consoleMessage, Image image) {
         System.out.println(consoleMessage);
