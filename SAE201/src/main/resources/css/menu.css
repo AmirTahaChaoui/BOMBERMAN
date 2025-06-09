@@ -82,12 +82,12 @@
     -fx-text-fill: #ffffff;
     -fx-font-family: 'Press Start 2P', 'Courier New', monospace;
     -fx-font-size: 11px;
-    -fx-padding: 18px 35px;
+    -fx-padding: 16px 28px;
     -fx-cursor: hand;
     -fx-background-radius: 4px;
     -fx-border-radius: 4px;
-    -fx-min-width: 220px;
-    -fx-max-width: 220px;
+    -fx-min-width: 200px;
+    -fx-max-width: 200px;
     -fx-alignment: center;
     -fx-letter-spacing: 1px;
 

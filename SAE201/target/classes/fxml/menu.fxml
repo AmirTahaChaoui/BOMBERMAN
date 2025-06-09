@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+
+<?import javafx.scene.control.ComboBox?>
+<StackPane fx:id="root"
+           xmlns="http://javafx.com/javafx/11.0.1"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="com.bomberman.controller.MenuController"
+           styleClass="root"
+           focusTraversable="true">
+
+    <!-- Image de fond -->
+    <ImageView fx:id="backgroundImage"
+               fitHeight="600"
+               fitWidth="800"
+               preserveRatio="false"
+               smooth="true"
+               pickOnBounds="false">
+        <image>
+            <Image url="@../images/background_bomberman.png" />
+        </image>
+    </ImageView>
+
+    <!-- Overlay semi-transparent pour améliorer la lisibilité -->
+    <StackPane styleClass="overlay" />
+
+    <!-- Container principal centré -->
+    <VBox fx:id="menuContainer"
+          alignment="CENTER"
+          styleClass="menu-container"
+          spacing="20"
+          StackPane.alignment="CENTER">
+
+        <!-- Titre du jeu -->
+        <VBox alignment="CENTER">
+            <!-- Logo/Image du jeu -->
+            <ImageView fx:id="titleImage"
+                       fitWidth="300"
+                       preserveRatio="true"
+                       smooth="true">
+                <image>
+                    <Image url="@../images/logo.png" />
+                </image>
+            </ImageView>
+
+            <!-- Titre textuel au cas où l'image ne charge pas -->
+            <Label fx:id="gameTitle"
+                   styleClass="game-title"
+                   text="SUPER BOMBERMAN"
+                   visible="false" />
+        </VBox>
+
+        <!-- Container des boutons -->
+        <VBox fx:id="menuButtons"
+              alignment="CENTER"
+              styleClass="menu-buttons"
+              spacing="15">
+
+            <!-- Bouton PLAY -->
+            <HBox fx:id="playButtonContainer"
+                  styleClass="button-container">
+                <Label fx:id="playCursor"
+                       styleClass="cursor"
+                       text=">"
+                       visible="true" />
+                <Button fx:id="playButton"
+                        mnemonicParsing="false"
+                        onAction="#handlePlayButton"
+                        styleClass="menu-btn,selected"
+                        text="JOUER"
+                        focusTraversable="false" />
+            </HBox>
+
+            <!-- Bouton SETTINGS -->
+            <HBox fx:id="settingsButtonContainer"
+                  styleClass="button-container">
+                <Label fx:id="settingsCursor"
+                       styleClass="cursor"
+                       text=">"
+                       visible="false" />
+                <Button fx:id="settingsButton"
+                        mnemonicParsing="false"
+                        onAction="#handleSettingsButton"
+                        styleClass="menu-btn"
+                        text="PARAMETRE"
+                        focusTraversable="false" />
+            </HBox>
+
+            <!-- Bouton SE CONNECTER -->
+            <HBox fx:id="loginButtonContainer"
+                  styleClass="button-container">
+                <Label fx:id="loginCursor"
+                       styleClass="cursor"
+                       text=">"
+                       visible="false" />
+                <Button fx:id="loginButton"
+                        mnemonicParsing="false"
+                        onAction="#handleLoginButton"
+                        styleClass="menu-btn"
+                        text="SE CONNECTER"
+                        focusTraversable="false" />
+            </HBox>
+
+            <!-- Bouton EXIT -->
+            <HBox fx:id="exitButtonContainer"
+                  styleClass="button-container">
+                <Label fx:id="exitCursor"
+                       styleClass="cursor"
+                       text=">"
+                       visible="false" />
+                <Button fx:id="exitButton"
+                        mnemonicParsing="false"
+                        onAction="#handleExitButton"
+                        styleClass="menu-btn"
+                        text="QUITTER"
+                        focusTraversable="false" />
+            </HBox>
+        </VBox>
+    </VBox>
+
+
+    <Label fx:id="versionLabel"
+           styleClass="version"
+           text="V1.0 - IUT EDTION"
+           StackPane.alignment="BOTTOM_RIGHT">
+        <StackPane.margin>
+            <Insets bottom="15.0" right="15.0" />
+        </StackPane.margin>
+    </Label>
+
+    <!-- Instructions de contrôle en bas à gauche -->
+    <Label fx:id="controlsLabel"
+           styleClass="version"
+           text="UTILISER LES FLECHES + ENTREE"
+           StackPane.alignment="BOTTOM_LEFT">
+        <StackPane.margin>
+            <Insets bottom="15.0" left="15.0" />
+        </StackPane.margin>
+    </Label>
+
+    <!-- NOUVEAU : Vue de connexion (cachée par défaut) -->
+    <StackPane fx:id="loginView"
+               styleClass="login-overlay"
+               visible="false">
+        <VBox fx:id="loginContent"
+              alignment="CENTER"
+              spacing="20"
+              styleClass="login-content">
+
+            <Label text="CONNEXION" styleClass="login-title" />
+
+            <VBox spacing="15" alignment="CENTER">
+                <VBox spacing="5">
+                    <Label text="Nom d'utilisateur:" styleClass="login-label" />
+                    <TextField fx:id="usernameField"
+                               promptText="Entrez votre nom d'utilisateur"
+                               focusTraversable="true" />
+                </VBox>
+
+                <VBox spacing="5">
+                    <Label text="Mot de passe:" styleClass="login-label" />
+                    <PasswordField fx:id="passwordField"
+                                   promptText="Entrez votre mot de passe"
+                                   focusTraversable="true" />
+                </VBox>
+            </VBox>
+
+            <HBox spacing="15" alignment="CENTER">
+                <Button fx:id="connectButton"
+                        text="SE CONNECTER"
+                        styleClass="login-btn-action"
+                        onAction="#handleConnectButton" />
+                <Button fx:id="cancelButton"
+                        text="ANNULER"
+                        styleClass="login-btn-cancel"
+                        onAction="#handleCancelButton" />
+            </HBox>
+
+            <Button fx:id="createAccountLink"
+                    text="Pas de compte ? Créer un compte"
+                    styleClass="create-account-link"
+                    onAction="#handleCreateAccountLink"
+                    focusTraversable="false" />
+
+            <Label fx:id="loginErrorLabel"
+                   text=""
+                   styleClass="login-error"
+                   visible="false" />
+        </VBox>
+    </StackPane>
+
+    <!-- NOUVEAU : Vue d'inscription (cachée par défaut) -->
+    <StackPane fx:id="registerView"
+               styleClass="login-overlay"
+               visible="false">
+        <VBox fx:id="registerContent"
+              alignment="CENTER"
+              spacing="15"
+              styleClass="login-content">
+
+            <Label text="CRÉER UN COMPTE" styleClass="login-title" />
+
+            <VBox spacing="12" alignment="CENTER">
+                <VBox spacing="3">
+                    <Label text="Prénom:" styleClass="login-label" />
+                    <TextField fx:id="firstNameField"
+                               promptText="Votre prénom"
+                               focusTraversable="true" />
+                </VBox>
+
+                <VBox spacing="3">
+                    <Label text="Nom:" styleClass="login-label" />
+                    <TextField fx:id="lastNameField"
+                               promptText="Votre nom de famille"
+                               focusTraversable="true" />
+                </VBox>
+
+                <VBox spacing="3">
+                    <Label text="Nom d'utilisateur:" styleClass="login-label" />
+                    <TextField fx:id="registerUsernameField"
+                               promptText="Choisissez un nom d'utilisateur"
+                               focusTraversable="true" />
+                </VBox>
+
+                <VBox spacing="3">
+                    <Label text="Mot de passe:" styleClass="login-label" />
+                    <PasswordField fx:id="registerPasswordField"
+                                   promptText="Choisissez un mot de passe"
+                                   focusTraversable="true" />
+                </VBox>
+
+                <VBox spacing="3">
+                    <Label text="Confirmer le mot de passe:" styleClass="login-label" />
+                    <PasswordField fx:id="confirmPasswordField"
+                                   promptText="Confirmez votre mot de passe"
+                                   focusTraversable="true" />
+                </VBox>
+
+                <VBox spacing="3">
+                    <Label text="Avatar:" styleClass="login-label" />
+                    <ComboBox fx:id="avatarComboBox"
+                              promptText="Choisissez votre avatar"
+                              focusTraversable="true" />
+                </VBox>
+            </VBox>
+
+            <HBox spacing="15" alignment="CENTER">
+                <Button fx:id="createAccountButton"
+                        text="CRÉER"
+                        styleClass="login-btn-action"
+                        onAction="#handleCreateAccountButton" />
+                <Button fx:id="cancelRegisterButton"
+                        text="ANNULER"
+                        styleClass="login-btn-cancel"
+                        onAction="#handleCancelRegisterButton" />
+            </HBox>
+
+            <Button fx:id="backToLoginLink"
+                    text="Déjà un compte ? Se connecter"
+                    styleClass="create-account-link"
+                    onAction="#handleBackToLoginLink"
+                    focusTraversable="false" />
+
+            <Label fx:id="registerErrorLabel"
+                   text=""
+                   styleClass="login-error"
+                   visible="false" />
+        </VBox>
+    </StackPane>
+
+</StackPane>
