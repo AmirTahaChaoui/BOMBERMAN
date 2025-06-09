@@ -3,12 +3,15 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.image.Image?>
 
+<?import javafx.scene.control.ComboBox?>
 <StackPane fx:id="root"
            xmlns="http://javafx.com/javafx/11.0.1"
            xmlns:fx="http://javafx.com/fxml/1"
@@ -31,11 +34,12 @@
     <!-- Overlay semi-transparent pour améliorer la lisibilité -->
     <StackPane styleClass="overlay" />
 
-    <!-- Container principal du menu -->
+    <!-- Container principal centré -->
     <VBox fx:id="menuContainer"
           alignment="CENTER"
           styleClass="menu-container"
-          spacing="20">
+          spacing="20"
+          StackPane.alignment="CENTER">
 
         <!-- Titre du jeu -->
         <VBox alignment="CENTER">
@@ -56,12 +60,6 @@
                    visible="false" />
         </VBox>
 
-        <!-- Sous-titre -->
-        <Label fx:id="gameSubtitle"
-               styleClass="game-subtitle"
-               text="Choisi un option"
-               alignment="CENTER" />
-
         <!-- Container des boutons -->
         <VBox fx:id="menuButtons"
               alignment="CENTER"
@@ -70,7 +68,6 @@
 
             <!-- Bouton PLAY -->
             <HBox fx:id="playButtonContainer"
-                  alignment="CENTER_LEFT"
                   styleClass="button-container">
                 <Label fx:id="playCursor"
                        styleClass="cursor"
@@ -86,7 +83,6 @@
 
             <!-- Bouton SETTINGS -->
             <HBox fx:id="settingsButtonContainer"
-                  alignment="CENTER_LEFT"
                   styleClass="button-container">
                 <Label fx:id="settingsCursor"
                        styleClass="cursor"
@@ -100,25 +96,23 @@
                         focusTraversable="false" />
             </HBox>
 
-            <!-- Bouton CREDITS -->
-            <HBox fx:id="creditsButtonContainer"
-                  alignment="CENTER_LEFT"
+            <!-- Bouton SE CONNECTER -->
+            <HBox fx:id="loginButtonContainer"
                   styleClass="button-container">
-                <Label fx:id="creditsCursor"
+                <Label fx:id="loginCursor"
                        styleClass="cursor"
                        text=">"
                        visible="false" />
-                <Button fx:id="creditsButton"
+                <Button fx:id="loginButton"
                         mnemonicParsing="false"
-                        onAction="#handleCreditsButton"
+                        onAction="#handleLoginButton"
                         styleClass="menu-btn"
-                        text="CREDITS"
+                        text="SE CONNECTER"
                         focusTraversable="false" />
             </HBox>
 
             <!-- Bouton EXIT -->
             <HBox fx:id="exitButtonContainer"
-                  alignment="CENTER_LEFT"
                   styleClass="button-container">
                 <Label fx:id="exitCursor"
                        styleClass="cursor"
@@ -132,14 +126,9 @@
                         focusTraversable="false" />
             </HBox>
         </VBox>
-
-        <!-- Espacement -->
-        <VBox.margin>
-            <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
-        </VBox.margin>
     </VBox>
 
-    <!-- Version en bas à droite -->
+
     <Label fx:id="versionLabel"
            styleClass="version"
            text="V1.0 - IUT EDTION"
@@ -158,5 +147,135 @@
             <Insets bottom="15.0" left="15.0" />
         </StackPane.margin>
     </Label>
+
+    <!-- NOUVEAU : Vue de connexion (cachée par défaut) -->
+    <StackPane fx:id="loginView"
+               styleClass="login-overlay"
+               visible="false">
+        <VBox fx:id="loginContent"
+              alignment="CENTER"
+              spacing="20"
+              styleClass="login-content">
+
+            <Label text="CONNEXION" styleClass="login-title" />
+
+            <VBox spacing="15" alignment="CENTER">
+                <VBox spacing="5">
+                    <Label text="Nom d'utilisateur:" styleClass="login-label" />
+                    <TextField fx:id="usernameField"
+                               promptText="Entrez votre nom d'utilisateur"
+                               focusTraversable="true" />
+                </VBox>
+
+                <VBox spacing="5">
+                    <Label text="Mot de passe:" styleClass="login-label" />
+                    <PasswordField fx:id="passwordField"
+                                   promptText="Entrez votre mot de passe"
+                                   focusTraversable="true" />
+                </VBox>
+            </VBox>
+
+            <HBox spacing="15" alignment="CENTER">
+                <Button fx:id="connectButton"
+                        text="SE CONNECTER"
+                        styleClass="login-btn-action"
+                        onAction="#handleConnectButton" />
+                <Button fx:id="cancelButton"
+                        text="ANNULER"
+                        styleClass="login-btn-cancel"
+                        onAction="#handleCancelButton" />
+            </HBox>
+
+            <Button fx:id="createAccountLink"
+                    text="Pas de compte ? Créer un compte"
+                    styleClass="create-account-link"
+                    onAction="#handleCreateAccountLink"
+                    focusTraversable="false" />
+
+            <Label fx:id="loginErrorLabel"
+                   text=""
+                   styleClass="login-error"
+                   visible="false" />
+        </VBox>
+    </StackPane>
+
+    <!-- NOUVEAU : Vue d'inscription (cachée par défaut) -->
+    <StackPane fx:id="registerView"
+               styleClass="login-overlay"
+               visible="false">
+        <VBox fx:id="registerContent"
+              alignment="CENTER"
+              spacing="15"
+              styleClass="login-content">
+
+            <Label text="CRÉER UN COMPTE" styleClass="login-title" />
+
+            <VBox spacing="12" alignment="CENTER">
+                <VBox spacing="3">
+                    <Label text="Prénom:" styleClass="login-label" />
+                    <TextField fx:id="firstNameField"
+                               promptText="Votre prénom"
+                               focusTraversable="true" />
+                </VBox>
+
+                <VBox spacing="3">
+                    <Label text="Nom:" styleClass="login-label" />
+                    <TextField fx:id="lastNameField"
+                               promptText="Votre nom de famille"
+                               focusTraversable="true" />
+                </VBox>
+
+                <VBox spacing="3">
+                    <Label text="Nom d'utilisateur:" styleClass="login-label" />
+                    <TextField fx:id="registerUsernameField"
+                               promptText="Choisissez un nom d'utilisateur"
+                               focusTraversable="true" />
+                </VBox>
+
+                <VBox spacing="3">
+                    <Label text="Mot de passe:" styleClass="login-label" />
+                    <PasswordField fx:id="registerPasswordField"
+                                   promptText="Choisissez un mot de passe"
+                                   focusTraversable="true" />
+                </VBox>
+
+                <VBox spacing="3">
+                    <Label text="Confirmer le mot de passe:" styleClass="login-label" />
+                    <PasswordField fx:id="confirmPasswordField"
+                                   promptText="Confirmez votre mot de passe"
+                                   focusTraversable="true" />
+                </VBox>
+
+                <VBox spacing="3">
+                    <Label text="Avatar:" styleClass="login-label" />
+                    <ComboBox fx:id="avatarComboBox"
+                              promptText="Choisissez votre avatar"
+                              focusTraversable="true" />
+                </VBox>
+            </VBox>
+
+            <HBox spacing="15" alignment="CENTER">
+                <Button fx:id="createAccountButton"
+                        text="CRÉER"
+                        styleClass="login-btn-action"
+                        onAction="#handleCreateAccountButton" />
+                <Button fx:id="cancelRegisterButton"
+                        text="ANNULER"
+                        styleClass="login-btn-cancel"
+                        onAction="#handleCancelRegisterButton" />
+            </HBox>
+
+            <Button fx:id="backToLoginLink"
+                    text="Déjà un compte ? Se connecter"
+                    styleClass="create-account-link"
+                    onAction="#handleBackToLoginLink"
+                    focusTraversable="false" />
+
+            <Label fx:id="registerErrorLabel"
+                   text=""
+                   styleClass="login-error"
+                   visible="false" />
+        </VBox>
+    </StackPane>
 
 </StackPane>

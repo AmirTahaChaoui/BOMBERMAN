@@ -13,22 +13,13 @@
     -fx-text-fill: white;
 }
 
-
-/* ========== MAIN MENU CONTAINER ========== */
+/* ========== MAIN MENU CONTAINER (SANS BORDURES) ========== */
 .menu-container {
-    -fx-border-color: #666666, #333333;
-    -fx-border-width: 4px, 2px;
-    -fx-border-style: solid, solid;
-    -fx-border-insets: 0, 4px;
     -fx-padding: 30px 30px;
     -fx-spacing: 15px;
-    -fx-background-radius: 8px;
-    -fx-border-radius: 8px;
-
-    /* Enhanced shadow effects */
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 15, 0.3, 0, 5),
-    innershadow(three-pass-box, rgba(68,68,68,0.6), 3, 0, 2, 2),
-    innershadow(three-pass-box, rgba(0,0,0,0.9), 3, 0, -2, -2);
+    -fx-background-radius: 0px;
+    -fx-border-radius: 0px;
+    /* Suppression de toutes les bordures et effets */
 }
 
 /* ========== TITLE STYLES ========== */
@@ -61,7 +52,7 @@
 /* ========== BUTTON CONTAINER ========== */
 .button-container {
     -fx-spacing: 15px;
-    -fx-alignment: center-left;
+    -fx-alignment: center;
     -fx-min-width: 250px;
     -fx-max-width: 250px;
     -fx-pref-width: 250px;
@@ -95,8 +86,8 @@
     -fx-cursor: hand;
     -fx-background-radius: 4px;
     -fx-border-radius: 4px;
-    -fx-min-width: 180px;
-    -fx-max-width: 180px;
+    -fx-min-width: 220px;
+    -fx-max-width: 220px;
     -fx-alignment: center;
     -fx-letter-spacing: 1px;
 
@@ -263,4 +254,279 @@
     -fx-effect: dropshadow(three-pass-box, rgba(255,170,51,0.8), 6, 0, 0, 3),
     innershadow(three-pass-box, rgba(119,119,119,0.4), 1, 0, 1, 1),
     innershadow(three-pass-box, rgba(34,34,34,0.8), 1, 0, -1, -1);
+}
+
+/* ========== STYLES POUR LE SYSTÈME DE CONNEXION ========== */
+
+/* Bouton de connexion en bas à droite */
+.login-btn {
+    -fx-background-color: linear-gradient(to bottom, rgba(34,139,34,0.95), rgba(25,111,25,0.95), rgba(20,90,20,0.95));
+    -fx-border-color: #228B22, #1B5E20;
+    -fx-border-width: 2px, 1px;
+    -fx-border-style: solid, solid;
+    -fx-border-insets: 0, 2px;
+    -fx-font-size: 9px;
+    -fx-padding: 10px 15px;
+    -fx-background-radius: 4px;
+    -fx-border-radius: 4px;
+    -fx-cursor: hand;
+    -fx-text-alignment: center;
+    -fx-alignment: center;
+    -fx-text-fill: white;
+    -fx-font-family: 'Press Start 2P', 'Courier New', monospace;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 4, 0, 2, 2),
+    innershadow(three-pass-box, rgba(68,136,68,0.4), 1, 0, 1, 1),
+    innershadow(three-pass-box, rgba(15,68,15,0.8), 1, 0, -1, -1);
+}
+
+.login-btn:hover {
+    -fx-background-color: linear-gradient(to bottom, rgba(50,205,50,0.95), rgba(34,139,34,0.95), rgba(25,111,25,0.95));
+    -fx-border-color: #32CD32, #228B22;
+    -fx-text-fill: #000000;
+    -fx-effect: dropshadow(three-pass-box, rgba(50,205,50,0.8), 6, 0, 0, 3),
+    innershadow(three-pass-box, rgba(102,255,102,0.4), 1, 0, 1, 1),
+    innershadow(three-pass-box, rgba(25,111,25,0.8), 1, 0, -1, -1);
+}
+
+.login-btn:pressed {
+    -fx-background-color: linear-gradient(to bottom, rgba(20,90,20,0.95), rgba(15,68,15,0.95), rgba(20,90,20,0.95));
+    -fx-translate-y: 1px;
+    -fx-effect: innershadow(three-pass-box, rgba(15,68,15,0.9), 3, 0, 2, 2),
+    innershadow(three-pass-box, rgba(68,136,68,0.3), 1, 0, -1, -1);
+}
+
+/* Informations utilisateur connecté */
+.user-info {
+    -fx-text-fill: #32CD32;
+    -fx-font-size: 8px;
+    -fx-font-family: 'Press Start 2P', 'Courier New', monospace;
+    -fx-text-alignment: center;
+    -fx-alignment: center;
+    -fx-wrap-text: true;
+    -fx-padding: 5px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.9), 2, 0, 0, 1);
+}
+
+/* Overlay de connexion */
+.login-overlay {
+    -fx-background-color: rgba(0, 0, 0, 0.85);
+}
+
+/* Contenu de la fenêtre de connexion */
+.login-content {
+    -fx-background-color: linear-gradient(to bottom, #2a2a2a, #1f1f1f, #1a1a1a);
+    -fx-border-color: #ff6600, #cc5500, #aa4400;
+    -fx-border-width: 3px, 2px, 1px;
+    -fx-border-style: solid, solid, solid;
+    -fx-border-insets: 0, 3px, 5px;
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+    -fx-padding: 35px;
+    -fx-max-width: 450px;
+    -fx-max-height: 600px;
+    -fx-spacing: 20px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.9), 20, 0.4, 0, 8),
+    innershadow(three-pass-box, rgba(68,68,68,0.3), 2, 0, 2, 2),
+    innershadow(three-pass-box, rgba(0,0,0,0.8), 2, 0, -2, -2);
+}
+
+/* Titre de connexion */
+.login-title {
+    -fx-text-fill: linear-gradient(to bottom, #ff9933, #ff6600);
+    -fx-font-size: 22px;
+    -fx-font-family: 'Press Start 2P', 'Courier New', monospace;
+    -fx-font-weight: bold;
+    -fx-text-alignment: center;
+    -fx-alignment: center;
+    -fx-padding: 10px;
+    -fx-effect: dropshadow(three-pass-box, rgba(255,102,0,0.8), 4, 0, 0, 3),
+    dropshadow(three-pass-box, rgba(0,0,0,0.9), 3, 0, 0, 1);
+}
+
+/* Labels des champs */
+.login-label {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 11px;
+    -fx-font-family: 'Press Start 2P', 'Courier New', monospace;
+    -fx-font-weight: bold;
+    -fx-padding: 5px 0;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 2, 0, 0, 1);
+}
+
+/* Champs de saisie */
+.login-field {
+    -fx-background-color: linear-gradient(to bottom, #1a1a1a, #0f0f0f);
+    -fx-border-color: #666666, #333333;
+    -fx-border-width: 2px, 1px;
+    -fx-border-style: solid, solid;
+    -fx-border-insets: 0, 2px;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-text-fill: #ffffff;
+    -fx-font-family: 'Press Start 2P', 'Courier New', monospace;
+    -fx-font-size: 10px;
+    -fx-padding: 12px 15px;
+    -fx-min-width: 280px;
+    -fx-prompt-text-fill: #888888;
+    -fx-effect: innershadow(three-pass-box, rgba(0,0,0,0.8), 2, 0, 1, 1),
+    dropshadow(three-pass-box, rgba(0,0,0,0.6), 3, 0, 0, 2);
+}
+
+.login-field:focused {
+    -fx-border-color: #ff6600, #ff9933;
+    -fx-background-color: linear-gradient(to bottom, #1f1f1f, #1a1a1a);
+    -fx-effect: innershadow(three-pass-box, rgba(0,0,0,0.8), 2, 0, 1, 1),
+    dropshadow(three-pass-box, rgba(255,102,0,0.6), 4, 0, 0, 0),
+    dropshadow(three-pass-box, rgba(0,0,0,0.6), 3, 0, 0, 2);
+}
+
+/* Effet de survol pour les champs */
+.login-field:hover {
+    -fx-border-color: #888888, #555555;
+    -fx-background-color: linear-gradient(to bottom, #1f1f1f, #1a1a1a);
+}
+
+/* Styles spécifiques pour ComboBox */
+.login-field.combo-box {
+    -fx-background-color: linear-gradient(to bottom, #1a1a1a, #0f0f0f);
+}
+
+.login-field.combo-box .list-cell {
+    -fx-background-color: #1a1a1a;
+    -fx-text-fill: #ffffff;
+    -fx-font-family: 'Press Start 2P', 'Courier New', monospace;
+    -fx-font-size: 9px;
+    -fx-padding: 8px;
+}
+
+.login-field.combo-box .list-cell:filled:selected {
+    -fx-background-color: #ff6600;
+    -fx-text-fill: #000000;
+}
+
+.login-field.combo-box .list-cell:filled:hover {
+    -fx-background-color: #ff9933;
+    -fx-text-fill: #000000;
+}
+
+.login-field.combo-box .arrow-button {
+    -fx-background-color: #333333;
+    -fx-background-radius: 0 6px 6px 0;
+}
+
+.login-field.combo-box .arrow-button:hover {
+    -fx-background-color: #444444;
+}
+
+.login-field.combo-box .arrow {
+    -fx-background-color: #ffffff;
+    -fx-shape: "M 0 0 L 4 4 L 8 0 Z";
+    -fx-scale-shape: true;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 1, 0, 0, 1);
+}
+
+/* Boutons d'action de connexion */
+.login-btn-action {
+    -fx-background-color: linear-gradient(to bottom, #ff6600, #e55a00, #cc5500);
+    -fx-border-color: #ff9933, #ff6600;
+    -fx-border-width: 2px, 1px;
+    -fx-border-style: solid, solid;
+    -fx-border-insets: 0, 2px;
+    -fx-text-fill: #000000;
+    -fx-font-family: 'Press Start 2P', 'Courier New', monospace;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-padding: 12px 25px;
+    -fx-background-radius: 6px;
+    -fx-border-radius: 6px;
+    -fx-cursor: hand;
+    -fx-min-width: 140px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 4, 0, 2, 2),
+    innershadow(three-pass-box, rgba(255,153,51,0.4), 1, 0, 1, 1),
+    innershadow(three-pass-box, rgba(170,51,0,0.6), 1, 0, -1, -1);
+}
+
+.login-btn-action:hover {
+    -fx-background-color: linear-gradient(to bottom, #ffaa33, #ff6600, #e55a00);
+    -fx-border-color: #ffcc66, #ff9933;
+    -fx-effect: dropshadow(three-pass-box, rgba(255,102,0,0.9), 6, 0, 0, 3),
+    innershadow(three-pass-box, rgba(255,204,102,0.6), 2, 0, 1, 1),
+    innershadow(three-pass-box, rgba(204,85,0,0.8), 2, 0, -1, -1);
+}
+
+.login-btn-action:pressed {
+    -fx-background-color: linear-gradient(to bottom, #cc5500, #bb4400, #aa3300);
+    -fx-translate-y: 1px;
+    -fx-effect: innershadow(three-pass-box, rgba(136,34,0,0.9), 3, 0, 2, 2),
+    innershadow(three-pass-box, rgba(255,102,51,0.3), 1, 0, -1, -1);
+}
+
+/* Bouton annuler */
+.login-btn-cancel {
+    -fx-background-color: linear-gradient(to bottom, #666666, #555555, #444444);
+    -fx-border-color: #888888, #666666;
+    -fx-border-width: 2px, 1px;
+    -fx-border-style: solid, solid;
+    -fx-border-insets: 0, 2px;
+    -fx-text-fill: #ffffff;
+    -fx-font-family: 'Press Start 2P', 'Courier New', monospace;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-padding: 12px 25px;
+    -fx-background-radius: 6px;
+    -fx-border-radius: 6px;
+    -fx-cursor: hand;
+    -fx-min-width: 140px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 4, 0, 2, 2),
+    innershadow(three-pass-box, rgba(136,136,136,0.4), 1, 0, 1, 1),
+    innershadow(three-pass-box, rgba(34,34,34,0.6), 1, 0, -1, -1);
+}
+
+.login-btn-cancel:hover {
+    -fx-background-color: linear-gradient(to bottom, #888888, #666666, #555555);
+    -fx-border-color: #aaaaaa, #888888;
+    -fx-effect: dropshadow(three-pass-box, rgba(136,136,136,0.6), 6, 0, 0, 3),
+    innershadow(three-pass-box, rgba(170,170,170,0.4), 2, 0, 1, 1),
+    innershadow(three-pass-box, rgba(68,68,68,0.8), 2, 0, -1, -1);
+}
+
+.login-btn-cancel:pressed {
+    -fx-background-color: linear-gradient(to bottom, #444444, #333333, #222222);
+    -fx-translate-y: 1px;
+    -fx-effect: innershadow(three-pass-box, rgba(34,34,34,0.9), 3, 0, 2, 2),
+    innershadow(three-pass-box, rgba(102,102,102,0.3), 1, 0, -1, -1);
+}
+
+/* Liens créer un compte (maintenant des boutons) */
+.create-account-link {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-text-fill: #66ccff;
+    -fx-font-size: 9px;
+    -fx-font-family: 'Press Start 2P', 'Courier New', monospace;
+    -fx-underline: true;
+    -fx-cursor: hand;
+    -fx-padding: 8px 5px;
+    -fx-alignment: center;
+    -fx-text-alignment: center;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 2, 0, 0, 1);
+}
+
+.create-account-link:hover {
+    -fx-text-fill: #99ddff;
+    -fx-background-color: rgba(102,204,255,0.1);
+    -fx-background-radius: 4px;
+    -fx-effect: dropshadow(three-pass-box, rgba(102,204,255,0.6), 3, 0, 0, 2)
+}
+
+/* Message d'erreur */
+.login-error {
+    -fx-text-fill: #ff4444;
+    -fx-font-size: 8px;
+    -fx-font-family: 'Press Start 2P', 'Courier New', monospace;
+    -fx-text-alignment: center;
+    -fx-alignment: center;
+    -fx-wrap-text: true;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.9), 2, 0, 0, 1);
 }
