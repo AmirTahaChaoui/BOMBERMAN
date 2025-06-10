@@ -132,12 +132,15 @@
     <VBox alignment="BOTTOM_RIGHT"
           spacing="10"
           StackPane.alignment="BOTTOM_RIGHT">
+        <!-- DÉCALAGE ici -->
+        <StackPane.margin>
+            <Insets bottom="30.0" right="60.0"/>
+        </StackPane.margin>
 
         <!-- Bouton ranking en haut -->
         <HBox fx:id="rankingButtonContainer"
               styleClass="ranking-button-container"
-              alignment="CENTER_RIGHT"
-              StackPane.alignment="BOTTOM_RIGHT">
+              alignment="CENTER_RIGHT">
             <Label fx:id="rankingCursor"
                    styleClass="ranking-cursor"
                    text=">"
@@ -155,28 +158,18 @@
                     </ImageView>
                 </graphic>
             </Button>
-            <StackPane.margin>
-                <Insets bottom="60.0" right="15.0" />
-            </StackPane.margin>
         </HBox>
 
-        <!-- Label version en bas -->
-        <Label fx:id="versionLabel"
-               styleClass="version"
-               text="V1.0 - IUT EDTION" />
-
-        <VBox.margin>
-            <Insets bottom="15.0" right="15.0" />
-        </VBox.margin>
     </VBox>
+
 
     <!-- Instructions de contrôle en bas à gauche -->
     <Label fx:id="controlsLabel"
            styleClass="version"
            text="UTILISER LES FLECHES + ENTREE"
-           StackPane.alignment="BOTTOM_LEFT">
+           StackPane.alignment="TOP_LEFT">
         <StackPane.margin>
-            <Insets bottom="15.0" left="15.0" />
+            <Insets top="15.0" left="15.0" />
         </StackPane.margin>
     </Label>
 

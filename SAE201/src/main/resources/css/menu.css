@@ -80,8 +80,6 @@
     -fx-max-height: 50px;
     -fx-pref-height: 50px;
     -fx-alignment: center;
-    -fx-translate-x: -35px ; /* ajuster la position du carré */
-    -fx-translate-y: -10px ; /* ajuster la position du carré */
 
     /* Effet 3D avec ombre rouge */
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 4, 0, 2, 2),
