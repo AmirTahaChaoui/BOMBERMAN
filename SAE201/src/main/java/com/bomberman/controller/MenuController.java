@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 public class MenuController implements Initializable {
 
@@ -46,18 +47,21 @@ public class MenuController implements Initializable {
     // Button containers existants
     @FXML private HBox playButtonContainer;
     @FXML private HBox settingsButtonContainer;
+    @FXML private HBox rankingButtonContainer; // NOUVEAU
     @FXML private HBox loginButtonContainer;
     @FXML private HBox exitButtonContainer;
 
     // Buttons existants
     @FXML private Button playButton;
     @FXML private Button settingsButton;
+    @FXML private Button rankingButton; // NOUVEAU
     @FXML private Button loginButton;
     @FXML private Button exitButton;
 
     // Cursors existants
     @FXML private Label playCursor;
     @FXML private Label settingsCursor;
+    @FXML private Label rankingCursor; // NOUVEAU
     @FXML private Label loginCursor;
     @FXML private Label exitCursor;
 
@@ -84,6 +88,12 @@ public class MenuController implements Initializable {
     @FXML private Button cancelRegisterButton;
     @FXML private Button backToLoginLink;
     @FXML private Label registerErrorLabel;
+
+    // NOUVEAU ÉLÉMENT - Vue du classement
+    @FXML private StackPane rankingView;
+    @FXML private VBox rankingContent;
+    @FXML private Button closeRankingButton;
+
 
     // Navigation state existante
     private int selectedIndex = 0;
@@ -178,7 +188,6 @@ public class MenuController implements Initializable {
             // userInfoLabel supprimé
         }
     }
-
 
     @FXML
     private void handleConnectButton() {
@@ -317,6 +326,7 @@ public class MenuController implements Initializable {
     // NOUVELLES MÉTHODES : Gestion de l'affichage
     private void showLoginView() {
         hideRegisterView();
+        hideRankingView();
         loginView.setVisible(true);
         loginView.toFront();
         // Désactiver la navigation clavier du menu
@@ -337,6 +347,7 @@ public class MenuController implements Initializable {
 
     private void showRegisterView() {
         hideLoginView();
+        hideRankingView();
         registerView.setVisible(true);
         registerView.toFront();
         // Désactiver la navigation clavier du menu
@@ -426,6 +437,8 @@ public class MenuController implements Initializable {
         menuOptions.add(new MenuOption(settingsButton, settingsCursor, settingsButtonContainer));
         menuOptions.add(new MenuOption(loginButton, loginCursor, loginButtonContainer));
         menuOptions.add(new MenuOption(exitButton, exitCursor, exitButtonContainer));
+        menuOptions.add(new MenuOption(rankingButton, rankingCursor, rankingButtonContainer)); // NOUVEAU
+
     }
 
     private void setupKeyboardNavigation() {
@@ -443,7 +456,8 @@ public class MenuController implements Initializable {
     // NOUVELLE MÉTHODE : Vérifier si une vue est visible
     private boolean isAnyViewVisible() {
         return (loginView != null && loginView.isVisible()) ||
-                (registerView != null && registerView.isVisible());
+                (registerView != null && registerView.isVisible()) ||
+                (rankingView != null && rankingView.isVisible());
     }
 
     private void setupCursorAnimation() {
@@ -472,12 +486,15 @@ public class MenuController implements Initializable {
     private void handleKeyPressed(KeyEvent event) {
         // Ne pas traiter les touches si une vue de connexion/inscription est visible
         if ((loginView != null && loginView.isVisible()) ||
-                (registerView != null && registerView.isVisible())) {
+                (registerView != null && registerView.isVisible()) ||
+                (rankingView != null && rankingView.isVisible())) {
             if (event.getCode() == KeyCode.ESCAPE) {
                 if (loginView.isVisible()) {
                     handleCancelButton();
                 } else if (registerView.isVisible()) {
                     handleCancelRegisterButton();
+                } else if (rankingView.isVisible()) {
+                    handleCloseRankingButton();
                 }
             }
             return;
@@ -596,6 +613,8 @@ public class MenuController implements Initializable {
             handlePlayButton();
         } else if (selected.button == settingsButton) {
             handleSettingsButton();
+        } else if (selected.button == rankingButton) { // NOUVEAU
+            handleRankingButton();
         } else if (selected.button == loginButton) {
             handleLoginButton();
         } else if (selected.button == exitButton) {
@@ -689,6 +708,94 @@ public class MenuController implements Initializable {
             musicManager.shutdown(); // Arrêter la musique à la fermeture
             Platform.exit();
         }
+    }
+
+    // NOUVELLE MÉTHODE : Afficher le classement
+    @FXML
+    private void handleRankingButton() {
+        System.out.println("Affichage du classement...");
+        showRankingView();
+    }
+
+    private void showRankingView() {
+        hideLoginView();
+        hideRegisterView();
+
+        // Récupérer tous les utilisateurs et créer le classement
+        List<User> allUsers = userManager.getAllUsers();
+
+        if (allUsers.isEmpty()) {
+            Alert alert = createStyledAlert("Classement",
+                    "Aucun joueur",
+                    "Aucun joueur n'est encore inscrit !");
+            alert.showAndWait();
+            return;
+        }
+
+        // Trier les utilisateurs par nombre de victoires (décroissant), puis par ratio de victoires
+        List<User> rankedUsers = allUsers.stream()
+                .sorted((u1, u2) -> {
+                    // D'abord par nombre de victoires
+                    int winsComparison = Integer.compare(u2.getGamesWon(), u1.getGamesWon());
+                    if (winsComparison != 0) {
+                        return winsComparison;
+                    }
+                    // Ensuite par ratio de victoires
+                    return Double.compare(u2.getWinRate(), u1.getWinRate());
+                })
+                .collect(Collectors.toList());
+
+        // Construire le texte du classement
+        StringBuilder rankingText = new StringBuilder();
+        rankingText.append("🏆 CLASSEMENT DES JOUEURS 🏆\n\n");
+
+        for (int i = 0; i < rankedUsers.size(); i++) {
+            User user = rankedUsers.get(i);
+            String medal = "";
+
+            // Ajouter des médailles pour le top 3
+
+            medal = " Top " + (i + 1) + " : "; // Affichage du numéro dans le classement
+
+            rankingText.append(String.format("%s%s %s\n",
+                    medal,
+                    user.getFirstName(),
+                    user.getLastName()));
+
+            rankingText.append(String.format("   Victoires: %d | Parties: %d | Ratio: %.1f%%\n",
+                    user.getGamesWon(),
+                    user.getGamesPlayed(),
+                    user.getWinRate()));
+
+            if (i < rankedUsers.size() - 1) {
+                rankingText.append("\n");
+            }
+        }
+
+        // Afficher le classement dans une alerte stylée
+        Alert rankingAlert = createStyledAlert("Classement",
+                "Tableau des scores",
+                rankingText.toString());
+
+        // Rendre l'alerte plus large pour un meilleur affichage
+        rankingAlert.getDialogPane().setPrefWidth(500);
+        rankingAlert.showAndWait();
+    }
+
+    private void hideRankingView() {
+        if (rankingView != null) {
+            rankingView.setVisible(false);
+        }
+        // Réactiver la navigation clavier du menu
+        root.setFocusTraversable(true);
+        Platform.runLater(() -> {
+            root.requestFocus();
+        });
+    }
+
+    @FXML
+    private void handleCloseRankingButton() {
+        hideRankingView();
     }
 
     private Alert createStyledAlert(String title, String header, String content) {
