@@ -96,14 +96,20 @@ public class MenuController implements Initializable {
     // NOUVEAU : Gestion des utilisateurs
     private UserManager userManager;
 
+    // Variables pour la vue thème
     @FXML private StackPane themeView;
     @FXML private VBox themeContent;
     @FXML private Button theme1Button;
     @FXML private Button theme2Button;
     @FXML private Button theme3Button;
+    @FXML private Button themeApplyButton;
     @FXML private Button themeCloseButton;
+    @FXML private VBox mapButtonsContainer;
 
+    private List<Button> mapButtons = new ArrayList<>();
 
+    private MapManager mapManager;
+    private static String selectedMapName = "Map Classique"; // Map par défaut
 
 
 
@@ -149,6 +155,10 @@ public class MenuController implements Initializable {
         Platform.runLater(() -> {
             root.requestFocus();
         });
+
+        mapManager = MapManager.getInstance();
+
+        // ← SUPPRIMER TOUTE LA SECTION mapComboBox ICI
     }
 
     // NOUVELLE MÉTHODE : Configuration du système de connexion
@@ -163,6 +173,10 @@ public class MenuController implements Initializable {
         if (registerView != null) {
             registerView.setVisible(false);
         }
+        if (themeView != null) {
+            themeView.setVisible(false);
+        }
+
 
         // Configurer les avatars disponibles
         setupAvatarComboBox();
@@ -523,24 +537,31 @@ public class MenuController implements Initializable {
     }
 
     private void handleKeyPressed(KeyEvent event) {
-        // Ne pas traiter les touches si une vue de connexion/inscription est visible
+        // Ne pas traiter les touches si une vue de connexion/inscription/thème est visible
         if ((loginView != null && loginView.isVisible()) ||
-                (registerView != null && registerView.isVisible())) {
+                (registerView != null && registerView.isVisible()) ||
+                (themeView != null && themeView.isVisible())) {
+
             if (event.getCode() == KeyCode.ESCAPE) {
                 if (loginView.isVisible()) {
                     handleCancelButton();
                 } else if (registerView.isVisible()) {
                     handleCancelRegisterButton();
+                } else if (themeView.isVisible()) {
+                    handleThemeCloseButton();
                 }
+                event.consume(); // ← Consommer seulement Échap
             }
+
+            // IMPORTANT : Ne pas consommer les autres événements pour laisser la ComboBox fonctionner
             return;
         }
 
+        // Le reste du code pour la navigation du menu principal...
         KeyCode code = event.getCode();
-
         switch (code) {
             case UP:
-            case W:
+            case Z:
                 navigateUp();
                 event.consume();
                 break;
@@ -677,15 +698,31 @@ public class MenuController implements Initializable {
 
     private void startGame() {
         try {
+            // NOUVEAU : Passer la map sélectionnée au GameController
+            GameControllerTheme1.setSelectedMap(selectedMapName);
+
+            // SAUVEGARDER les dimensions actuelles du menu
+            Stage stage = (Stage) playButton.getScene().getWindow();
+            double currentWidth = stage.getWidth();
+            double currentHeight = stage.getHeight();
+
+            // Passer les dimensions au GameController
+            GameControllerTheme1.setOriginalMenuDimensions(currentWidth, currentHeight);
+
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/theme1.fxml"));
             Parent gameRoot = loader.load();
 
+            // FORCER les bonnes dimensions pour le jeu
             Scene gameScene = new Scene(gameRoot, 800, 700);
             gameScene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
 
-            Stage stage = (Stage) playButton.getScene().getWindow();
             stage.setScene(gameScene);
             stage.setTitle("Super Bomberman - Jeu");
+
+            // FORCER les dimensions du jeu
+            stage.setWidth(800);
+            stage.setHeight(700);
+            stage.centerOnScreen();
 
             shutdown();
 
@@ -789,10 +826,18 @@ public class MenuController implements Initializable {
     private void showThemeView() {
         hideLoginView();
         hideRegisterView();
+
+        // Charger les maps disponibles
+        loadAvailableMaps();
+
         themeView.setVisible(true);
         themeView.toFront();
+
+        // IMPORTANT : Désactiver la navigation clavier du menu
         root.setFocusTraversable(false);
+
         updateThemeButtons();
+
         Platform.runLater(() -> {
             theme1Button.requestFocus();
         });
@@ -800,96 +845,215 @@ public class MenuController implements Initializable {
 
     private void hideThemeView() {
         themeView.setVisible(false);
+
+        // IMPORTANT : Réactiver la navigation clavier du menu
         root.setFocusTraversable(true);
+
         Platform.runLater(() -> {
             root.requestFocus();
         });
     }
 
+    private void loadAvailableMaps() {
+        if (mapButtonsContainer != null) {
+            System.out.println("🔍 Début chargement maps...");
+
+            // Vider les boutons existants
+            mapButtonsContainer.getChildren().clear();
+            mapButtons.clear();
+
+            List<String> availableMaps = mapManager.getMapsList();
+            System.out.println("🗺️ Maps trouvées : " + availableMaps);
+            System.out.println("🗺️ Nombre de maps : " + availableMaps.size());
+
+            if (availableMaps.isEmpty()) {
+                Label noMapsLabel = new Label("Aucune map disponible");
+                noMapsLabel.setStyle("-fx-text-fill: #666666; -fx-font-size: 9px;");
+                mapButtonsContainer.getChildren().add(noMapsLabel);
+                System.out.println("⚠️ Aucune map disponible");
+            } else {
+                // Créer un bouton pour chaque map
+                for (String mapName : availableMaps) {
+                    Button mapButton = new Button(mapName);
+                    mapButton.getStyleClass().add("theme-btn");
+                    mapButton.setMaxWidth(280);
+                    mapButton.setMinWidth(280);
+
+                    // Marquer la map sélectionnée
+                    if (mapName.equals(selectedMapName)) {
+                        mapButton.getStyleClass().add("selected");
+                    }
+
+                    // Gestionnaire de clic
+                    mapButton.setOnAction(e -> selectMap(mapName, mapButton));
+
+                    mapButtons.add(mapButton);
+                    mapButtonsContainer.getChildren().add(mapButton);
+
+                    System.out.println("✅ Bouton créé pour : " + mapName);
+                }
+            }
+
+            System.out.println("🗺️ " + availableMaps.size() + " bouton(s) de map créé(s)");
+            System.out.println("🗺️ Sélection actuelle : " + selectedMapName);
+        } else {
+            System.out.println("❌ mapButtonsContainer est null !");
+        }
+    }
+
+    private void selectMap(String mapName, Button clickedButton) {
+        // Changer la sélection
+        selectedMapName = mapName;
+        System.out.println("🗺️ Map sélectionnée : " + mapName);
+
+        // Mettre à jour l'apparence des boutons
+        updateMapButtonsSelection();
+    }
+
+    private void updateMapButtonsSelection() {
+        for (Button mapButton : mapButtons) {
+            mapButton.getStyleClass().removeAll("selected");
+
+            if (mapButton.getText().equals(selectedMapName)) {
+                mapButton.getStyleClass().add("selected");
+            }
+        }
+    }
+
+
     private void updateThemeButtons() {
         String currentTheme = GameControllerTheme1.getCurrentTheme();
 
         // Reset tous les styles
-        theme1Button.getStyleClass().removeAll("login-btn-action", "login-btn-cancel");
-        theme2Button.getStyleClass().removeAll("login-btn-action", "login-btn-cancel");
+        theme1Button.getStyleClass().removeAll("selected");
+        theme2Button.getStyleClass().removeAll("selected");
 
-        // Appliquer le bon style
+        // Appliquer le style sélectionné
         if (currentTheme.equals("theme1")) {
-            theme1Button.getStyleClass().add("login-btn-action");
-            theme2Button.getStyleClass().add("login-btn-cancel");
-        } else {
-            theme1Button.getStyleClass().add("login-btn-cancel");
-            theme2Button.getStyleClass().add("login-btn-action");
+            theme1Button.getStyleClass().add("selected");
+        } else if (currentTheme.equals("theme2")) {
+            theme2Button.getStyleClass().add("selected");
         }
     }
 
     @FXML
     private void handleTheme1Button() {
         selectTheme("theme1", "Thème Classique");
-        hideThemeView();
     }
 
     @FXML
     private void handleTheme2Button() {
         selectTheme("theme2", "Thème 2");
-        hideThemeView();
     }
 
     @FXML
     private void handleTheme3Button() {
         Alert alert = createStyledAlert("Thème non disponible",
                 "Thème 3",
-                "Ce thème n'est pas encore disponible.\n" +
-                        "Il sera ajouté dans une future mise à jour !");
+                "Ce thème n'est pas encore disponible.");
         alert.showAndWait();
+    }
+
+    @FXML
+    private void handleThemeApplyButton() {
+        Alert alert = createStyledAlert("Configuration appliquée",
+                "Paramètres sauvegardés",
+                "✅ Configuration appliquée !\n\n" +
+                        "Thème : " + GameControllerTheme1.getCurrentTheme().toUpperCase() + "\n" +
+                        "Map : " + selectedMapName + "\n\n" +
+                        "Changements effectifs à la prochaine partie.");
+        alert.showAndWait();
+
+        hideThemeView();
     }
 
     @FXML
     private void handleThemeCloseButton() {
         hideThemeView();
     }
-
     // NOUVELLE MÉTHODE : Sélectionner un thème
     private void selectTheme(String themeId, String themeName) {
         String oldTheme = GameControllerTheme1.getCurrentTheme();
 
-        if (themeId.equals(oldTheme)) {
-            // Thème déjà sélectionné
-            Alert alert = createStyledAlert("Thème",
-                    "Thème déjà sélectionné",
-                    String.format("Le %s est déjà actif !\n\n" +
-                            "Lancez une partie pour voir le thème en action.", themeName));
-            alert.showAndWait();
-        } else {
-            // Nouveau thème sélectionné
+        if (!themeId.equals(oldTheme)) {
             GameControllerTheme1.setCurrentTheme(themeId);
-
-            Alert alert = createStyledAlert("Thème changé",
-                    "Nouveau thème sélectionné",
-                    String.format("✅ %s sélectionné !\n\n" +
-                                    "Le nouveau thème sera appliqué\n" +
-                                    "lors de votre prochaine partie.\n\n" +
-                                    "Ancien thème : %s\n" +
-                                    "Nouveau thème : %s",
-                            themeName,
-                            oldTheme.toUpperCase().replace("THEME", "THEME "),
-                            themeName));
-            alert.showAndWait();
-
+            updateThemeButtons();
             System.out.println("🎨 Thème changé : " + oldTheme + " → " + themeId);
         }
     }
 
+    // Méthodes statiques pour l'accès externe
+    public static String getSelectedMapName() {
+        return selectedMapName;
+    }
+
+    public static void setSelectedMapName(String mapName) {
+        selectedMapName = mapName;
+    }
+
+
     private void handleMapEditor() {
-        Alert alert = createStyledAlert("Map Editor",
-                "Éditeur de cartes",
-                "Fonctionnalité d'édition de cartes\n" +
-                        "à implémenter prochainement !\n\n" +
-                        "Fonctionnalités prévues :\n" +
-                        "- Créer des cartes personnalisées\n" +
-                        "- Modifier les cartes existantes\n" +
-                        "- Sauvegarder dans les thèmes");
-        alert.showAndWait();
+        System.out.println("🗺️ Ouverture de l'éditeur de cartes...");
+
+        try {
+            // SAUVEGARDER les dimensions actuelles
+            Stage stage = (Stage) loginButton.getScene().getWindow();
+            double originalWidth = stage.getWidth();
+            double originalHeight = stage.getHeight();
+
+            // Charger la scène de l'éditeur de cartes
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/mapeditor.fxml"));
+            Parent editorRoot = loader.load();
+
+            // Obtenir le contrôleur de l'éditeur
+            MapEditorController editorController = loader.getController();
+
+            // PASSER les dimensions originales au contrôleur de l'éditeur
+            editorController.setOriginalDimensions(originalWidth, originalHeight);
+
+            // Créer la nouvelle scène
+            Scene editorScene = new Scene(editorRoot, 1000, 700);
+
+            // Appliquer le CSS si il existe
+            try {
+                editorScene.getStylesheets().add(getClass().getResource("/css/mapeditor.css").toExternalForm());
+            } catch (Exception e) {
+                System.out.println("⚠️ CSS mapeditor.css non trouvé, utilisation du style par défaut");
+            }
+
+            // Changer de scène et redimensionner pour l'éditeur
+            stage.setScene(editorScene);
+            stage.setTitle("Super Bomberman - Éditeur de Cartes");
+            stage.setWidth(1000);
+            stage.setHeight(700);
+            stage.centerOnScreen();
+
+            // Arrêter la musique du menu (optionnel)
+            if (musicManager != null) {
+                musicManager.pauseBackgroundMusic();
+            }
+
+            System.out.println("✅ Éditeur de cartes ouvert avec succès");
+
+        } catch (IOException e) {
+            System.err.println("❌ Erreur lors du chargement de l'éditeur de cartes : " + e.getMessage());
+            e.printStackTrace();
+
+            Alert alert = createStyledAlert("Erreur",
+                    "Impossible d'ouvrir l'éditeur",
+                    "Une erreur s'est produite lors du chargement de l'éditeur de cartes.\n\n" +
+                            "Vérifiez que le fichier mapeditor.fxml existe dans resources/fxml/\n\n" +
+                            "Erreur technique : " + e.getMessage());
+            alert.showAndWait();
+        } catch (Exception e) {
+            System.err.println("❌ Erreur inattendue : " + e.getMessage());
+            e.printStackTrace();
+
+            Alert alert = createStyledAlert("Erreur",
+                    "Erreur inattendue",
+                    "Une erreur inattendue s'est produite.\n\n" + e.getMessage());
+            alert.showAndWait();
+        }
     }
 
     private Alert createStyledAlert(String title, String header, String content) {

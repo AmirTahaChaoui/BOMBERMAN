@@ -275,53 +275,63 @@
                    visible="false" />
         </VBox>
     </StackPane>
-    <!-- NOUVEAU : Vue de sélection thème (cachée par défaut) -->
+    <!-- NOUVEAU : Vue de sélection thème/map (cachée par défaut) -->
     <StackPane fx:id="themeView"
-               styleClass="login-overlay"
+               styleClass="theme-overlay"
                visible="false">
         <VBox fx:id="themeContent"
               alignment="CENTER"
-              spacing="20"
-              styleClass="login-content">
+              spacing="25"
+              styleClass="theme-content">
 
-            <Label text="SÉLECTION" styleClass="login-title" />
+            <Label text="CONFIGURATION" styleClass="theme-title" />
 
-            <VBox spacing="15" alignment="CENTER">
-                <VBox spacing="5">
-                    <Label text="THÈME:" styleClass="login-label" />
+            <!-- Section Thème -->
+            <VBox spacing="12" alignment="CENTER">
+                <Label text="THÈME VISUEL:" styleClass="theme-section-title" />
 
+                <VBox spacing="8" alignment="CENTER">
                     <Button fx:id="theme1Button"
                             text="THÈME CLASSIQUE"
-                            styleClass="login-btn-action"
+                            styleClass="theme-btn"
                             onAction="#handleTheme1Button" />
 
                     <Button fx:id="theme2Button"
                             text="THÈME 2"
-                            styleClass="login-btn-cancel"
+                            styleClass="theme-btn"
                             onAction="#handleTheme2Button" />
 
                     <Button fx:id="theme3Button"
                             text="THÈME 3 (bientôt)"
-                            styleClass="login-btn-cancel"
+                            styleClass="theme-btn-disabled"
                             onAction="#handleTheme3Button"
                             disable="true" />
                 </VBox>
+            </VBox>
 
-                <VBox spacing="5">
-                    <Label text="MAP:" styleClass="login-label" />
-                    <Label text="Bientôt disponible..."
-                           styleClass="login-error"
-                           style="-fx-text-fill: #888888;" />
+            <!-- Section Map -->
+            <VBox spacing="12" alignment="CENTER">
+                <Label text="CARTE:" styleClass="theme-section-title" />
+
+                <VBox fx:id="mapButtonsContainer" spacing="8" alignment="CENTER">
+                    <!-- Les boutons de maps seront ajoutés dynamiquement ici -->
                 </VBox>
             </VBox>
 
-            <Button fx:id="themeCloseButton"
-                    text="FERMER"
-                    styleClass="login-btn-cancel"
-                    onAction="#handleThemeCloseButton" />
+            <!-- Boutons d'action -->
+            <HBox spacing="15" alignment="CENTER">
+                <Button fx:id="themeApplyButton"
+                        text="APPLIQUER"
+                        styleClass="theme-btn-apply"
+                        onAction="#handleThemeApplyButton" />
+
+                <Button fx:id="themeCloseButton"
+                        text="FERMER"
+                        styleClass="theme-btn-close"
+                        onAction="#handleThemeCloseButton" />
+            </HBox>
 
         </VBox>
     </StackPane>
-
 
 </StackPane>

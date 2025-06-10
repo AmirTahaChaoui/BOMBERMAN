@@ -5,6 +5,33 @@ public class GameBoard {
     public static final int BOARD_WIDTH = 15;
     public static final int BOARD_HEIGHT = 13;
 
+    private int width;
+    private int height;
+
+    /**
+     * Constructeur pour créer un GameBoard avec des dimensions personnalisées
+     * (pour les maps custom)
+     */
+    /**
+     * Constructeur pour créer un GameBoard avec des dimensions personnalisées
+     * (pour les maps custom)
+     */
+    public GameBoard(int width, int height) {
+        this.width = width;  // ← CORRECTION : utiliser les paramètres
+        this.height = height; // ← CORRECTION : utiliser les paramètres
+        this.board = new CellType[height][width];
+
+        // Initialiser avec des cellules vides
+        for (int row = 0; row < height; row++) {
+            for (int col = 0; col < width; col++) {
+                board[row][col] = CellType.EMPTY;
+            }
+        }
+
+        System.out.println("🎮 GameBoard créé avec dimensions : " + width + "x" + height);
+    }
+
+
     // Types de cellules
     public enum CellType {
         EMPTY,              // Passage libre

@@ -1,9 +1,6 @@
 package com.bomberman.controller;
 
-import com.bomberman.model.GameBoard;
-import com.bomberman.model.Player;
-import com.bomberman.model.Bomb;
-import com.bomberman.model.User;
+import com.bomberman.model.*;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.fxml.FXML;
@@ -94,6 +91,9 @@ public class GameControllerTheme1 implements Initializable {
     private static final int DEFAULT_EXPLOSION_RANGE = 1;
     private static final int DEFAULT_MAX_BOMBS = 1;
 
+    private static double originalMenuWidth = 800;  // Valeurs par défaut
+    private static double originalMenuHeight = 600;
+
     // Images perso 1
     private Image persoUp;
     private Image persoDown;
@@ -147,14 +147,25 @@ public class GameControllerTheme1 implements Initializable {
     private Image bombBonusImage;
     private Image rangeBonusImage;
 
+    // Ajouter ces variables en haut de la classe :
+    private MapManager mapManager;
+    private static String selectedMap = "Map Classique"; // Map sélectionnée
+    private boolean useCustomMap = false; // Indicateur si on utilise une map personnalisée
+
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // NOUVEAU : Initialiser le chemin du thème
         themePath = "/images/" + currentTheme + "/";
         System.out.println("🎨 Chargement du thème : " + currentTheme);
 
-        // NOUVEAU : Initialiser le gestionnaire d'utilisateurs
+        // NOUVEAU : Initialiser les gestionnaires
         userManager = UserManager.getInstance();
+        mapManager = MapManager.getInstance();
+
+        // NOUVEAU : Récupérer la map sélectionnée depuis le menu
+        selectedMap = MenuController.getSelectedMapName();
+        System.out.println("🗺️ Map à charger : " + selectedMap);
 
         // Charger les images avec le thème sélectionné
         loadThemeImages();
@@ -168,6 +179,22 @@ public class GameControllerTheme1 implements Initializable {
         gameTimer.play();
     }
 
+
+    public static void setOriginalMenuDimensions(double width, double height) {
+        originalMenuWidth = width;
+        originalMenuHeight = height;
+        System.out.println("🔍 Dimensions menu sauvegardées : " + width + "x" + height);
+    }
+
+    // Ajouter ces méthodes statiques pour gérer la map sélectionnée :
+    public static void setSelectedMap(String mapName) {
+        selectedMap = mapName;
+        System.out.println("🗺️ Map sélectionnée pour le jeu : " + mapName);
+    }
+
+    public static String getSelectedMap() {
+        return selectedMap;
+    }
 
     // NOUVEAU : Méthode pour définir le thème (appelée depuis le menu)
     public static void setCurrentTheme(String theme) {
@@ -286,10 +313,28 @@ public class GameControllerTheme1 implements Initializable {
     }
 
     private void initializeGameArea() {
-        gameBoard = new GameBoard();
+        // NOUVEAU : Essayer de charger la map personnalisée sélectionnée
+        CustomMap customMap = mapManager.getMapByName(selectedMap);
 
+        if (customMap != null && !selectedMap.equals("Map Classique")) {
+            // Utiliser la map personnalisée
+            System.out.println("✅ Chargement de la map personnalisée : " + selectedMap);
+            gameBoard = customMap.toGameBoard();
+            useCustomMap = true;
+            System.out.println("📐 Dimensions de la map : " + customMap.getWidth() + "x" + customMap.getHeight());
+        } else {
+            // Utiliser la map par défaut générée automatiquement
+            System.out.println("🔄 Utilisation de la map par défaut (génération automatique)");
+            gameBoard = new GameBoard(); // Génération automatique classique
+            useCustomMap = false;
+        }
+
+        // Initialiser les joueurs selon les dimensions du plateau
         player1 = new Player("Player 1", 1, 1);
         player2 = new Player("Player 2", gameBoard.getHeight() - 2, gameBoard.getWidth() - 2);
+
+        // Vérifier que les positions de spawn sont valides
+        validatePlayerSpawns();
 
         player1Alive = true;
         player2Alive = true;
@@ -310,8 +355,45 @@ public class GameControllerTheme1 implements Initializable {
         createPlayersSprites();
 
         System.out.println("Plateau de jeu " + gameBoard.getWidth() + "x" + gameBoard.getHeight() + " créé");
+        System.out.println("Mode : " + (useCustomMap ? "Map personnalisée" : "Map générée"));
         System.out.println("Joueur 1 créé : " + player1 + " (Max bombes: " + player1MaxBombs + ")");
         System.out.println("Joueur 2 créé : " + player2 + " (Max bombes: " + player2MaxBombs + ")");
+    }
+
+    // NOUVELLE MÉTHODE : Valider les positions de spawn des joueurs
+    private void validatePlayerSpawns() {
+        // Vérifier que les positions de spawn sont dans les limites
+        if (player1.getRow() >= gameBoard.getHeight() || player1.getCol() >= gameBoard.getWidth()) {
+            System.out.println("⚠️ Position joueur 1 hors limites, ajustement...");
+            player1 = new Player("Player 1", 1, 1);
+        }
+
+        if (player2.getRow() >= gameBoard.getHeight() || player2.getCol() >= gameBoard.getWidth()) {
+            System.out.println("⚠️ Position joueur 2 hors limites, ajustement...");
+            player2 = new Player("Player 2",
+                    Math.max(1, gameBoard.getHeight() - 2),
+                    Math.max(1, gameBoard.getWidth() - 2));
+        }
+
+        // S'assurer que les zones de spawn sont vides
+        gameBoard.setCellType(player1.getRow(), player1.getCol(), GameBoard.CellType.EMPTY);
+        gameBoard.setCellType(player2.getRow(), player2.getCol(), GameBoard.CellType.EMPTY);
+
+        // Dégager les cases adjacentes aux spawns pour éviter que les joueurs soient bloqués
+        clearSpawnArea(player1.getRow(), player1.getCol());
+        clearSpawnArea(player2.getRow(), player2.getCol());
+    }
+
+    // NOUVELLE MÉTHODE : Dégager la zone de spawn
+    private void clearSpawnArea(int row, int col) {
+        // Dégager une zone 2x2 autour du spawn (sauf les murs indestructibles)
+        for (int r = row; r <= row + 1 && r < gameBoard.getHeight(); r++) {
+            for (int c = col; c <= col + 1 && c < gameBoard.getWidth(); c++) {
+                if (gameBoard.getCellType(r, c) == GameBoard.CellType.DESTRUCTIBLE_WALL) {
+                    gameBoard.setCellType(r, c, GameBoard.CellType.EMPTY);
+                }
+            }
+        }
     }
 
     private void createVisualBoard() {
@@ -519,14 +601,20 @@ public class GameControllerTheme1 implements Initializable {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/menu.fxml"));
             Parent menuRoot = loader.load();
 
-            Scene menuScene = new Scene(menuRoot, 800, 600);
+            // Utiliser les dimensions originales du menu
+            Scene menuScene = new Scene(menuRoot, originalMenuWidth, originalMenuHeight);
             menuScene.getStylesheets().add(getClass().getResource("/css/menu.css").toExternalForm());
 
             Stage stage = (Stage) gameArea.getScene().getWindow();
             stage.setScene(menuScene);
             stage.setTitle("Super Bomberman - Menu");
 
-            System.out.println("🏠 Retour au menu principal");
+            // REMETTRE les dimensions originales du menu
+            stage.setWidth(originalMenuWidth);
+            stage.setHeight(originalMenuHeight);
+            stage.centerOnScreen();
+
+            System.out.println("🏠 Retour au menu avec dimensions : " + originalMenuWidth + "x" + originalMenuHeight);
 
         } catch (Exception e) {
             e.printStackTrace();
