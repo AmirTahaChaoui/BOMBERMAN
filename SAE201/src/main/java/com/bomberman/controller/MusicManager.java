@@ -17,7 +17,7 @@ public class MusicManager {
     private int currentTrackIndex = 0;
     private boolean isPlaying = false;
     private boolean isShuffle = true;
-    private double volume = 0.5;
+    private double volume = 0.3;
     private boolean musicFailed = false; // Nouvelle variable pour arrêter sur erreur
 
     private MusicManager() {

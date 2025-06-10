@@ -32,6 +32,8 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -215,6 +217,54 @@ public class CaptureTheFlagController implements Initializable {
         gameTimer.play();
     }
 
+    private void playSound(String soundFileName) {
+        try {
+            URL soundURL = getClass().getResource("/Sound/" + soundFileName);
+            if (soundURL != null) {
+                Media sound = new Media(soundURL.toExternalForm());
+                MediaPlayer mediaPlayer = new MediaPlayer(sound);
+                mediaPlayer.setVolume(0.5); // Volume à 50%
+                mediaPlayer.play();
+            }
+        } catch (Exception e) {
+            System.err.println("❌ Erreur lors de la lecture du son : " + e.getMessage());
+        }
+    }
+
+    private void playBonusCollectionSound() {
+        URL bonusSound = getClass().getResource("/Sound/bonus.mp3");
+        if (bonusSound != null) {
+            playSound("bonus.mp3");
+        } else {
+            // Son de fallback si bonus.mp3 n'existe pas
+            playSound("select.mp3");
+        }
+        System.out.println("♪ Son de collection de bonus");
+    }
+
+    private void playFlagCaptureSound() {
+        URL flagSound = getClass().getResource("/Sound/flag_capture.mp3");
+        if (flagSound != null) {
+            playSound("flag_capture.mp3");
+        } else {
+            // Son de fallback
+            playSound("navigation.mp3");
+        }
+        System.out.println("♪ Son de capture de drapeau");
+    }
+
+    private void playFlagScoreSound() {
+        URL scoreSound = getClass().getResource("/Sound/score.mp3");
+        if (scoreSound != null) {
+            playSound("score.mp3");
+        } else {
+            // Son de fallback
+            playSound("select.mp3");
+        }
+        System.out.println("♪ Son de score!");
+    }
+
+
     // Méthodes timer
     private void initializeTimer() {
         gameTimer = new Timeline(new KeyFrame(Duration.seconds(1), e -> updateTimer()));
@@ -266,8 +316,8 @@ public class CaptureTheFlagController implements Initializable {
         player1 = new Player("Player 1", 1, 1);
         player2 = new Player("Player 2", gameBoard.getHeight() - 2, gameBoard.getWidth() - 2);
 
-        redFlag = new Flag(gameBoard.getHeight() - 2, 1, Flag.Team.RED);
-        blueFlag = new Flag(1, gameBoard.getWidth() - 2, Flag.Team.BLUE);
+        redFlag = new Flag(1, 1, Flag.Team.RED);
+        blueFlag = new Flag(gameBoard.getHeight() - 2, gameBoard.getWidth() - 2, Flag.Team.BLUE);
 
         player1Alive = true;
         player2Alive = true;
@@ -627,6 +677,8 @@ public class CaptureTheFlagController implements Initializable {
                 System.out.println("💣 Joueur 2 collecte un bonus bombes ! Nouvelles bombes max: " + player2MaxBombs);
             }
 
+            playBonusCollectionSound();
+
             gameBoard.setCellType(currentPlayer.getRow(), currentPlayer.getCol(), GameBoard.CellType.EMPTY);
             updateBoardDisplay();
 
@@ -638,6 +690,9 @@ public class CaptureTheFlagController implements Initializable {
                 player2ExplosionRange++;
                 System.out.println("🔥 Joueur 2 collecte un bonus portée ! Nouvelle portée: " + player2ExplosionRange);
             }
+
+
+            playBonusCollectionSound();
 
             gameBoard.setCellType(currentPlayer.getRow(), currentPlayer.getCol(), GameBoard.CellType.EMPTY);
             updateBoardDisplay();
