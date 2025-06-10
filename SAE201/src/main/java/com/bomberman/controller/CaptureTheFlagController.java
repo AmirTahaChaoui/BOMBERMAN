@@ -242,6 +242,17 @@ public class CaptureTheFlagController implements Initializable {
         System.out.println("♪ Son de collection de bonus");
     }
 
+    private void playBombSound() {
+        URL bombSound = getClass().getResource("/Sound/bombSound.mp3");
+        if (bombSound != null) {
+            playSound("bombSound.mp3");
+        } else {
+            // Son de fallback si bonus.mp3 n'existe pas
+            playSound("select.mp3");
+        }
+        System.out.println("♪ Son d'explosion de Bomb");
+    }
+
     private void playFlagCaptureSound() {
         URL flagSound = getClass().getResource("/Sound/flag_capture.mp3");
         if (flagSound != null) {
@@ -610,6 +621,7 @@ public class CaptureTheFlagController implements Initializable {
                     !blueFlag.isDropped() && !blueFlag.isCaptured()) {
 
                 captureFlag(1, blueFlag);
+                playFlagCaptureSound();
             }
         } else if (playerNumber == 2 && !player2HasFlag) {
             // Player 2 trying to get red flag
@@ -618,6 +630,7 @@ public class CaptureTheFlagController implements Initializable {
                     !redFlag.isDropped() && !redFlag.isCaptured()) {
 
                 captureFlag(2, redFlag);
+                playFlagCaptureSound();
             }
         }
 
@@ -901,6 +914,7 @@ public class CaptureTheFlagController implements Initializable {
 
             explosionSprites.add(explosionSprite);
             currentExplosionSprites.add(explosionSprite);
+            playBombSound();
 
             gameGrid.add(explosionSprite, pos.col, pos.row);
 
