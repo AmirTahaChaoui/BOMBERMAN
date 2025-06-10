@@ -92,7 +92,10 @@ public class    Main extends Application {
                 "/fxml/menu.fxml",
                 "/css/menu.css",
                 "/fonts/PressStart2P.ttf",
-                "/images/logo.png"
+                "/images",
+                "/fxml/theme1.fxml",
+                "/css/style.css",
+                "/donnees/users.json"
         };
 
         for (String resource : resources) {

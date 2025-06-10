@@ -610,11 +610,11 @@ public class MenuController implements Initializable {
 
         try {
             // Load the game scene
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/theme1.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/CTF.fxml"));
             Parent gameRoot = loader.load();
 
             Scene gameScene = new Scene(gameRoot, 800, 700);
-            gameScene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
+            gameScene.getStylesheets().add(getClass().getResource("/css/CTF.css").toExternalForm());
 
             Stage stage = (Stage) playButton.getScene().getWindow();
             stage.setScene(gameScene);
@@ -633,7 +633,7 @@ public class MenuController implements Initializable {
 
     @FXML
     private void handleSettingsButton() {
-        System.out.println("Opening settings...");
+        System.out.println("Ouverture de Parametre...");
 
         String musicInfo = String.format("Musique: %s (Vol: %.0f%%)\nPiste actuelle: %s",
                 musicManager.isPlaying() ? "Activée" : "Désactivée",
