@@ -38,7 +38,6 @@
     <VBox fx:id="menuContainer"
           alignment="CENTER"
           styleClass="menu-container"
-          spacing="20"
           StackPane.alignment="CENTER">
 
         <!-- Titre du jeu -->
@@ -63,8 +62,7 @@
         <!-- Container des boutons -->
         <VBox fx:id="menuButtons"
               alignment="CENTER"
-              styleClass="menu-buttons"
-              spacing="15">
+              styleClass="menu-buttons">
 
             <!-- Bouton PLAY -->
             <HBox fx:id="playButtonContainer"

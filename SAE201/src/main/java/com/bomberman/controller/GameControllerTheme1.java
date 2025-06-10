@@ -3,7 +3,6 @@ package com.bomberman.controller;
 import com.bomberman.model.GameBoard;
 import com.bomberman.model.Player;
 import com.bomberman.model.Bomb;
-import com.bomberman.controller.UserManager;
 import com.bomberman.model.User;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -126,6 +125,9 @@ public class GameControllerTheme1 implements Initializable {
     private Image explosionMiddleLeftImage;
     private Image explosionMiddleRightImage;
 
+    private static String currentTheme = "theme1"; // Thème par défaut
+    private String themePath; // Chemin vers les images du thème actuel
+
     //Image de fin de partie
     private Image victoire1;
     private Image victoire2;
@@ -147,49 +149,17 @@ public class GameControllerTheme1 implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        // NOUVEAU : Initialiser le chemin du thème
+        themePath = "/images/" + currentTheme + "/";
+        System.out.println("🎨 Chargement du thème : " + currentTheme);
+
         // NOUVEAU : Initialiser le gestionnaire d'utilisateurs
         userManager = UserManager.getInstance();
 
-        // Images perso 1
-        persoDown = new Image(getClass().getResource("/images/persoDown.png").toExternalForm());
-        persoLeft = new Image(getClass().getResource("/images/persoLeft.png").toExternalForm());
-        persoRight = new Image(getClass().getResource("/images/persoRight.png").toExternalForm());
-        persoUp = new Image(getClass().getResource("/images/persoUp.png").toExternalForm());
-        persoDeath = new Image(getClass().getResource("/images/death.png").toExternalForm());
+        // Charger les images avec le thème sélectionné
+        loadThemeImages();
 
-        // Images perso 2
-        perso2Down = new Image(getClass().getResource("/images/perso2Down.png").toExternalForm());
-        perso2Left = new Image(getClass().getResource("/images/perso2Left.png").toExternalForm());
-        perso2Right = new Image(getClass().getResource("/images/perso2Right.png").toExternalForm());
-        perso2Up = new Image(getClass().getResource("/images/perso2Up.png").toExternalForm());
-        perso2Death = new Image(getClass().getResource("/images/death2.png").toExternalForm());
-
-        wallImage = new Image(getClass().getResource("/images/wall.png").toExternalForm());
-        blockImage = new Image(getClass().getResource("/images/block.png").toExternalForm());
-        floorImage = new Image(getClass().getResource("/images/floor.png").toExternalForm());
-        floorShadowImage = new Image(getClass().getResource("/images/floor_shadow.png").toExternalForm());
-
-        // Bombe et bonus image
-        bombImage = new Image(this.getClass().getResource("/images/bomb.png").toExternalForm());
-        bombBonusImage = new Image(this.getClass().getResource("/images/bomb-bonus.png").toExternalForm());
-        rangeBonusImage = new Image(this.getClass().getResource("/images/range-bonus.png").toExternalForm());
-
-        // Image explosion
-        explosionCenterImage = new Image(getClass().getResource("/images/explosion_milieu.png").toExternalForm());
-        explosionEndUpImage = new Image(getClass().getResource("/images/bout_explosion_haut.png").toExternalForm());
-        explosionEndDownImage = new Image(getClass().getResource("/images/bout_explosion_bas.png").toExternalForm());
-        explosionEndLeftImage = new Image(getClass().getResource("/images/bout_explosion_gauche.png").toExternalForm());
-        explosionEndRightImage = new Image(getClass().getResource("/images/bout_explosion_droite.png").toExternalForm());
-        explosionMiddleUpImage = new Image(getClass().getResource("/images/explosion_haut.png").toExternalForm());
-        explosionMiddleDownImage = new Image(getClass().getResource("/images/explosion_bas.png").toExternalForm());
-        explosionMiddleLeftImage = new Image(getClass().getResource("/images/explosion_gauche.png").toExternalForm());
-        explosionMiddleRightImage = new Image(getClass().getResource("/images/explosion_droite.png").toExternalForm());
-
-        victoire1 = new Image(getClass().getResource("/images/victoire1.png").toExternalForm());
-        victoire2 = new Image(getClass().getResource("/images/victoire2.png").toExternalForm());
-        egalite = new Image(getClass().getResource("/images/egalite.png").toExternalForm());
-
-        System.out.println("GameController initialisé");
+        System.out.println("GameController initialisé avec le thème : " + currentTheme);
         initializeGameArea();
         setupKeyboardControls();
         initializeTimer();
@@ -198,12 +168,85 @@ public class GameControllerTheme1 implements Initializable {
         gameTimer.play();
     }
 
+
+    // NOUVEAU : Méthode pour définir le thème (appelée depuis le menu)
+    public static void setCurrentTheme(String theme) {
+        currentTheme = theme;
+        System.out.println("🎨 Thème sélectionné : " + theme);
+    }
+
+    // NOUVEAU : Méthode pour obtenir le thème actuel
+    public static String getCurrentTheme() {
+        return currentTheme;
+    }
+
+
+    // NOUVELLE MÉTHODE : Charger toutes les images du thème
+    private void loadThemeImages() {
+        try {
+            // Images perso 1
+            persoDown = new Image(getClass().getResource(themePath + "persoDown.png").toExternalForm());
+            persoLeft = new Image(getClass().getResource(themePath + "persoLeft.png").toExternalForm());
+            persoRight = new Image(getClass().getResource(themePath + "persoRight.png").toExternalForm());
+            persoUp = new Image(getClass().getResource(themePath + "persoUp.png").toExternalForm());
+            persoDeath = new Image(getClass().getResource(themePath + "death.png").toExternalForm());
+
+            // Images perso 2
+            perso2Down = new Image(getClass().getResource(themePath + "perso2Down.png").toExternalForm());
+            perso2Left = new Image(getClass().getResource(themePath + "perso2Left.png").toExternalForm());
+            perso2Right = new Image(getClass().getResource(themePath + "perso2Right.png").toExternalForm());
+            perso2Up = new Image(getClass().getResource(themePath + "perso2Up.png").toExternalForm());
+            perso2Death = new Image(getClass().getResource(themePath + "death2.png").toExternalForm());
+
+            // Images des cellules
+            wallImage = new Image(getClass().getResource(themePath + "wall.png").toExternalForm());
+            blockImage = new Image(getClass().getResource(themePath + "block.png").toExternalForm());
+            floorImage = new Image(getClass().getResource(themePath + "floor.png").toExternalForm());
+            floorShadowImage = new Image(getClass().getResource(themePath + "floor_shadow.png").toExternalForm());
+
+            // Bombe et bonus images
+            bombImage = new Image(getClass().getResource(themePath + "bomb.png").toExternalForm());
+            bombBonusImage = new Image(getClass().getResource("/images/bomb-bonus.png").toExternalForm());
+            rangeBonusImage = new Image(getClass().getResource("/images/range-bonus.png").toExternalForm());
+
+            // Images explosion
+            explosionCenterImage = new Image(getClass().getResource("/images/explosion_milieu.png").toExternalForm());
+            explosionEndUpImage = new Image(getClass().getResource( "/images/bout_explosion_haut.png").toExternalForm());
+            explosionEndDownImage = new Image(getClass().getResource( "/images/bout_explosion_bas.png").toExternalForm());
+            explosionEndLeftImage = new Image(getClass().getResource( "/images/bout_explosion_gauche.png").toExternalForm());
+            explosionEndRightImage = new Image(getClass().getResource("/images/bout_explosion_droite.png").toExternalForm());
+            explosionMiddleUpImage = new Image(getClass().getResource( "/images/explosion_haut.png").toExternalForm());
+            explosionMiddleDownImage = new Image(getClass().getResource( "/images/explosion_bas.png").toExternalForm());
+            explosionMiddleLeftImage = new Image(getClass().getResource( "/images/explosion_gauche.png").toExternalForm());
+            explosionMiddleRightImage = new Image(getClass().getResource("/images/explosion_droite.png").toExternalForm());
+
+            victoire1 = new Image(getClass().getResource("/images/victoire1.png").toExternalForm());
+            victoire2 = new Image(getClass().getResource("/images/victoire2.png").toExternalForm());
+            egalite = new Image(getClass().getResource("/images/egalite.png").toExternalForm());
+
+            System.out.println("✅ Images du thème " + currentTheme + " chargées avec succès");
+
+        } catch (Exception e) {
+            System.err.println("❌ Erreur lors du chargement des images du thème " + currentTheme + " : " + e.getMessage());
+            // En cas d'erreur, revenir au thème par défaut
+            if (!currentTheme.equals("theme1")) {
+                System.out.println("🔄 Retour au thème par défaut...");
+                currentTheme = "theme1";
+                themePath = "/images/" + currentTheme + "/";
+                loadThemeImages(); // Essayer de recharger avec le thème par défaut
+            }
+        }
+    }
+
+
+
     // Méthodes timer
     private void initializeTimer() {
         gameTimer = new Timeline(new KeyFrame(Duration.seconds(1), e -> updateTimer()));
         gameTimer.setCycleCount(Timeline.INDEFINITE);
         updateTimerDisplay();
     }
+
 
     private void updateTimer() {
         timeRemainingSeconds--;

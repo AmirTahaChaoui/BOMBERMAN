@@ -23,6 +23,8 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.scene.control.ButtonBar;
+
 
 import java.io.IOException;
 import java.net.URL;
@@ -93,6 +95,11 @@ public class MenuController implements Initializable {
 
     // NOUVEAU : Gestion des utilisateurs
     private UserManager userManager;
+
+    // État de navigation
+    private boolean isInSubMenu = false;
+    private MenuOption[] mainMenuOptions;
+    private MenuOption[] subMenuOptions;
 
     // Menu option class to hold button and cursor references
     private static class MenuOption {
@@ -421,11 +428,46 @@ public class MenuController implements Initializable {
     }
 
     private void setupMenuOptions() {
+        // Menu principal
+        mainMenuOptions = new MenuOption[]{
+                new MenuOption(playButton, playCursor, playButtonContainer),
+                new MenuOption(settingsButton, settingsCursor, settingsButtonContainer),
+                new MenuOption(loginButton, loginCursor, loginButtonContainer),
+                new MenuOption(exitButton, exitCursor, exitButtonContainer)
+        };
+
+        // Sous-menu (quand on est dans "JOUER")
+        subMenuOptions = new MenuOption[]{
+                new MenuOption(playButton, playCursor, playButtonContainer),      // "LANCER PARTIE"
+                new MenuOption(settingsButton, settingsCursor, settingsButtonContainer), // "THEMES"
+                new MenuOption(loginButton, loginCursor, loginButtonContainer),   // "MAP EDITOR"
+                new MenuOption(exitButton, exitCursor, exitButtonContainer)       // "RETOUR"
+        };
+
+        // Commencer avec le menu principal
         menuOptions = new ArrayList<>();
-        menuOptions.add(new MenuOption(playButton, playCursor, playButtonContainer));
-        menuOptions.add(new MenuOption(settingsButton, settingsCursor, settingsButtonContainer));
-        menuOptions.add(new MenuOption(loginButton, loginCursor, loginButtonContainer));
-        menuOptions.add(new MenuOption(exitButton, exitCursor, exitButtonContainer));
+        for (MenuOption option : mainMenuOptions) {
+            menuOptions.add(option);
+        }
+
+        updateMenuDisplay();
+    }
+
+    /* mettre à jour l'affichage du menu*/
+    private void updateMenuDisplay() {
+        if (isInSubMenu) {
+            // Affichage du sous-menu
+            playButton.setText("LANCER PARTIE");
+            settingsButton.setText("THEMES");
+            loginButton.setText("MAP EDITOR");
+            exitButton.setText("RETOUR");
+        } else {
+            // Affichage du menu principal
+            playButton.setText("JOUER");
+            settingsButton.setText("PARAMETRE");
+            loginButton.setText("SE CONNECTER");
+            exitButton.setText("QUITTER");
+        }
     }
 
     private void setupKeyboardNavigation() {
@@ -606,10 +648,24 @@ public class MenuController implements Initializable {
     // Button action handlers (inchangés)
     @FXML
     private void handlePlayButton() {
-        System.out.println("Demarrage du jeux ...");
+        if (isInSubMenu) {
+            // Dans le sous-menu : "LANCER PARTIE"
+            System.out.println("Démarrage du jeu...");
+            startGame();
+        } else {
+            // Dans le menu principal : "JOUER" -> aller au sous-menu
+            System.out.println("Navigation vers le sous-menu de jeu...");
+            isInSubMenu = true;
+            updateMenuDisplay();
 
+            // Remettre la sélection sur le premier élément
+            selectedIndex = 0;
+            updateSelection();
+        }
+    }
+
+    private void startGame() {
         try {
-            // Load the game scene
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/theme1.fxml"));
             Parent gameRoot = loader.load();
 
@@ -618,77 +674,201 @@ public class MenuController implements Initializable {
 
             Stage stage = (Stage) playButton.getScene().getWindow();
             stage.setScene(gameScene);
-            stage.setTitle("Super Bomberman - Jeux");
+            stage.setTitle("Super Bomberman - Jeu");
 
-            // Stop menu animations but keep music playing
             shutdown();
-            // La musique continue à jouer dans le jeu !
 
         } catch (IOException e) {
             e.printStackTrace();
-            showErrorDialog("Erreur au niveau du jeux", "Impossible de charger le jeux.",
-                    "Verifie que le game.fxml existes belle est bien dans le resources/fxml.");
+            showErrorDialog("Erreur au niveau du jeu", "Impossible de charger le jeu.",
+                    "Vérifiez que le theme1.fxml existe bien dans le resources/fxml.");
         }
     }
 
     @FXML
     private void handleSettingsButton() {
-        System.out.println("Opening settings...");
+        if (isInSubMenu) {
+            // Dans le sous-menu : "THEMES"
+            System.out.println("🎨 Ouverture de la sélection de thèmes...");
+            handleThemeSelection();
+        } else {
+            // Dans le menu principal : "PARAMETRE" -> afficher les paramètres
+            System.out.println("Ouverture des paramètres...");
 
-        String musicInfo = String.format("Musique: %s (Vol: %.0f%%)\nPiste actuelle: %s",
-                musicManager.isPlaying() ? "Activée" : "Désactivée",
-                musicManager.getVolume() * 100,
-                musicManager.getCurrentTrackName());
+            String musicInfo = String.format("Musique: %s (Vol: %.0f%%)\nPiste actuelle: %s",
+                    musicManager.isPlaying() ? "Activée" : "Désactivée",
+                    musicManager.getVolume() * 100,
+                    musicManager.getCurrentTrackName());
 
-        Alert alert = createStyledAlert( "Settings",
-                "Parametre du jeux",
-                "Resolution: 800x600\n" +
-                        musicInfo + "\n" +
-                        "Controles: Fleche + Espace\n" +
-                        "Difficulté: Normal\n" +
-                        "Controles musique:\n" +
-                        "M = Pause/Reprise\n" +
-                        "N = Piste suivante\n" +
-                        "P = Piste précédente\n\n" +
-                        "Parametre configuration prochainement!");
-        alert.showAndWait();
+            Alert alert = createStyledAlert("Paramètres",
+                    "Paramètres du jeu",
+                    "Résolution: 800x600\n" +
+                            musicInfo + "\n" +
+                            "Contrôles: Flèches + Entrée\n" +
+                            "Difficulté: Normal\n" +
+                            "Contrôles musique:\n" +
+                            "B = Pause/Reprise\n" +
+                            "N = Piste suivante\n" +
+                            "P = Piste précédente\n\n" +
+                            "Paramètres de configuration prochainement!");
+            alert.showAndWait();
+        }
     }
 
     // NOUVELLES MÉTHODES : Gestionnaires de connexion
     @FXML
     private void handleLoginButton() {
-        System.out.println("Bouton connexion/compte cliqué");
-
-        if (userManager.isLoggedIn()) {
-            // Si connecté, afficher le profil/déconnexion
-            showUserProfile();
+        if (isInSubMenu) {
+            // Dans le sous-menu : "MAP EDITOR"
+            System.out.println("🗺️ Ouverture de l'éditeur de cartes...");
+            handleMapEditor();
         } else {
-            // Si pas connecté, afficher la fenêtre de connexion
-            showLoginView();
+            // Dans le menu principal : "SE CONNECTER" -> système de connexion
+            System.out.println("Bouton connexion/compte cliqué");
+
+            if (userManager.isLoggedIn()) {
+                showUserProfile();
+            } else {
+                showLoginView();
+            }
         }
     }
 
     @FXML
     private void handleExitButton() {
-        System.out.println("Fermeture du jeux...");
+        if (isInSubMenu) {
+            // Dans le sous-menu : "RETOUR" -> retour au menu principal
+            System.out.println("Retour au menu principal...");
+            isInSubMenu = false;
+            updateMenuDisplay();
 
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Fermeture du jeux");
-        alert.setHeaderText("Etes vous sur de vouloir quitter ?");
-        alert.setContentText("Tous les progres non sauvegrader seront perdue.");
+            // Remettre la sélection sur "JOUER" (index 0)
+            selectedIndex = 0;
+            updateSelection();
+        } else {
+            // Dans le menu principal : "QUITTER" -> fermer le jeu
+            System.out.println("Fermeture du jeu...");
 
-        // Apply custom styling
-        alert.getDialogPane().getStylesheets().add(
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Fermeture du jeu");
+            alert.setHeaderText("Êtes vous sûr de vouloir quitter ?");
+            alert.setContentText("Tous les progrès non sauvegardés seront perdus.");
+
+            alert.getDialogPane().getStylesheets().add(
+                    getClass().getResource("/css/menu.css").toExternalForm()
+            );
+            alert.getDialogPane().getStyleClass().add("alert");
+
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.isPresent() && result.get() == ButtonType.OK) {
+                shutdown();
+                musicManager.shutdown();
+                Platform.exit();
+            }
+        }
+    }
+
+
+
+    // Dans MenuController.java - Modifier handleThemeSelection()
+
+    private void handleThemeSelection() {
+        System.out.println("🎨 Ouverture de la sélection de thèmes...");
+
+        // Créer un dialog personnalisé pour la sélection de thème
+        Alert themeDialog = new Alert(Alert.AlertType.NONE);
+        themeDialog.setTitle("Sélection de Thème");
+        themeDialog.setHeaderText("Choisissez votre thème visuel");
+
+        // Créer les boutons pour chaque thème
+        ButtonType theme1Button = new ButtonType("THEME CLASSIQUE");
+        ButtonType theme2Button = new ButtonType("THEME 2");
+        ButtonType theme3Button = new ButtonType("THEME 3 (bientôt)");
+        ButtonType cancelButton = new ButtonType("RETOUR", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+        // Ajouter les boutons au dialog
+        themeDialog.getButtonTypes().setAll(theme1Button, theme2Button, theme3Button, cancelButton);
+
+        // Appliquer le style personnalisé
+        themeDialog.getDialogPane().getStylesheets().add(
                 getClass().getResource("/css/menu.css").toExternalForm()
         );
-        alert.getDialogPane().getStyleClass().add("alert");
+        themeDialog.getDialogPane().getStyleClass().add("alert");
 
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.isPresent() && result.get() == ButtonType.OK) {
-            shutdown();
-            musicManager.shutdown(); // Arrêter la musique à la fermeture
-            Platform.exit();
+        // Créer le contenu du dialog avec des infos sur les thèmes
+        String currentTheme = GameControllerTheme1.getCurrentTheme();
+        String content = String.format("Thème actuel : %s\n\n" +
+                        "🎨 THEME CLASSIQUE : Style original du jeu\n" +
+                        "🌟 THEME 2 : Nouveau style graphique\n" +
+                        "🚀 THEME 3 : Bientôt disponible\n\n" +
+                        "Sélectionnez un thème pour votre prochaine partie.",
+                currentTheme.toUpperCase().replace("THEME", "THEME "));
+
+        themeDialog.setContentText(content);
+
+        // Afficher le dialog et traiter la réponse
+        Optional<ButtonType> result = themeDialog.showAndWait();
+
+        if (result.isPresent()) {
+            ButtonType selectedButton = result.get();
+
+            if (selectedButton == theme1Button) {
+                selectTheme("theme1", "Thème Classique");
+            } else if (selectedButton == theme2Button) {
+                selectTheme("theme2", "Thème 2");
+            } else if (selectedButton == theme3Button) {
+                // Theme 3 pas encore disponible
+                Alert alert = createStyledAlert("Thème non disponible",
+                        "Thème 3",
+                        "Ce thème n'est pas encore disponible.\n" +
+                                "Il sera ajouté dans une future mise à jour !");
+                alert.showAndWait();
+            }
+            // Si c'est cancelButton, on ne fait rien
         }
+    }
+
+    // NOUVELLE MÉTHODE : Sélectionner un thème
+    private void selectTheme(String themeId, String themeName) {
+        String oldTheme = GameControllerTheme1.getCurrentTheme();
+
+        if (themeId.equals(oldTheme)) {
+            // Thème déjà sélectionné
+            Alert alert = createStyledAlert("Thème",
+                    "Thème déjà sélectionné",
+                    String.format("Le %s est déjà actif !\n\n" +
+                            "Lancez une partie pour voir le thème en action.", themeName));
+            alert.showAndWait();
+        } else {
+            // Nouveau thème sélectionné
+            GameControllerTheme1.setCurrentTheme(themeId);
+
+            Alert alert = createStyledAlert("Thème changé",
+                    "Nouveau thème sélectionné",
+                    String.format("✅ %s sélectionné !\n\n" +
+                                    "Le nouveau thème sera appliqué\n" +
+                                    "lors de votre prochaine partie.\n\n" +
+                                    "Ancien thème : %s\n" +
+                                    "Nouveau thème : %s",
+                            themeName,
+                            oldTheme.toUpperCase().replace("THEME", "THEME "),
+                            themeName));
+            alert.showAndWait();
+
+            System.out.println("🎨 Thème changé : " + oldTheme + " → " + themeId);
+        }
+    }
+
+    private void handleMapEditor() {
+        Alert alert = createStyledAlert("Map Editor",
+                "Éditeur de cartes",
+                "Fonctionnalité d'édition de cartes\n" +
+                        "à implémenter prochainement !\n\n" +
+                        "Fonctionnalités prévues :\n" +
+                        "- Créer des cartes personnalisées\n" +
+                        "- Modifier les cartes existantes\n" +
+                        "- Sauvegarder dans les thèmes");
+        alert.showAndWait();
     }
 
     private Alert createStyledAlert(String title, String header, String content) {
