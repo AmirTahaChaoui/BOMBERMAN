@@ -275,5 +275,53 @@
                    visible="false" />
         </VBox>
     </StackPane>
+    <!-- NOUVEAU : Vue de sélection thème (cachée par défaut) -->
+    <StackPane fx:id="themeView"
+               styleClass="login-overlay"
+               visible="false">
+        <VBox fx:id="themeContent"
+              alignment="CENTER"
+              spacing="20"
+              styleClass="login-content">
+
+            <Label text="SÉLECTION" styleClass="login-title" />
+
+            <VBox spacing="15" alignment="CENTER">
+                <VBox spacing="5">
+                    <Label text="THÈME:" styleClass="login-label" />
+
+                    <Button fx:id="theme1Button"
+                            text="THÈME CLASSIQUE"
+                            styleClass="login-btn-action"
+                            onAction="#handleTheme1Button" />
+
+                    <Button fx:id="theme2Button"
+                            text="THÈME 2"
+                            styleClass="login-btn-cancel"
+                            onAction="#handleTheme2Button" />
+
+                    <Button fx:id="theme3Button"
+                            text="THÈME 3 (bientôt)"
+                            styleClass="login-btn-cancel"
+                            onAction="#handleTheme3Button"
+                            disable="true" />
+                </VBox>
+
+                <VBox spacing="5">
+                    <Label text="MAP:" styleClass="login-label" />
+                    <Label text="Bientôt disponible..."
+                           styleClass="login-error"
+                           style="-fx-text-fill: #888888;" />
+                </VBox>
+            </VBox>
+
+            <Button fx:id="themeCloseButton"
+                    text="FERMER"
+                    styleClass="login-btn-cancel"
+                    onAction="#handleThemeCloseButton" />
+
+        </VBox>
+    </StackPane>
+
 
 </StackPane>

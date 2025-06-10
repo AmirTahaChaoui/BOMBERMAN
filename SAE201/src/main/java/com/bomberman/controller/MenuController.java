@@ -96,6 +96,17 @@ public class MenuController implements Initializable {
     // NOUVEAU : Gestion des utilisateurs
     private UserManager userManager;
 
+    @FXML private StackPane themeView;
+    @FXML private VBox themeContent;
+    @FXML private Button theme1Button;
+    @FXML private Button theme2Button;
+    @FXML private Button theme3Button;
+    @FXML private Button themeCloseButton;
+
+
+
+
+
     // État de navigation
     private boolean isInSubMenu = false;
     private MenuOption[] mainMenuOptions;
@@ -770,62 +781,72 @@ public class MenuController implements Initializable {
 
 
 
-    // Dans MenuController.java - Modifier handleThemeSelection()
-
     private void handleThemeSelection() {
         System.out.println("🎨 Ouverture de la sélection de thèmes...");
+        showThemeView();
+    }
 
-        // Créer un dialog personnalisé pour la sélection de thème
-        Alert themeDialog = new Alert(Alert.AlertType.NONE);
-        themeDialog.setTitle("Sélection de Thème");
-        themeDialog.setHeaderText("Choisissez votre thème visuel");
+    private void showThemeView() {
+        hideLoginView();
+        hideRegisterView();
+        themeView.setVisible(true);
+        themeView.toFront();
+        root.setFocusTraversable(false);
+        updateThemeButtons();
+        Platform.runLater(() -> {
+            theme1Button.requestFocus();
+        });
+    }
 
-        // Créer les boutons pour chaque thème
-        ButtonType theme1Button = new ButtonType("THEME CLASSIQUE");
-        ButtonType theme2Button = new ButtonType("THEME 2");
-        ButtonType theme3Button = new ButtonType("THEME 3 (bientôt)");
-        ButtonType cancelButton = new ButtonType("RETOUR", ButtonBar.ButtonData.CANCEL_CLOSE);
+    private void hideThemeView() {
+        themeView.setVisible(false);
+        root.setFocusTraversable(true);
+        Platform.runLater(() -> {
+            root.requestFocus();
+        });
+    }
 
-        // Ajouter les boutons au dialog
-        themeDialog.getButtonTypes().setAll(theme1Button, theme2Button, theme3Button, cancelButton);
-
-        // Appliquer le style personnalisé
-        themeDialog.getDialogPane().getStylesheets().add(
-                getClass().getResource("/css/menu.css").toExternalForm()
-        );
-        themeDialog.getDialogPane().getStyleClass().add("alert");
-
-        // Créer le contenu du dialog avec des infos sur les thèmes
+    private void updateThemeButtons() {
         String currentTheme = GameControllerTheme1.getCurrentTheme();
-        String content = String.format("Thème actuel : %s\n\n" +
-                        "🎨 THEME CLASSIQUE : Style original du jeu\n" +
-                        "🌟 THEME 2 : Nouveau style graphique\n" +
-                        "🚀 THEME 3 : Bientôt disponible\n\n" +
-                        "Sélectionnez un thème pour votre prochaine partie.",
-                currentTheme.toUpperCase().replace("THEME", "THEME "));
 
-        themeDialog.setContentText(content);
+        // Reset tous les styles
+        theme1Button.getStyleClass().removeAll("login-btn-action", "login-btn-cancel");
+        theme2Button.getStyleClass().removeAll("login-btn-action", "login-btn-cancel");
 
-        // Afficher le dialog et traiter la réponse
-        Optional<ButtonType> result = themeDialog.showAndWait();
-
-        if (result.isPresent()) {
-            ButtonType selectedButton = result.get();
-
-            if (selectedButton == theme1Button) {
-                selectTheme("theme1", "Thème Classique");
-            } else if (selectedButton == theme2Button) {
-                selectTheme("theme2", "Thème 2");
-            } else if (selectedButton == theme3Button) {
-                // Theme 3 pas encore disponible
-                Alert alert = createStyledAlert("Thème non disponible",
-                        "Thème 3",
-                        "Ce thème n'est pas encore disponible.\n" +
-                                "Il sera ajouté dans une future mise à jour !");
-                alert.showAndWait();
-            }
-            // Si c'est cancelButton, on ne fait rien
+        // Appliquer le bon style
+        if (currentTheme.equals("theme1")) {
+            theme1Button.getStyleClass().add("login-btn-action");
+            theme2Button.getStyleClass().add("login-btn-cancel");
+        } else {
+            theme1Button.getStyleClass().add("login-btn-cancel");
+            theme2Button.getStyleClass().add("login-btn-action");
         }
+    }
+
+    @FXML
+    private void handleTheme1Button() {
+        selectTheme("theme1", "Thème Classique");
+        hideThemeView();
+    }
+
+    @FXML
+    private void handleTheme2Button() {
+        selectTheme("theme2", "Thème 2");
+        hideThemeView();
+    }
+
+    @FXML
+    private void handleTheme3Button() {
+        Alert alert = createStyledAlert("Thème non disponible",
+                "Thème 3",
+                "Ce thème n'est pas encore disponible.\n" +
+                        "Il sera ajouté dans une future mise à jour !");
+        alert.showAndWait();
+    }
+
+    @FXML
+    private void handleThemeCloseButton() {
+        hideThemeView();
     }
 
     // NOUVELLE MÉTHODE : Sélectionner un thème
