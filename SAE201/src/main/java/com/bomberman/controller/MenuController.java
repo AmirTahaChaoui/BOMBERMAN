@@ -23,6 +23,8 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.scene.control.ButtonBar;
+
 
 import java.io.IOException;
 import java.net.URL;
@@ -94,6 +96,28 @@ public class MenuController implements Initializable {
     // NOUVEAU : Gestion des utilisateurs
     private UserManager userManager;
 
+    // Variables pour la vue thème
+    @FXML private StackPane themeView;
+    @FXML private VBox themeContent;
+    @FXML private Button theme1Button;
+    @FXML private Button theme2Button;
+    @FXML private Button theme3Button;
+    @FXML private Button themeApplyButton;
+    @FXML private Button themeCloseButton;
+    @FXML private VBox mapButtonsContainer;
+
+    private List<Button> mapButtons = new ArrayList<>();
+
+    private MapManager mapManager;
+    private static String selectedMapName = "Map Classique"; // Map par défaut
+
+
+
+    // État de navigation
+    private boolean isInSubMenu = false;
+    private MenuOption[] mainMenuOptions;
+    private MenuOption[] subMenuOptions;
+
     // Menu option class to hold button and cursor references
     private static class MenuOption {
         final Button button;
@@ -131,6 +155,10 @@ public class MenuController implements Initializable {
         Platform.runLater(() -> {
             root.requestFocus();
         });
+
+        mapManager = MapManager.getInstance();
+
+        // ← SUPPRIMER TOUTE LA SECTION mapComboBox ICI
     }
 
     // NOUVELLE MÉTHODE : Configuration du système de connexion
@@ -145,6 +173,10 @@ public class MenuController implements Initializable {
         if (registerView != null) {
             registerView.setVisible(false);
         }
+        if (themeView != null) {
+            themeView.setVisible(false);
+        }
+
 
         // Configurer les avatars disponibles
         setupAvatarComboBox();
@@ -421,11 +453,46 @@ public class MenuController implements Initializable {
     }
 
     private void setupMenuOptions() {
+        // Menu principal
+        mainMenuOptions = new MenuOption[]{
+                new MenuOption(playButton, playCursor, playButtonContainer),
+                new MenuOption(settingsButton, settingsCursor, settingsButtonContainer),
+                new MenuOption(loginButton, loginCursor, loginButtonContainer),
+                new MenuOption(exitButton, exitCursor, exitButtonContainer)
+        };
+
+        // Sous-menu (quand on est dans "JOUER")
+        subMenuOptions = new MenuOption[]{
+                new MenuOption(playButton, playCursor, playButtonContainer),      // "LANCER PARTIE"
+                new MenuOption(settingsButton, settingsCursor, settingsButtonContainer), // "THEMES"
+                new MenuOption(loginButton, loginCursor, loginButtonContainer),   // "MAP EDITOR"
+                new MenuOption(exitButton, exitCursor, exitButtonContainer)       // "RETOUR"
+        };
+
+        // Commencer avec le menu principal
         menuOptions = new ArrayList<>();
-        menuOptions.add(new MenuOption(playButton, playCursor, playButtonContainer));
-        menuOptions.add(new MenuOption(settingsButton, settingsCursor, settingsButtonContainer));
-        menuOptions.add(new MenuOption(loginButton, loginCursor, loginButtonContainer));
-        menuOptions.add(new MenuOption(exitButton, exitCursor, exitButtonContainer));
+        for (MenuOption option : mainMenuOptions) {
+            menuOptions.add(option);
+        }
+
+        updateMenuDisplay();
+    }
+
+    /* mettre à jour l'affichage du menu*/
+    private void updateMenuDisplay() {
+        if (isInSubMenu) {
+            // Affichage du sous-menu
+            playButton.setText("LANCER PARTIE");
+            settingsButton.setText("THEMES");
+            loginButton.setText("MAP EDITOR");
+            exitButton.setText("RETOUR");
+        } else {
+            // Affichage du menu principal
+            playButton.setText("JOUER");
+            settingsButton.setText("PARAMETRE");
+            loginButton.setText("SE CONNECTER");
+            exitButton.setText("QUITTER");
+        }
     }
 
     private void setupKeyboardNavigation() {
@@ -470,24 +537,31 @@ public class MenuController implements Initializable {
     }
 
     private void handleKeyPressed(KeyEvent event) {
-        // Ne pas traiter les touches si une vue de connexion/inscription est visible
+        // Ne pas traiter les touches si une vue de connexion/inscription/thème est visible
         if ((loginView != null && loginView.isVisible()) ||
-                (registerView != null && registerView.isVisible())) {
+                (registerView != null && registerView.isVisible()) ||
+                (themeView != null && themeView.isVisible())) {
+
             if (event.getCode() == KeyCode.ESCAPE) {
                 if (loginView.isVisible()) {
                     handleCancelButton();
                 } else if (registerView.isVisible()) {
                     handleCancelRegisterButton();
+                } else if (themeView.isVisible()) {
+                    handleThemeCloseButton();
                 }
+                event.consume(); // ← Consommer seulement Échap
             }
+
+            // IMPORTANT : Ne pas consommer les autres événements pour laisser la ComboBox fonctionner
             return;
         }
 
+        // Le reste du code pour la navigation du menu principal...
         KeyCode code = event.getCode();
-
         switch (code) {
             case UP:
-            case W:
+            case Z:
                 navigateUp();
                 event.consume();
                 break;
@@ -606,88 +680,379 @@ public class MenuController implements Initializable {
     // Button action handlers (inchangés)
     @FXML
     private void handlePlayButton() {
-        System.out.println("Demarrage du jeux ...");
+        if (isInSubMenu) {
+            // Dans le sous-menu : "LANCER PARTIE"
+            System.out.println("Démarrage du jeu...");
+            startGame();
+        } else {
+            // Dans le menu principal : "JOUER" -> aller au sous-menu
+            System.out.println("Navigation vers le sous-menu de jeu...");
+            isInSubMenu = true;
+            updateMenuDisplay();
 
+            // Remettre la sélection sur le premier élément
+            selectedIndex = 0;
+            updateSelection();
+        }
+    }
+
+    private void startGame() {
         try {
-            // Load the game scene
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/CTF.fxml"));
+            // NOUVEAU : Passer la map sélectionnée au GameController
+            GameControllerTheme1.setSelectedMap(selectedMapName);
+
+            // SAUVEGARDER les dimensions actuelles du menu
+            Stage stage = (Stage) playButton.getScene().getWindow();
+            double currentWidth = stage.getWidth();
+            double currentHeight = stage.getHeight();
+
+            // Passer les dimensions au GameController
+            GameControllerTheme1.setOriginalMenuDimensions(currentWidth, currentHeight);
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/theme1.fxml"));
             Parent gameRoot = loader.load();
 
+            // FORCER les bonnes dimensions pour le jeu
             Scene gameScene = new Scene(gameRoot, 800, 700);
-            gameScene.getStylesheets().add(getClass().getResource("/css/CTF.css").toExternalForm());
+            gameScene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
 
-            Stage stage = (Stage) playButton.getScene().getWindow();
             stage.setScene(gameScene);
-            stage.setTitle("Super Bomberman - Jeux");
+            stage.setTitle("Super Bomberman - Jeu");
 
-            // Stop menu animations but keep music playing
+            // FORCER les dimensions du jeu
+            stage.setWidth(800);
+            stage.setHeight(700);
+            stage.centerOnScreen();
+
             shutdown();
-            // La musique continue à jouer dans le jeu !
 
         } catch (IOException e) {
             e.printStackTrace();
-            showErrorDialog("Erreur au niveau du jeux", "Impossible de charger le jeux.",
-                    "Verifie que le game.fxml existes belle est bien dans le resources/fxml.");
+            showErrorDialog("Erreur au niveau du jeu", "Impossible de charger le jeu.",
+                    "Vérifiez que le theme1.fxml existe bien dans le resources/fxml.");
         }
     }
 
     @FXML
     private void handleSettingsButton() {
-        System.out.println("Ouverture de Parametre...");
+        if (isInSubMenu) {
+            // Dans le sous-menu : "THEMES"
+            System.out.println("🎨 Ouverture de la sélection de thèmes...");
+            handleThemeSelection();
+        } else {
+            // Dans le menu principal : "PARAMETRE" -> afficher les paramètres
+            System.out.println("Ouverture des paramètres...");
 
-        String musicInfo = String.format("Musique: %s (Vol: %.0f%%)\nPiste actuelle: %s",
-                musicManager.isPlaying() ? "Activée" : "Désactivée",
-                musicManager.getVolume() * 100,
-                musicManager.getCurrentTrackName());
+            String musicInfo = String.format("Musique: %s (Vol: %.0f%%)\nPiste actuelle: %s",
+                    musicManager.isPlaying() ? "Activée" : "Désactivée",
+                    musicManager.getVolume() * 100,
+                    musicManager.getCurrentTrackName());
 
-        Alert alert = createStyledAlert( "Settings",
-                "Parametre du jeux",
-                "Resolution: 800x600\n" +
-                        musicInfo + "\n" +
-                        "Controles: Fleche + Espace\n" +
-                        "Difficulté: Normal\n" +
-                        "Controles musique:\n" +
-                        "M = Pause/Reprise\n" +
-                        "N = Piste suivante\n" +
-                        "P = Piste précédente\n\n" +
-                        "Parametre configuration prochainement!");
-        alert.showAndWait();
+            Alert alert = createStyledAlert("Paramètres",
+                    "Paramètres du jeu",
+                    "Résolution: 800x600\n" +
+                            musicInfo + "\n" +
+                            "Contrôles: Flèches + Entrée\n" +
+                            "Difficulté: Normal\n" +
+                            "Contrôles musique:\n" +
+                            "B = Pause/Reprise\n" +
+                            "N = Piste suivante\n" +
+                            "P = Piste précédente\n\n" +
+                            "Paramètres de configuration prochainement!");
+            alert.showAndWait();
+        }
     }
 
     // NOUVELLES MÉTHODES : Gestionnaires de connexion
     @FXML
     private void handleLoginButton() {
-        System.out.println("Bouton connexion/compte cliqué");
-
-        if (userManager.isLoggedIn()) {
-            // Si connecté, afficher le profil/déconnexion
-            showUserProfile();
+        if (isInSubMenu) {
+            // Dans le sous-menu : "MAP EDITOR"
+            System.out.println("🗺️ Ouverture de l'éditeur de cartes...");
+            handleMapEditor();
         } else {
-            // Si pas connecté, afficher la fenêtre de connexion
-            showLoginView();
+            // Dans le menu principal : "SE CONNECTER" -> système de connexion
+            System.out.println("Bouton connexion/compte cliqué");
+
+            if (userManager.isLoggedIn()) {
+                showUserProfile();
+            } else {
+                showLoginView();
+            }
         }
     }
 
     @FXML
     private void handleExitButton() {
-        System.out.println("Fermeture du jeux...");
+        if (isInSubMenu) {
+            // Dans le sous-menu : "RETOUR" -> retour au menu principal
+            System.out.println("Retour au menu principal...");
+            isInSubMenu = false;
+            updateMenuDisplay();
 
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Fermeture du jeux");
-        alert.setHeaderText("Etes vous sur de vouloir quitter ?");
-        alert.setContentText("Tous les progres non sauvegrader seront perdue.");
+            // Remettre la sélection sur "JOUER" (index 0)
+            selectedIndex = 0;
+            updateSelection();
+        } else {
+            // Dans le menu principal : "QUITTER" -> fermer le jeu
+            System.out.println("Fermeture du jeu...");
 
-        // Apply custom styling
-        alert.getDialogPane().getStylesheets().add(
-                getClass().getResource("/css/menu.css").toExternalForm()
-        );
-        alert.getDialogPane().getStyleClass().add("alert");
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Fermeture du jeu");
+            alert.setHeaderText("Êtes vous sûr de vouloir quitter ?");
+            alert.setContentText("Tous les progrès non sauvegardés seront perdus.");
 
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.isPresent() && result.get() == ButtonType.OK) {
-            shutdown();
-            musicManager.shutdown(); // Arrêter la musique à la fermeture
-            Platform.exit();
+            alert.getDialogPane().getStylesheets().add(
+                    getClass().getResource("/css/menu.css").toExternalForm()
+            );
+            alert.getDialogPane().getStyleClass().add("alert");
+
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.isPresent() && result.get() == ButtonType.OK) {
+                shutdown();
+                musicManager.shutdown();
+                Platform.exit();
+            }
+        }
+    }
+
+
+
+    private void handleThemeSelection() {
+        System.out.println("🎨 Ouverture de la sélection de thèmes...");
+        showThemeView();
+    }
+
+    private void showThemeView() {
+        hideLoginView();
+        hideRegisterView();
+
+        // Charger les maps disponibles
+        loadAvailableMaps();
+
+        themeView.setVisible(true);
+        themeView.toFront();
+
+        // IMPORTANT : Désactiver la navigation clavier du menu
+        root.setFocusTraversable(false);
+
+        updateThemeButtons();
+
+        Platform.runLater(() -> {
+            theme1Button.requestFocus();
+        });
+    }
+
+    private void hideThemeView() {
+        themeView.setVisible(false);
+
+        // IMPORTANT : Réactiver la navigation clavier du menu
+        root.setFocusTraversable(true);
+
+        Platform.runLater(() -> {
+            root.requestFocus();
+        });
+    }
+
+    private void loadAvailableMaps() {
+        if (mapButtonsContainer != null) {
+            System.out.println("🔍 Début chargement maps...");
+
+            // Vider les boutons existants
+            mapButtonsContainer.getChildren().clear();
+            mapButtons.clear();
+
+            List<String> availableMaps = mapManager.getMapsList();
+            System.out.println("🗺️ Maps trouvées : " + availableMaps);
+            System.out.println("🗺️ Nombre de maps : " + availableMaps.size());
+
+            if (availableMaps.isEmpty()) {
+                Label noMapsLabel = new Label("Aucune map disponible");
+                noMapsLabel.setStyle("-fx-text-fill: #666666; -fx-font-size: 9px;");
+                mapButtonsContainer.getChildren().add(noMapsLabel);
+                System.out.println("⚠️ Aucune map disponible");
+            } else {
+                // Créer un bouton pour chaque map
+                for (String mapName : availableMaps) {
+                    Button mapButton = new Button(mapName);
+                    mapButton.getStyleClass().add("theme-btn");
+                    mapButton.setMaxWidth(280);
+                    mapButton.setMinWidth(280);
+
+                    // Marquer la map sélectionnée
+                    if (mapName.equals(selectedMapName)) {
+                        mapButton.getStyleClass().add("selected");
+                    }
+
+                    // Gestionnaire de clic
+                    mapButton.setOnAction(e -> selectMap(mapName, mapButton));
+
+                    mapButtons.add(mapButton);
+                    mapButtonsContainer.getChildren().add(mapButton);
+
+                    System.out.println("✅ Bouton créé pour : " + mapName);
+                }
+            }
+
+            System.out.println("🗺️ " + availableMaps.size() + " bouton(s) de map créé(s)");
+            System.out.println("🗺️ Sélection actuelle : " + selectedMapName);
+        } else {
+            System.out.println("❌ mapButtonsContainer est null !");
+        }
+    }
+
+    private void selectMap(String mapName, Button clickedButton) {
+        // Changer la sélection
+        selectedMapName = mapName;
+        System.out.println("🗺️ Map sélectionnée : " + mapName);
+
+        // Mettre à jour l'apparence des boutons
+        updateMapButtonsSelection();
+    }
+
+    private void updateMapButtonsSelection() {
+        for (Button mapButton : mapButtons) {
+            mapButton.getStyleClass().removeAll("selected");
+
+            if (mapButton.getText().equals(selectedMapName)) {
+                mapButton.getStyleClass().add("selected");
+            }
+        }
+    }
+
+
+    private void updateThemeButtons() {
+        String currentTheme = GameControllerTheme1.getCurrentTheme();
+
+        // Reset tous les styles
+        theme1Button.getStyleClass().removeAll("selected");
+        theme2Button.getStyleClass().removeAll("selected");
+
+        // Appliquer le style sélectionné
+        if (currentTheme.equals("theme1")) {
+            theme1Button.getStyleClass().add("selected");
+        } else if (currentTheme.equals("theme2")) {
+            theme2Button.getStyleClass().add("selected");
+        }
+    }
+
+    @FXML
+    private void handleTheme1Button() {
+        selectTheme("theme1", "Thème Classique");
+    }
+
+    @FXML
+    private void handleTheme2Button() {
+        selectTheme("theme2", "Thème 2");
+    }
+
+    @FXML
+    private void handleTheme3Button() {
+        Alert alert = createStyledAlert("Thème non disponible",
+                "Thème 3",
+                "Ce thème n'est pas encore disponible.");
+        alert.showAndWait();
+    }
+
+    @FXML
+    private void handleThemeApplyButton() {
+        Alert alert = createStyledAlert("Configuration appliquée",
+                "Paramètres sauvegardés",
+                "✅ Configuration appliquée !\n\n" +
+                        "Thème : " + GameControllerTheme1.getCurrentTheme().toUpperCase() + "\n" +
+                        "Map : " + selectedMapName + "\n\n" +
+                        "Changements effectifs à la prochaine partie.");
+        alert.showAndWait();
+
+        hideThemeView();
+    }
+
+    @FXML
+    private void handleThemeCloseButton() {
+        hideThemeView();
+    }
+    // NOUVELLE MÉTHODE : Sélectionner un thème
+    private void selectTheme(String themeId, String themeName) {
+        String oldTheme = GameControllerTheme1.getCurrentTheme();
+
+        if (!themeId.equals(oldTheme)) {
+            GameControllerTheme1.setCurrentTheme(themeId);
+            updateThemeButtons();
+            System.out.println("🎨 Thème changé : " + oldTheme + " → " + themeId);
+        }
+    }
+
+    // Méthodes statiques pour l'accès externe
+    public static String getSelectedMapName() {
+        return selectedMapName;
+    }
+
+    public static void setSelectedMapName(String mapName) {
+        selectedMapName = mapName;
+    }
+
+
+    private void handleMapEditor() {
+        System.out.println("🗺️ Ouverture de l'éditeur de cartes...");
+
+        try {
+            // SAUVEGARDER les dimensions actuelles
+            Stage stage = (Stage) loginButton.getScene().getWindow();
+            double originalWidth = stage.getWidth();
+            double originalHeight = stage.getHeight();
+
+            // Charger la scène de l'éditeur de cartes
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/mapeditor.fxml"));
+            Parent editorRoot = loader.load();
+
+            // Obtenir le contrôleur de l'éditeur
+            MapEditorController editorController = loader.getController();
+
+            // PASSER les dimensions originales au contrôleur de l'éditeur
+            editorController.setOriginalDimensions(originalWidth, originalHeight);
+
+            // Créer la nouvelle scène
+            Scene editorScene = new Scene(editorRoot, 1000, 700);
+
+            // Appliquer le CSS si il existe
+            try {
+                editorScene.getStylesheets().add(getClass().getResource("/css/mapeditor.css").toExternalForm());
+            } catch (Exception e) {
+                System.out.println("⚠️ CSS mapeditor.css non trouvé, utilisation du style par défaut");
+            }
+
+            // Changer de scène et redimensionner pour l'éditeur
+            stage.setScene(editorScene);
+            stage.setTitle("Super Bomberman - Éditeur de Cartes");
+            stage.setWidth(1000);
+            stage.setHeight(700);
+            stage.centerOnScreen();
+
+            // Arrêter la musique du menu (optionnel)
+            if (musicManager != null) {
+                musicManager.pauseBackgroundMusic();
+            }
+
+            System.out.println("✅ Éditeur de cartes ouvert avec succès");
+
+        } catch (IOException e) {
+            System.err.println("❌ Erreur lors du chargement de l'éditeur de cartes : " + e.getMessage());
+            e.printStackTrace();
+
+            Alert alert = createStyledAlert("Erreur",
+                    "Impossible d'ouvrir l'éditeur",
+                    "Une erreur s'est produite lors du chargement de l'éditeur de cartes.\n\n" +
+                            "Vérifiez que le fichier mapeditor.fxml existe dans resources/fxml/\n\n" +
+                            "Erreur technique : " + e.getMessage());
+            alert.showAndWait();
+        } catch (Exception e) {
+            System.err.println("❌ Erreur inattendue : " + e.getMessage());
+            e.printStackTrace();
+
+            Alert alert = createStyledAlert("Erreur",
+                    "Erreur inattendue",
+                    "Une erreur inattendue s'est produite.\n\n" + e.getMessage());
+            alert.showAndWait();
         }
     }
 

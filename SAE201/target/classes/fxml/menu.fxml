@@ -38,7 +38,6 @@
     <VBox fx:id="menuContainer"
           alignment="CENTER"
           styleClass="menu-container"
-          spacing="20"
           StackPane.alignment="CENTER">
 
         <!-- Titre du jeu -->
@@ -63,8 +62,7 @@
         <!-- Container des boutons -->
         <VBox fx:id="menuButtons"
               alignment="CENTER"
-              styleClass="menu-buttons"
-              spacing="15">
+              styleClass="menu-buttons">
 
             <!-- Bouton PLAY -->
             <HBox fx:id="playButtonContainer"
@@ -275,6 +273,64 @@
                    text=""
                    styleClass="login-error"
                    visible="false" />
+        </VBox>
+    </StackPane>
+    <!-- NOUVEAU : Vue de sélection thème/map (cachée par défaut) -->
+    <StackPane fx:id="themeView"
+               styleClass="theme-overlay"
+               visible="false">
+        <VBox fx:id="themeContent"
+              alignment="CENTER"
+              spacing="25"
+              styleClass="theme-content">
+
+            <Label text="CONFIGURATION" styleClass="theme-title" />
+
+            <!-- Section Thème -->
+            <VBox spacing="12" alignment="CENTER">
+                <Label text="THÈME VISUEL:" styleClass="theme-section-title" />
+
+                <VBox spacing="8" alignment="CENTER">
+                    <Button fx:id="theme1Button"
+                            text="THÈME CLASSIQUE"
+                            styleClass="theme-btn"
+                            onAction="#handleTheme1Button" />
+
+                    <Button fx:id="theme2Button"
+                            text="THÈME 2"
+                            styleClass="theme-btn"
+                            onAction="#handleTheme2Button" />
+
+                    <Button fx:id="theme3Button"
+                            text="THÈME 3 (bientôt)"
+                            styleClass="theme-btn-disabled"
+                            onAction="#handleTheme3Button"
+                            disable="true" />
+                </VBox>
+            </VBox>
+
+            <!-- Section Map -->
+            <VBox spacing="12" alignment="CENTER">
+                <Label text="CARTE:" styleClass="theme-section-title" />
+
+                <VBox fx:id="mapButtonsContainer" spacing="8" alignment="CENTER">
+                    <!-- Les boutons de maps seront ajoutés dynamiquement ici -->
+                </VBox>
+            </VBox>
+
+            <!-- Boutons d'action -->
+            <HBox spacing="15" alignment="CENTER">
+                <Button fx:id="themeApplyButton"
+                        text="APPLIQUER"
+                        styleClass="theme-btn-apply"
+                        onAction="#handleThemeApplyButton" />
+
+                <Button fx:id="themeCloseButton"
+                        text="FERMER"
+                        styleClass="theme-btn-close"
+                        onAction="#handleThemeCloseButton" />
+            </HBox>
+
         </VBox>
     </StackPane>
 
