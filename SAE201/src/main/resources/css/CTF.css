@@ -1,0 +1,263 @@
+/* ========== GENERAL STYLES ========== */
+.root {
+    -fx-font-family: 'Press Start 2P', 'Courier New', monospace;
+    -fx-background-color: #202020;
+}
+
+/* ========== HEADER ========== */
+.header {
+    -fx-background-color: #F68400;
+    -fx-padding: 10px;
+    -fx-border-color: #861E04;
+    -fx-border-width: 0 0 5px 0;
+}
+
+.title {
+    -fx-text-fill: #ecf0f1;
+    -fx-font-weight: bold;
+}
+
+/* ========== GAME AREA ========== */
+.game-area {
+    -fx-background-color: #444444;
+    -fx-padding: 20px;
+    -fx-border-color: #333333;
+    -fx-border-width: 3px;
+    -fx-border-radius: 5px;
+}
+
+.game-grid {
+    -fx-grid-lines-visible: false;
+    -fx-alignment: center;
+}
+
+.game-cell {
+    -fx-min-width: 40px;
+    -fx-min-height: 40px;
+    -fx-max-width: 40px;
+    -fx-max-height: 40px;
+    -fx-border-color: transparent;
+}
+
+/* ========== TIMER DISPLAY ========== */
+.timer-display {
+    -fx-text-fill: white;
+    -fx-font-size: 30px;
+    -fx-background-color: black;
+    -fx-padding: 10px 16px;
+    -fx-background-radius: 5px;
+    -fx-border-color: #861E04;
+    -fx-border-width: 3px;
+    -fx-font-family: 'Press Start 2P', 'Courier New', monospace;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.6), 5, 0, 0, 3);
+}
+
+/* ========== CONTROLS ========== */
+.controls {
+    -fx-padding: 15px;
+    -fx-border-width: 3px 0 0 0;
+    -fx-border-color: #333333;
+    -fx-background-color: #222222;
+}
+
+.controls Button {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 8px 16px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-cursor: hand;
+}
+
+.controls Button:hover {
+    -fx-background-color: #2980b9;
+    -fx-effect: dropshadow(three-pass-box, rgba(52, 152, 219, 0.5), 5, 0, 0, 0);
+}
+
+.controls Button:pressed {
+    -fx-background-color: #21618c;
+}
+
+.controls Button:disabled {
+    -fx-background-color: #7f8c8d;
+    -fx-cursor: default;
+}
+
+.controls Label {
+    -fx-text-fill: #ecf0f1;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+}
+
+/* ========== PAUSE MENU ========== */
+.pause-overlay {
+    -fx-background-color: rgba(0, 0, 0, 0.7);
+}
+
+.pause-menu-content {
+    -fx-background-color: #F68400;
+    -fx-border-color: #861E04;
+    -fx-border-width: 3px;
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+    -fx-max-width: 300px;
+    -fx-max-height: 250px;
+    -fx-font-family: 'Press Start 2P', 'Courier New', monospace;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0.5, 0, 5);
+}
+
+.pause-title {
+    -fx-text-fill: white;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.7), 2, 0, 0, 2);
+}
+
+.pause-button-resume {
+    -fx-background-color: #27ae60;
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-padding: 10px 30px;
+    -fx-background-radius: 5px;
+    -fx-cursor: hand;
+    -fx-min-width: 200px;
+    -fx-effect: innershadow(three-pass-box, rgba(0,0,0,0.4), 2, 0, 0, 2);
+}
+
+.pause-button-resume:hover {
+    -fx-background-color: #2ecc71;
+    -fx-effect: dropshadow(three-pass-box, rgba(46, 204, 113, 0.6), 5, 0, 0, 0);
+}
+
+.pause-button-menu {
+    -fx-background-color: #e74c3c;
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-padding: 10px 30px;
+    -fx-background-radius: 5px;
+    -fx-cursor: hand;
+    -fx-min-width: 200px;
+    -fx-effect: innershadow(three-pass-box, rgba(0,0,0,0.4), 2, 0, 0, 2);
+}
+
+.pause-button-menu:hover {
+    -fx-background-color: #c0392b;
+    -fx-effect: dropshadow(three-pass-box, rgba(231, 76, 60, 0.6), 5, 0, 0, 0);
+}
+
+/* ========== FLAG STYLES ========== */
+.red-flag {
+    -fx-effect: dropshadow(three-pass-box, rgba(255, 0, 0, 0.5), 8, 0.5, 0, 0);
+}
+
+.blue-flag {
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 255, 0.5), 8, 0.5, 0, 0);
+}
+
+.flag-base {
+    -fx-opacity: 0.7;
+}
+
+.player-with-flag {
+    -fx-effect: dropshadow(three-pass-box, rgba(255, 215, 0, 0.8), 10, 0.7, 0, 0);
+}
+
+/* ========== SCORE DISPLAY ========== */
+.score-display {
+    -fx-background-color: rgba(0, 0, 0, 0.7);
+    -fx-padding: 10px;
+    -fx-background-radius: 5px;
+    -fx-border-radius: 5px;
+    -fx-border-color: #F68400;
+    -fx-border-width: 2px;
+}
+
+.team-red {
+    -fx-text-fill: #ff5555;
+    -fx-font-weight: bold;
+}
+
+.team-blue {
+    -fx-text-fill: #5555ff;
+    -fx-font-weight: bold;
+}
+
+.score-number {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+/* ========== RESPAWN COUNTDOWN ========== */
+.respawn-countdown {
+    -fx-font-size: 24px;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(three-pass-box, black, 2, 0, 0, 0);
+}
+
+/* ========== WINNING SCREEN ========== */
+.winning-overlay {
+    -fx-background-color: rgba(0, 0, 0, 0.8);
+}
+
+.winning-content {
+    -fx-background-color: #F68400;
+    -fx-border-color: #861E04;
+    -fx-border-width: 5px;
+    -fx-background-radius: 15px;
+    -fx-border-radius: 15px;
+    -fx-padding: 30px;
+    -fx-max-width: 500px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.9), 15, 0.5, 0, 7);
+}
+
+.winning-title {
+    -fx-font-size: 36px;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.7), 3, 0, 0, 3);
+}
+
+.winning-button {
+    -fx-background-color: linear-gradient(to bottom, #ff9933, #ff6600);
+    -fx-text-fill: white;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-padding: 15px 30px;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-border-color: #ffcc66;
+    -fx-border-width: 2px;
+    -fx-cursor: hand;
+}
+
+.winning-button:hover {
+    -fx-background-color: linear-gradient(to bottom, #ffcc66, #ff9933);
+    -fx-effect: dropshadow(three-pass-box, rgba(255,102,0,0.8), 10, 0.5, 0, 0);
+}
+
+/* ========== ANIMATIONS ========== */
+@keyframes flag-pulse {
+    0% { -fx-scale-x: 1; -fx-scale-y: 1; }
+    50% { -fx-scale-x: 1.1; -fx-scale-y: 1.1; }
+    100% { -fx-scale-x: 1; -fx-scale-y: 1; }
+}
+
+.flag-captured {
+    -fx-animation: flag-pulse 1.5s infinite;
+}
+
+/* ========== GAME TIPS ========== */
+.game-tip {
+    -fx-background-color: rgba(0, 0, 0, 0.7);
+    -fx-padding: 10px;
+    -fx-background-radius: 5px;
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-max-width: 300px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.6), 5, 0, 0, 3);
+}

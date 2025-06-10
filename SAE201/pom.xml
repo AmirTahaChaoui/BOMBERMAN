@@ -74,6 +74,7 @@
                     <include>**/*.jpg</include>
                     <include>**/*.ttf</include>
                     <include>**/*.mp3</include>
+                    <include>**/*.json</include>
                 </includes>
             </resource>
         </resources>
