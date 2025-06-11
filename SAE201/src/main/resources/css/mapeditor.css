@@ -1,0 +1,413 @@
+/* mapeditor.css - Styles pour l'éditeur de cartes Super Bomberman */
+
+/* ========== FONT LOADING ========== */
+@font-face {
+    font-family: 'Press Start 2P';
+    src: url('../fonts/PressStart2P.ttf') format('truetype');
+}
+
+/* ========== ROOT STYLES ========== */
+.root {
+    -fx-font-family: 'Press Start 2P', 'Courier New', monospace;
+    -fx-font-size: 10px;
+    -fx-text-fill: white;
+    -fx-background-color: linear-gradient(to bottom, #0a0a0a, #1a1a1a, #0f0f0f);
+}
+
+/* ========== PANEL D'OUTILS (GAUCHE) ========== */
+.tool-panel {
+    -fx-background-color: linear-gradient(to bottom, #2a2a2a, #1f1f1f, #1a1a1a);
+    -fx-border-color: #ff6600, #cc5500;
+    -fx-border-width: 3px, 2px;
+    -fx-border-style: solid, solid;
+    -fx-border-insets: 0, 3px;
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.9), 15, 0.3, 5, 5),
+    innershadow(three-pass-box, rgba(68,68,68,0.3), 2, 0, 2, 2),
+    innershadow(three-pass-box, rgba(0,0,0,0.8), 2, 0, -2, -2);
+}
+
+/* ========== TITRE DE L'ÉDITEUR ========== */
+.editor-title {
+    -fx-text-fill: linear-gradient(to bottom, #ffcc66, #ff9933);
+    -fx-font-size: 14px;
+    -fx-font-family: 'Press Start 2P', 'Courier New', monospace;
+    -fx-font-weight: bold;
+    -fx-text-alignment: center;
+    -fx-alignment: center;
+    -fx-padding: 10px;
+    -fx-letter-spacing: 2px;
+    -fx-effect: dropshadow(three-pass-box, rgba(255,153,51,0.8), 4, 0, 0, 3),
+    dropshadow(three-pass-box, rgba(0,0,0,0.9), 3, 0, 0, 1);
+}
+
+/* ========== TITRES DE SECTIONS ========== */
+.section-title {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 10px;
+    -fx-font-family: 'Press Start 2P', 'Courier New', monospace;
+    -fx-font-weight: bold;
+    -fx-text-alignment: center;
+    -fx-alignment: center;
+    -fx-padding: 8px 0 5px 0;
+    -fx-letter-spacing: 1px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 2, 0, 0, 1);
+}
+
+/* ========== SÉPARATEURS ========== */
+.separator .line {
+    -fx-background-color: linear-gradient(to right, transparent, #ff6600, transparent);
+    -fx-pref-height: 2px;
+    -fx-effect: dropshadow(three-pass-box, rgba(255,102,0,0.6), 2, 0, 0, 1);
+}
+
+/* ========== BOUTONS RADIO (OUTILS) ========== */
+.tool-radio {
+    -fx-text-fill: #ffffff;
+    -fx-font-family: 'Press Start 2P', 'Courier New', monospace;
+    -fx-font-size: 8px;
+    -fx-padding: 5px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 1, 0, 0, 1);
+}
+
+.tool-radio .radio-button {
+    -fx-background-color: linear-gradient(to bottom, #333333, #222222);
+    -fx-border-color: #666666;
+    -fx-border-width: 2px;
+    -fx-border-radius: 3px;
+    -fx-background-radius: 3px;
+    -fx-effect: innershadow(three-pass-box, rgba(0,0,0,0.8), 2, 0, 1, 1);
+}
+
+.tool-radio:selected .radio-button {
+    -fx-background-color: linear-gradient(to bottom, #ff6600, #e55a00);
+    -fx-border-color: #ff9933;
+    -fx-effect: dropshadow(three-pass-box, rgba(255,102,0,0.8), 3, 0, 0, 2),
+    innershadow(three-pass-box, rgba(255,153,51,0.4), 1, 0, 1, 1);
+}
+
+.tool-radio:hover {
+    -fx-text-fill: #ffcc66;
+    -fx-background-color: rgba(255,102,0,0.1);
+    -fx-background-radius: 4px;
+}
+
+/* ========== LABELS D'INFORMATION ========== */
+.info-label {
+    -fx-text-fill: #cccccc;
+    -fx-font-family: 'Press Start 2P', 'Courier New', monospace;
+    -fx-font-size: 7px;
+    -fx-padding: 2px 0;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 1, 0, 0, 1);
+}
+
+/* ========== CHAMP NOM DE MAP ========== */
+.map-name-field {
+    -fx-background-color: linear-gradient(to bottom, #1a1a1a, #0f0f0f);
+    -fx-border-color: #666666, #333333;
+    -fx-border-width: 2px, 1px;
+    -fx-border-style: solid, solid;
+    -fx-border-insets: 0, 2px;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-text-fill: #ffffff;
+    -fx-font-family: 'Press Start 2P', 'Courier New', monospace;
+    -fx-font-size: 8px;
+    -fx-padding: 8px 10px;
+    -fx-prompt-text-fill: #888888;
+    -fx-effect: innershadow(three-pass-box, rgba(0,0,0,0.8), 2, 0, 1, 1),
+    dropshadow(three-pass-box, rgba(0,0,0,0.6), 3, 0, 0, 2);
+}
+
+.map-name-field:focused {
+    -fx-border-color: #ff6600, #ff9933;
+    -fx-background-color: linear-gradient(to bottom, #1f1f1f, #1a1a1a);
+    -fx-effect: innershadow(three-pass-box, rgba(0,0,0,0.8), 2, 0, 1, 1),
+    dropshadow(three-pass-box, rgba(255,102,0,0.6), 4, 0, 0, 0),
+    dropshadow(three-pass-box, rgba(0,0,0,0.6), 3, 0, 0, 2);
+}
+
+.map-name-field:hover {
+    -fx-border-color: #888888, #555555;
+    -fx-background-color: linear-gradient(to bottom, #1f1f1f, #1a1a1a);
+}
+
+/* ========== BOUTONS DE L'ÉDITEUR ========== */
+.editor-btn {
+    -fx-font-family: 'Press Start 2P', 'Courier New', monospace;
+    -fx-font-size: 8px;
+    -fx-font-weight: bold;
+    -fx-padding: 10px 15px;
+    -fx-background-radius: 6px;
+    -fx-border-radius: 6px;
+    -fx-cursor: hand;
+    -fx-text-alignment: center;
+    -fx-alignment: center;
+    -fx-letter-spacing: 1px;
+    -fx-border-width: 2px, 1px;
+    -fx-border-style: solid, solid;
+    -fx-border-insets: 0, 2px;
+}
+
+/* ========== BOUTON SAUVEGARDER ========== */
+.save-btn {
+    -fx-background-color: linear-gradient(to bottom, #32cd32, #228b22, #1f7a1f);
+    -fx-border-color: #90ee90, #32cd32;
+    -fx-text-fill: #000000;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 4, 0, 2, 2),
+    innershadow(three-pass-box, rgba(144,238,144,0.4), 1, 0, 1, 1),
+    innershadow(three-pass-box, rgba(34,139,34,0.6), 1, 0, -1, -1);
+}
+
+.save-btn:hover {
+    -fx-background-color: linear-gradient(to bottom, #90ee90, #32cd32, #228b22);
+    -fx-border-color: #98fb98, #90ee90;
+    -fx-effect: dropshadow(three-pass-box, rgba(50,205,50,0.9), 6, 0, 0, 3),
+    innershadow(three-pass-box, rgba(152,251,152,0.6), 2, 0, 1, 1),
+    innershadow(three-pass-box, rgba(34,139,34,0.8), 2, 0, -1, -1);
+}
+
+.save-btn:pressed {
+    -fx-background-color: linear-gradient(to bottom, #1f7a1f, #1b6b1b, #175717);
+    -fx-translate-y: 1px;
+    -fx-effect: innershadow(three-pass-box, rgba(23,87,23,0.9), 3, 0, 2, 2);
+}
+
+/* ========== BOUTON CHARGER ========== */
+.load-btn {
+    -fx-background-color: linear-gradient(to bottom, #4169e1, #1e3a8a, #1a237e);
+    -fx-border-color: #87ceeb, #4169e1;
+    -fx-text-fill: #ffffff;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 4, 0, 2, 2),
+    innershadow(three-pass-box, rgba(135,206,235,0.4), 1, 0, 1, 1),
+    innershadow(three-pass-box, rgba(26,35,126,0.6), 1, 0, -1, -1);
+}
+
+.load-btn:hover {
+    -fx-background-color: linear-gradient(to bottom, #87ceeb, #4169e1, #1e3a8a);
+    -fx-border-color: #b0e0e6, #87ceeb;
+    -fx-effect: dropshadow(three-pass-box, rgba(65,105,225,0.9), 6, 0, 0, 3),
+    innershadow(three-pass-box, rgba(176,224,230,0.6), 2, 0, 1, 1),
+    innershadow(three-pass-box, rgba(26,35,126,0.8), 2, 0, -1, -1);
+}
+
+.load-btn:pressed {
+    -fx-background-color: linear-gradient(to bottom, #1a237e, #151d6b, #101758);
+    -fx-translate-y: 1px;
+    -fx-effect: innershadow(three-pass-box, rgba(16,23,88,0.9), 3, 0, 2, 2);
+}
+
+/* ========== BOUTON TESTER ========== */
+.test-btn {
+    -fx-background-color: linear-gradient(to bottom, #ff6600, #e55a00, #cc5500);
+    -fx-border-color: #ff9933, #ff6600;
+    -fx-text-fill: #000000;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 4, 0, 2, 2),
+    innershadow(three-pass-box, rgba(255,153,51,0.4), 1, 0, 1, 1),
+    innershadow(three-pass-box, rgba(170,51,0,0.6), 1, 0, -1, -1);
+}
+
+.test-btn:hover {
+    -fx-background-color: linear-gradient(to bottom, #ffaa33, #ff6600, #e55a00);
+    -fx-border-color: #ffcc66, #ff9933;
+    -fx-effect: dropshadow(three-pass-box, rgba(255,102,0,0.9), 6, 0, 0, 3),
+    innershadow(three-pass-box, rgba(255,204,102,0.6), 2, 0, 1, 1),
+    innershadow(three-pass-box, rgba(204,85,0,0.8), 2, 0, -1, -1);
+}
+
+.test-btn:pressed {
+    -fx-background-color: linear-gradient(to bottom, #cc5500, #bb4400, #aa3300);
+    -fx-translate-y: 1px;
+    -fx-effect: innershadow(three-pass-box, rgba(136,34,0,0.9), 3, 0, 2, 2);
+}
+
+/* ========== BOUTON EFFACER ========== */
+.clear-btn {
+    -fx-background-color: linear-gradient(to bottom, #dc143c, #b91c3c, #8b0000);
+    -fx-border-color: #ff69b4, #dc143c;
+    -fx-text-fill: #ffffff;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 4, 0, 2, 2),
+    innershadow(three-pass-box, rgba(255,105,180,0.4), 1, 0, 1, 1),
+    innershadow(three-pass-box, rgba(139,0,0,0.6), 1, 0, -1, -1);
+}
+
+.clear-btn:hover {
+    -fx-background-color: linear-gradient(to bottom, #ff69b4, #dc143c, #b91c3c);
+    -fx-border-color: #ffb6c1, #ff69b4;
+    -fx-effect: dropshadow(three-pass-box, rgba(220,20,60,0.9), 6, 0, 0, 3),
+    innershadow(three-pass-box, rgba(255,182,193,0.6), 2, 0, 1, 1),
+    innershadow(three-pass-box, rgba(139,0,0,0.8), 2, 0, -1, -1);
+}
+
+.clear-btn:pressed {
+    -fx-background-color: linear-gradient(to bottom, #8b0000, #7a0000, #690000);
+    -fx-translate-y: 1px;
+    -fx-effect: innershadow(three-pass-box, rgba(105,0,0,0.9), 3, 0, 2, 2);
+}
+
+/* ========== BOUTON RETOUR ========== */
+.back-btn {
+    -fx-background-color: linear-gradient(to bottom, #666666, #555555, #444444);
+    -fx-border-color: #888888, #666666;
+    -fx-text-fill: #ffffff;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 4, 0, 2, 2),
+    innershadow(three-pass-box, rgba(136,136,136,0.4), 1, 0, 1, 1),
+    innershadow(three-pass-box, rgba(68,68,68,0.6), 1, 0, -1, -1);
+}
+
+.back-btn:hover {
+    -fx-background-color: linear-gradient(to bottom, #888888, #666666, #555555);
+    -fx-border-color: #aaaaaa, #888888;
+    -fx-text-fill: #ffcc66;
+    -fx-effect: dropshadow(three-pass-box, rgba(136,136,136,0.6), 6, 0, 0, 3),
+    innershadow(three-pass-box, rgba(170,170,170,0.4), 2, 0, 1, 1),
+    innershadow(three-pass-box, rgba(68,68,68,0.8), 2, 0, -1, -1);
+}
+
+.back-btn:pressed {
+    -fx-background-color: linear-gradient(to bottom, #444444, #333333, #222222);
+    -fx-translate-y: 1px;
+    -fx-effect: innershadow(three-pass-box, rgba(34,34,34,0.9), 3, 0, 2, 2);
+}
+
+/* ========== ZONE DE LA CARTE ========== */
+.map-title {
+    -fx-text-fill: linear-gradient(to bottom, #ffffff, #cccccc);
+    -fx-font-size: 12px;
+    -fx-font-family: 'Press Start 2P', 'Courier New', monospace;
+    -fx-font-weight: bold;
+    -fx-text-alignment: center;
+    -fx-alignment: center;
+    -fx-padding: 10px;
+    -fx-letter-spacing: 2px;
+    -fx-effect: dropshadow(three-pass-box, rgba(255,102,0,0.8), 2, 0, 0, 2),
+    dropshadow(three-pass-box, rgba(0,0,0,0.9), 3, 0, 0, 1);
+}
+
+/* ========== SCROLL PANE DE LA CARTE ========== */
+.map-scroll {
+    -fx-background-color: linear-gradient(to bottom, #1a1a1a, #0f0f0f);
+    -fx-border-color: #666666, #333333;
+    -fx-border-width: 3px, 2px;
+    -fx-border-style: solid, solid;
+    -fx-border-insets: 0, 3px;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-effect: innershadow(three-pass-box, rgba(0,0,0,0.8), 5, 0, 3, 3),
+    dropshadow(three-pass-box, rgba(0,0,0,0.7), 8, 0, 2, 2);
+}
+
+.map-scroll .scroll-bar {
+    -fx-background-color: #333333;
+    -fx-border-color: #666666;
+    -fx-border-width: 1px;
+}
+
+.map-scroll .scroll-bar .thumb {
+    -fx-background-color: linear-gradient(to bottom, #ff6600, #cc5500);
+    -fx-border-color: #ff9933;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+}
+
+.map-scroll .scroll-bar .thumb:hover {
+    -fx-background-color: linear-gradient(to bottom, #ff9933, #ff6600);
+}
+
+/* ========== GRILLE DE LA CARTE ========== */
+.map-grid {
+    -fx-background-color: #0a0a0a;
+    -fx-effect: innershadow(three-pass-box, rgba(0,0,0,0.9), 3, 0, 2, 2);
+}
+
+/* ========== CELLULES DE LA CARTE ========== */
+.map-cell {
+    -fx-stroke: #333333;
+    -fx-stroke-width: 0.5;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 1, 0, 0, 1);
+}
+
+.map-cell:hover {
+    -fx-stroke: #ff6600;
+    -fx-stroke-width: 1.5;
+    -fx-effect: dropshadow(three-pass-box, rgba(255,102,0,0.6), 2, 0, 0, 0);
+}
+
+/* ========== INSTRUCTIONS ========== */
+.instructions {
+    -fx-background-color: linear-gradient(to bottom, rgba(42,42,42,0.8), rgba(26,26,26,0.8));
+    -fx-border-color: #555555;
+    -fx-border-width: 2px;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-padding: 10px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.7), 3, 0, 1, 1),
+    innershadow(three-pass-box, rgba(68,68,68,0.3), 1, 0, 1, 1);
+}
+
+.instruction-label {
+    -fx-text-fill: #cccccc;
+    -fx-font-family: 'Press Start 2P', 'Courier New', monospace;
+    -fx-font-size: 7px;
+    -fx-text-alignment: center;
+    -fx-alignment: center;
+    -fx-padding: 1px 0;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 1, 0, 0, 1);
+}
+
+/* ========== EFFETS DE SURVOL POUR BOUTONS ========== */
+.editor-btn:focused {
+    -fx-border-width: 3px, 1px;
+    -fx-effect: dropshadow(three-pass-box, rgba(255,170,51,0.8), 6, 0, 0, 3);
+}
+
+/* ========== ANIMATIONS ========== */
+.editor-btn {
+    -fx-transition: all 0.15s ease-in-out;
+}
+
+/* ========== RESPONSIVITÉ ========== */
+@media (max-width: 1024px) {
+    .editor-title {
+        -fx-font-size: 12px;
+    }
+
+    .section-title {
+        -fx-font-size: 9px;
+    }
+
+    .editor-btn {
+        -fx-font-size: 7px;
+        -fx-padding: 8px 12px;
+    }
+}
+
+/* ========== ÉTATS DÉSACTIVÉS ========== */
+.editor-btn:disabled {
+    -fx-opacity: 0.6;
+    -fx-background-color: linear-gradient(to bottom, #2a2a2a, #1f1f1f, #1a1a1a);
+    -fx-text-fill: #666666;
+    -fx-border-color: #444444, #333333;
+    -fx-cursor: default;
+}
+
+/* ========== FOCUS GLOBAL ========== */
+.root:focused {
+    -fx-effect: dropshadow(three-pass-box, rgba(255,102,0,0.3), 15, 0.2, 0, 3);
+}
+
+/* ========== TOOLTIPS PERSONNALISÉS ========== */
+.tooltip {
+    -fx-background-color: linear-gradient(to bottom, #2a2a2a, #1f1f1f);
+    -fx-border-color: #ff6600;
+    -fx-border-width: 2px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-text-fill: #ffffff;
+    -fx-font-family: 'Press Start 2P', 'Courier New', monospace;
+    -fx-font-size: 7px;
+    -fx-padding: 5px 8px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 5, 0, 2, 2);
+}

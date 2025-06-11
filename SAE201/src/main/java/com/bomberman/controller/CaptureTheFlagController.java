@@ -169,9 +169,8 @@ public class CaptureTheFlagController implements Initializable {
     private static final int WINNING_SCORE = 3;
     private static final int FLAG_RETURN_TIME = 10;
 
-    // Labels pour affichage des scores CTF
-    //@FXML private Label player1ScoreLabel;
-    //@FXML private Label player2ScoreLabel;
+    @FXML private Label player1ScoreLabel;
+    @FXML private Label player2ScoreLabel;
 
     // Images CTF
     private Image redFlagImage;
@@ -490,13 +489,22 @@ public class CaptureTheFlagController implements Initializable {
 
     // NOUVELLE MÉTHODE : Mettre à jour l'affichage des scores
     private void updateScoreDisplay() {
-    //    if (player1ScoreLabel != null) {
-    //        player1ScoreLabel.setText(String.valueOf(player1Score));
-    //    }
-    //    if (player2ScoreLabel != null) {
-    //        player2ScoreLabel.setText(String.valueOf(player2Score));
-    //    }
-        System.out.println("📊 [CTF] Score: J1=" + player1Score + " J2=" + player2Score);
+        System.out.println("📊 [CTF] Mise à jour affichage scores: J1=" + player1Score + " J2=" + player2Score);
+
+        // Mettre à jour les labels si ils existent
+        if (player1ScoreLabel != null) {
+            player1ScoreLabel.setText(String.valueOf(player1Score));
+            System.out.println("✅ [CTF] Label Joueur 1 mis à jour: " + player1Score);
+        } else {
+            System.out.println("❌ [CTF] player1ScoreLabel est null!");
+        }
+
+        if (player2ScoreLabel != null) {
+            player2ScoreLabel.setText(String.valueOf(player2Score));
+            System.out.println("✅ [CTF] Label Joueur 2 mis à jour: " + player2Score);
+        } else {
+            System.out.println("❌ [CTF] player2ScoreLabel est null!");
+        }
     }
 
     // Méthodes de validation (identiques à GameControllerTheme1)
@@ -610,11 +618,11 @@ public class CaptureTheFlagController implements Initializable {
             return;
         }
 
-        // Le reste du code (mouvement des joueurs)
+        // ✅ MODIFICATION CRITIQUE : Vérifier que le jeu est démarré ET que le joueur est vivant
         if (!gameStarted || isPauseMenuVisible) return;
 
-        // Contrôles du joueur 1 (ZQSD + ESPACE)
-        if (player1Alive) {
+        // ✅ NOUVEAU : Contrôles du joueur 1 (ZQSD + ESPACE) - SEULEMENT si vivant
+        if (player1Alive) { // ✅ Cette vérification empêche le mouvement quand mort
             switch (event.getCode()) {
                 case Z: // Haut
                     if (player1.moveUp(gameBoard)) {
@@ -646,8 +654,8 @@ public class CaptureTheFlagController implements Initializable {
             }
         }
 
-        // Contrôles du joueur 2 (OKML + SHIFT)
-        if (player2Alive) {
+        // ✅ NOUVEAU : Contrôles du joueur 2 (OKML + SHIFT) - SEULEMENT si vivant
+        if (player2Alive) { // ✅ Cette vérification empêche le mouvement quand mort
             switch (event.getCode()) {
                 case O: // Haut
                     if (player2.moveUp(gameBoard)) {
@@ -962,16 +970,18 @@ public class CaptureTheFlagController implements Initializable {
         if (hasFlag) {
             if (playerNumber == 1) {
                 player1Sprite.setStroke(Color.YELLOW);
-                player1Sprite.setStrokeWidth(3);
+                player1Sprite.setStrokeWidth(2); // ✅ RÉDUIT de 3 à 2 pixels
             } else {
                 player2Sprite.setStroke(Color.YELLOW);
-                player2Sprite.setStrokeWidth(3);
+                player2Sprite.setStrokeWidth(2); // ✅ RÉDUIT de 3 à 2 pixels
             }
         } else {
             if (playerNumber == 1) {
                 player1Sprite.setStroke(null);
+                player1Sprite.setStrokeWidth(0); // ✅ AJOUTÉ : Remettre à 0
             } else {
                 player2Sprite.setStroke(null);
+                player2Sprite.setStrokeWidth(0); // ✅ AJOUTÉ : Remettre à 0
             }
         }
     }
@@ -1320,35 +1330,91 @@ public class CaptureTheFlagController implements Initializable {
 
     // MODIFIÉE : Gestion de la mort avec logique CTF
     private void playerDied(int playerNumber) {
+        // ✅ NOUVEAU : Marquer le joueur comme mort IMMÉDIATEMENT
+        if (playerNumber == 1) {
+            player1Alive = false;
+            System.out.println("💀 [CTF] LE JOUEUR 1 EST MORT !");
+            player1Sprite.setFill(new ImagePattern(persoDeath));
+        } else {
+            player2Alive = false;
+            System.out.println("💀 [CTF] LE JOUEUR 2 EST MORT !");
+            player2Sprite.setFill(new ImagePattern(perso2Death));
+        }
+
+        // Lâcher le drapeau si le joueur en avait un
         if ((playerNumber == 1 && player1HasFlag) || (playerNumber == 2 && player2HasFlag)) {
             dropFlag(playerNumber);
         }
 
-        // En CTF, les joueurs respawn après un délai
+        // ✅ NOUVEAU : Timer de respawn de 5 secondes pendant lequel le joueur ne peut rien faire
         Timeline respawnTimer = new Timeline(new KeyFrame(Duration.seconds(5), e -> {
             respawnPlayer(playerNumber);
         }));
         respawnTimer.play();
+
+        System.out.println("⏱️ [CTF] Joueur " + playerNumber + " va respawn dans 5 secondes...");
     }
+
+    private void showRespawnCountdown(int playerNumber) {
+        // Créer un label de countdown temporaire
+        Label countdownLabel = new Label("Respawn dans: 5");
+        countdownLabel.setStyle("-fx-font-size: 20px; -fx-text-fill: red; -fx-font-weight: bold;");
+
+        // Positionner le label près du joueur mort
+        if (playerNumber == 1) {
+            gameGrid.add(countdownLabel, player1.getCol(), player1.getRow() - 1);
+        } else {
+            gameGrid.add(countdownLabel, player2.getCol(), player2.getRow() - 1);
+        }
+
+        // Créer une timeline pour le countdown
+        Timeline countdownTimer = new Timeline();
+        for (int i = 0; i <= 4; i++) {
+            final int secondsLeft = 4 - i;
+            KeyFrame keyFrame = new KeyFrame(Duration.seconds(i + 1), e -> {
+                if (secondsLeft > 0) {
+                    countdownLabel.setText("Respawn dans: " + secondsLeft);
+                } else {
+                    gameGrid.getChildren().remove(countdownLabel);
+                }
+            });
+            countdownTimer.getKeyFrames().add(keyFrame);
+        }
+
+        countdownTimer.play();
+    }
+
 
     // NOUVELLE MÉTHODE : Respawn d'un joueur
     private void respawnPlayer(int playerNumber) {
         if (playerNumber == 1) {
+            // ✅ REMETTRE le joueur à sa position de spawn originale
             player1.setRow(1);
             player1.setCol(1);
-            player1Alive = true;
+            player1Alive = true; // ✅ IMPORTANT : Remettre alive à true
             player1Sprite.setFill(new ImagePattern(persoDown));
-            updatePlayer1Position();
-            System.out.println("♻️ [CTF] Joueur 1 a respawn !");
+
+            // Mettre à jour la position visuelle
+            gameGrid.getChildren().remove(player1Sprite);
+            gameGrid.add(player1Sprite, player1.getCol(), player1.getRow());
+
+            System.out.println("♻️ [CTF] Joueur 1 a respawn à la position (1,1) !");
         } else {
+            // ✅ REMETTRE le joueur à sa position de spawn originale
             player2.setRow(gameBoard.getHeight() - 2);
             player2.setCol(gameBoard.getWidth() - 2);
-            player2Alive = true;
+            player2Alive = true; // ✅ IMPORTANT : Remettre alive à true
             player2Sprite.setFill(new ImagePattern(perso2Down));
-            updatePlayer2Position();
-            System.out.println("♻️ [CTF] Joueur 2 a respawn !");
+
+            // Mettre à jour la position visuelle
+            gameGrid.getChildren().remove(player2Sprite);
+            gameGrid.add(player2Sprite, player2.getCol(), player2.getRow());
+
+            System.out.println("♻️ [CTF] Joueur 2 a respawn à la position (" + (gameBoard.getHeight() - 2) + "," + (gameBoard.getWidth() - 2) + ") !");
         }
     }
+
+
 
     // NOUVELLE MÉTHODE : Fin de partie CTF
     private void endGame() {

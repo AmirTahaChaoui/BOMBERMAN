@@ -30,25 +30,6 @@
 
             <Separator/>
 
-            <!-- Outils de dessin -->
-            <Label text="OUTILS:" styleClass="section-title">
-                <font>
-                    <Font name="System Bold" size="12"/>
-                </font>
-            </Label>
-
-            <VBox spacing="8">
-                <fx:define>
-                    <ToggleGroup fx:id="toolGroup"/>
-                </fx:define>
-
-                <RadioButton fx:id="emptyTool" text="1. Vider" toggleGroup="$toolGroup" styleClass="tool-radio"/>
-                <RadioButton fx:id="wallTool" text="2. Mur" toggleGroup="$toolGroup" styleClass="tool-radio"/>
-                <RadioButton fx:id="destructibleTool" text="3. Bloc" toggleGroup="$toolGroup" styleClass="tool-radio"/>
-            </VBox>
-
-            <Separator/>
-
             <!-- Informations -->
             <Label text="INFOS:" styleClass="section-title">
                 <font>
@@ -58,7 +39,7 @@
 
             <VBox fx:id="infoPanel" spacing="5">
                 <Label fx:id="mapSizeLabel" text="Taille: 15x13" styleClass="info-label"/>
-                <Label fx:id="currentToolLabel" text="Outil: Vider" styleClass="info-label"/>
+                <Label text="Mode: Murs Indestructibles" styleClass="info-label"/>
             </VBox>
 
             <Separator/>
@@ -83,12 +64,6 @@
                 </Button>
 
                 <Button fx:id="loadButton" text="CHARGER" onAction="#loadMap" styleClass="editor-btn,load-btn" maxWidth="Infinity">
-                    <font>
-                        <Font name="System Bold" size="10"/>
-                    </font>
-                </Button>
-
-                <Button fx:id="testButton" text="TESTER" onAction="#testMap" styleClass="editor-btn,test-btn" maxWidth="Infinity">
                     <font>
                         <Font name="System Bold" size="10"/>
                     </font>
@@ -132,10 +107,9 @@
                 </GridPane>
             </ScrollPane>
 
-            <!-- Instructions -->
+            <!-- Instructions simplifiées -->
             <VBox alignment="CENTER" spacing="5" styleClass="instructions">
-                <Label text="🖱️ Clic gauche : Placer" styleClass="instruction-label"/>
-                <Label text="⌨️ 1,2,3 : Changer d'outil" styleClass="instruction-label"/>
+                <Label text="🖱️ Clic gauche : Placer/Enlever mur" styleClass="instruction-label"/>
                 <Label text="⌨️ Ctrl+S : Sauvegarder" styleClass="instruction-label"/>
                 <Label text="⌨️ Échap : Retour menu" styleClass="instruction-label"/>
             </VBox>

@@ -48,15 +48,11 @@ public class MapEditorController implements Initializable {
     @FXML private VBox toolPanel;
     @FXML private VBox infoPanel;
 
-    // Outils
-    @FXML private ToggleGroup toolGroup;
-    @FXML private RadioButton emptyTool;
-    @FXML private RadioButton wallTool;
-    @FXML private RadioButton destructibleTool;
+    // ✅ SUPPRIMÉ : Outils de sélection
+    // Les RadioButton et ToggleGroup ont été retirés
 
     // Informations
     @FXML private Label mapSizeLabel;
-    @FXML private Label currentToolLabel;
     @FXML private TextField mapNameField;
 
     // Boutons d'action
@@ -70,7 +66,6 @@ public class MapEditorController implements Initializable {
     private static final int CELL_SIZE = 30;
     private static final int MAP_WIDTH = 15;
     private static final int MAP_HEIGHT = 13;
-    private static final String MAPS_FILE ="/SAE201/src/main/resources/donnees/maps.json";
 
     private double originalWidth = 800;  // Valeurs par défaut
     private double originalHeight = 600;
@@ -78,8 +73,7 @@ public class MapEditorController implements Initializable {
     // État de l'éditeur
     private int[][] mapData;
     private Rectangle[][] mapCells;
-    private int currentTool = 0; // 0=vide, 1=mur, 2=destructible
-    private List<MapData> allMaps;
+    // ✅ SUPPRIMÉ : currentTool (plus besoin de sélection d'outil)
 
     // Images
     private Image wallImage;
@@ -88,21 +82,20 @@ public class MapEditorController implements Initializable {
 
     // Gestionnaires
     private UserManager userManager;
-    private Gson gson;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         userManager = UserManager.getInstance();
-        mapManager = MapManager.getInstance(); // Remplace gson
+        mapManager = MapManager.getInstance();
 
         loadImages();
         initializeMapData();
         createMapGrid();
-        setupTools();
+        setupDefaults(); // ✅ RENOMMÉ : setupTools() -> setupDefaults()
         setupKeyboardControls();
         updateInfoPanel();
 
-        System.out.println("🗺️ Map Editor initialisé");
+        System.out.println("🗺️ Map Editor simplifié initialisé");
     }
 
     private void loadImages() {
@@ -129,61 +122,6 @@ public class MapEditorController implements Initializable {
         this.originalWidth = width;
         this.originalHeight = height;
         System.out.println("🔍 Dimensions originales sauvegardées : " + width + "x" + height);
-    }
-
-    private void loadExistingMaps() {
-        try {
-            File mapsFile = new File(MAPS_FILE);
-            File directory = mapsFile.getParentFile();
-
-            // Créer le dossier si nécessaire
-            if (directory != null && !directory.exists()) {
-                boolean created = directory.mkdirs();
-                if (created) {
-                    System.out.println("📁 Dossier donnees créé : " + directory.getAbsolutePath());
-                }
-            }
-
-            if (!mapsFile.exists()) {
-                // Créer le fichier avec une liste vide
-                allMaps = new ArrayList<>();
-                saveMapsToFile();
-                System.out.println("📄 Fichier maps.json créé");
-            } else {
-                // Charger les maps existantes
-                String json = new String(Files.readAllBytes(Paths.get(MAPS_FILE)), StandardCharsets.UTF_8);
-
-                if (json.trim().isEmpty()) {
-                    allMaps = new ArrayList<>();
-                } else {
-                    Type listType = new TypeToken<ArrayList<MapData>>(){}.getType();
-                    allMaps = gson.fromJson(json, listType);
-
-                    if (allMaps == null) {
-                        allMaps = new ArrayList<>();
-                    }
-                }
-                System.out.println("✅ " + allMaps.size() + " map(s) chargée(s) depuis maps.json");
-            }
-
-        } catch (Exception e) {
-            System.err.println("❌ Erreur lors du chargement des maps : " + e.getMessage());
-            allMaps = new ArrayList<>();
-        }
-    }
-
-    private void saveMapsToFile() {
-        try {
-            String json = gson.toJson(allMaps);
-            Files.write(Paths.get(MAPS_FILE), json.getBytes(StandardCharsets.UTF_8),
-                    StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
-
-            System.out.println("💾 Maps sauvegardées dans " + MAPS_FILE);
-
-        } catch (Exception e) {
-            System.err.println("❌ Erreur lors de la sauvegarde des maps : " + e.getMessage());
-            e.printStackTrace();
-        }
     }
 
     private void initializeMapData() {
@@ -264,24 +202,10 @@ public class MapEditorController implements Initializable {
         }
     }
 
-    private void setupTools() {
-        // Configurer les outils
-        emptyTool.setSelected(true);
-        currentTool = 0;
-
-        // Listeners pour changement d'outil
-        toolGroup.selectedToggleProperty().addListener((obs, oldToggle, newToggle) -> {
-            if (newToggle == emptyTool) {
-                currentTool = 0;
-                currentToolLabel.setText("Outil: Vider");
-            } else if (newToggle == wallTool) {
-                currentTool = 1;
-                currentToolLabel.setText("Outil: Mur");
-            } else if (newToggle == destructibleTool) {
-                currentTool = 2;
-                currentToolLabel.setText("Outil: Bloc");
-            }
-        });
+    // ✅ MODIFIÉE : setupTools() -> setupDefaults()
+    private void setupDefaults() {
+        // ✅ SUPPRIMÉ : Configuration des outils radio
+        // Plus besoin de listeners pour les outils
 
         // Nom de map par défaut
         if (userManager.isLoggedIn()) {
@@ -298,19 +222,12 @@ public class MapEditorController implements Initializable {
         root.requestFocus();
     }
 
+    // ✅ MODIFIÉE : Suppression des contrôles d'outils
     private void handleKeyPress(KeyEvent event) {
         KeyCode code = event.getCode();
 
         switch (code) {
-            case DIGIT1:
-                emptyTool.setSelected(true);
-                break;
-            case DIGIT2:
-                wallTool.setSelected(true);
-                break;
-            case DIGIT3:
-                destructibleTool.setSelected(true);
-                break;
+            // ✅ SUPPRIMÉ : DIGIT1, DIGIT2, DIGIT3 (plus d'outils à sélectionner)
             case S:
                 if (event.isControlDown()) {
                     saveMap();
@@ -329,6 +246,7 @@ public class MapEditorController implements Initializable {
         event.consume();
     }
 
+    // ✅ MÉTHODE INCHANGÉE : Logique simplifiée déjà en place
     private void handleCellClick(int row, int col, MouseEvent event) {
         // Ne pas modifier les bordures
         if (row == 0 || row == MAP_HEIGHT - 1 || col == 0 || col == MAP_WIDTH - 1) {
@@ -342,18 +260,19 @@ public class MapEditorController implements Initializable {
             return;
         }
 
-        // Seulement permettre la pose/suppression de murs indestructibles
+        // ✅ LOGIQUE SIMPLE : Basculer entre vide (0) et mur indestructible (1)
         if (event.isPrimaryButtonDown() || event.getEventType() == MouseEvent.MOUSE_CLICKED) {
             if (mapData[row][col] == 1) {
                 // Si c'est un mur indestructible, le supprimer
                 mapData[row][col] = 0;
+                System.out.println("🗑️ Mur supprimé en (" + row + "," + col + ")");
             } else {
                 // Sinon, placer un mur indestructible
                 mapData[row][col] = 1;
+                System.out.println("🧱 Mur placé en (" + row + "," + col + ")");
             }
 
             updateCellAppearance(mapCells[row][col], mapData[row][col]);
-            System.out.println("🖱️ Cellule (" + row + "," + col + ") -> " + cellTypeToString(mapData[row][col]));
         }
     }
 
@@ -366,12 +285,13 @@ public class MapEditorController implements Initializable {
         }
     }
 
+    // ✅ MODIFIÉE : Suppression de currentToolLabel
     private void updateInfoPanel() {
         mapSizeLabel.setText("Taille: " + MAP_WIDTH + "x" + MAP_HEIGHT);
-        currentToolLabel.setText("Outil: Vider");
+        // ✅ SUPPRIMÉ : currentToolLabel.setText("Outil: Vider");
     }
 
-    // ===== ACTIONS DES BOUTONS =====
+    // ===== ACTIONS DES BOUTONS (INCHANGÉES) =====
 
     @FXML
     private void saveMap() {
@@ -477,7 +397,6 @@ public class MapEditorController implements Initializable {
         // Mettre à jour l'affichage
         createMapGrid();
     }
-
 
     private int[][] createMatrixFromEditor() {
         // Utiliser les constantes de l'éditeur pour garantir la bonne taille
@@ -585,15 +504,6 @@ public class MapEditorController implements Initializable {
     }
 
     @FXML
-    private void testMap() {
-        // TODO: Lancer le jeu avec cette map
-        showAlert("Info", "Fonction à venir",
-                "Le test de map sera implémenté prochainement!\n\n" +
-                        "Cette fonction permettra de tester votre map\n" +
-                        "directement dans le jeu.");
-    }
-
-    @FXML
     private void backToMenu() {
         try {
             // Charger la scène du menu principal
@@ -633,7 +543,7 @@ public class MapEditorController implements Initializable {
         alert.showAndWait();
     }
 
-    // ===== CLASSES DE DONNÉES =====
+    // ===== CLASSES DE DONNÉES (INCHANGÉES) =====
 
     public static class MapData {
         public String name;
