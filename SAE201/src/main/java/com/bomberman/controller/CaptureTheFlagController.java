@@ -146,8 +146,8 @@ public class CaptureTheFlagController implements Initializable {
 
     // Variables pour le timer
     private Timeline gameTimer;
-    private int timeRemainingSeconds = 120;
-    private static final int GAME_DURATION_SECONDS = 120;
+    private int timeRemainingSeconds = 300;
+    private static final int GAME_DURATION_SECONDS = 300;
 
     // Images Bomb et bonus
     private Image bombImage;
@@ -415,7 +415,7 @@ public class CaptureTheFlagController implements Initializable {
             if (soundURL != null) {
                 Media sound = new Media(soundURL.toExternalForm());
                 MediaPlayer mediaPlayer = new MediaPlayer(sound);
-                mediaPlayer.setVolume(0.5); // Volume à 50%
+                mediaPlayer.setVolume(0.3); // Volume à 50%
                 mediaPlayer.play();
             }
         } catch (Exception e) {

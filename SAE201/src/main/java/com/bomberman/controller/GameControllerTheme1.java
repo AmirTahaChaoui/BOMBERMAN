@@ -355,7 +355,7 @@ public class GameControllerTheme1 implements Initializable {
             if (soundURL != null) {
                 Media sound = new Media(soundURL.toExternalForm());
                 MediaPlayer mediaPlayer = new MediaPlayer(sound);
-                mediaPlayer.setVolume(0.5); // Volume à 50%
+                mediaPlayer.setVolume(0.3); // Volume à 50%
                 mediaPlayer.play();
             }
         } catch (Exception e) {
