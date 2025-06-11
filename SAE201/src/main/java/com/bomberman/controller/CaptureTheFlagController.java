@@ -3,10 +3,12 @@ package com.bomberman.controller;
 import com.bomberman.model.*;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.HPos;
+import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -19,12 +21,14 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.scene.media.Media;
@@ -57,6 +61,7 @@ public class CaptureTheFlagController implements Initializable {
     private Button backToMenuButton;
     private boolean isPauseMenuVisible = false;
 
+    public boolean inputEnabled = false;
     private boolean gameStarted = true; // Démarrage automatique
     private boolean gamePaused = false;
     private boolean gameEnded = false;
@@ -203,8 +208,80 @@ public class CaptureTheFlagController implements Initializable {
         setupKeyboardControls();
         initializeTimer();
 
-        // Démarrer automatiquement le jeu
-        gameTimer.play();
+        // ✅ NOUVEAU : Afficher le popup des explications au démarrage
+        Platform.runLater(() -> {
+            showSettingsPopup2();
+        });
+
+        // Le timer ne démarre QUE après la fermeture du popup (géré dans showSettingsPopup)
+    }
+
+    // Pop-up des explications avant la partie
+    public void showSettingsPopup2() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(" ");
+        alert.setHeaderText(null);     // Retire le header ("Message")
+        alert.setGraphic(null);        // Retire l'icône bleue
+
+        // Création du contenu custom
+        VBox content = new VBox(10);
+        content.setPrefWidth(550);
+        content.getStyleClass().add("popup-content");
+
+        Label titre1 = new Label("Contrôles");
+        titre1.setStyle("-fx-font-weight: bold; -fx-text-fill: #ff6600; -fx-font-size: 16px;");
+        Label txt1 = new Label("Joueur 1 : Z Q S D + Espace");
+        Label txt2 = new Label("Joueur 2 : O K L M + Shift");
+
+        Label titre4 = new Label("Bonus");
+        titre4.setStyle("-fx-font-weight: bold; -fx-text-fill: #ff6600; -fx-font-size: 16px;");
+
+        ImageView bombImgView = new ImageView(bombBonusImage);
+        bombImgView.setFitHeight(40);
+        bombImgView.setFitWidth(40);
+        Label txt4 = new Label(": ajoute une bombe supplémentaire au joueur");
+        txt4.getStyleClass().add("bonus-label");
+        txt4.setWrapText(true);
+        HBox bombLine = new HBox(10, bombImgView, txt4);
+        bombLine.setAlignment(Pos.CENTER_LEFT);
+
+        ImageView rangeImgView = new ImageView(rangeBonusImage);
+        rangeImgView.setFitHeight(40);
+        rangeImgView.setFitWidth(40);
+        Label txt5 = new Label(": rallonge l'étendue de l'explosion");
+        txt5.getStyleClass().add("bonus-label");
+        txt5.setWrapText(true);
+
+        HBox rangeLine = new HBox(20, rangeImgView, txt5);
+        rangeLine.setAlignment(Pos.CENTER_LEFT);
+        txt5.getStyleClass().add("bonus-label");
+
+        Label titre3 = new Label("Difficulté");
+        titre3.setStyle("-fx-font-weight: bold; -fx-text-fill: #ff6600; -fx-font-size: 16px;");
+        Label txt3 = new Label("Normale");
+
+        content.getChildren().addAll(
+                titre1, txt1, txt2,
+                titre4, bombLine, rangeLine,
+                titre3, txt3
+        );
+
+        alert.getDialogPane().setContent(content);
+        alert.initModality(Modality.APPLICATION_MODAL);
+
+        // Style custom (optionnel)
+        alert.getDialogPane().getStylesheets().add(
+                getClass().getResource("/css/menu.css").toExternalForm()
+        );
+        alert.getDialogPane().getStyleClass().add("alert");
+
+        alert.showAndWait();
+
+        // Quand l'utilisateur ferme le popup
+        inputEnabled = true;
+        if (gameTimer != null) {
+            gameTimer.play();
+        }
     }
 
     // Méthodes statiques (identiques à GameControllerTheme1)
