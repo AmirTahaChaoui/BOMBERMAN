@@ -55,6 +55,7 @@ public class GameControllerTheme1 implements Initializable {
     private Button backToMenuButton;
     private boolean isPauseMenuVisible = false;
 
+    public boolean inputEnabled = false;
     private boolean gameStarted = true; // Démarrage automatique
     private boolean gamePaused = false;
     private boolean gameEnded = false;
@@ -167,6 +168,11 @@ public class GameControllerTheme1 implements Initializable {
         selectedMap = MenuController.getSelectedMapName();
         System.out.println("🗺️ Map à charger : " + selectedMap);
 
+        // Bombe et bonus image
+        bombImage = new Image(this.getClass().getResource("/images/bomb.png").toExternalForm());
+        bombBonusImage = new Image(this.getClass().getResource("/images/bomb-bonus.png").toExternalForm());
+        rangeBonusImage = new Image(this.getClass().getResource("/images/range-bonus.png").toExternalForm());
+        
         // Charger les images avec le thème sélectionné
         loadThemeImages();
 
@@ -179,6 +185,73 @@ public class GameControllerTheme1 implements Initializable {
         gameTimer.play();
     }
 
+    // Pop-up des explications avant la partie
+    public void showSettingsPopup() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(" ");
+        alert.setHeaderText(null);     // Retire le header ("Message")
+        alert.setGraphic(null);        // Retire l'icône bleue
+
+        // Création du contenu custom
+        VBox content = new VBox(10);
+        content.setPrefWidth(550);
+        content.getStyleClass().add("popup-content");
+
+        Label titre1 = new Label("Contrôles");
+        titre1.setStyle("-fx-font-weight: bold; -fx-text-fill: #ff6600; -fx-font-size: 16px;");
+        Label txt1 = new Label("Joueur 1 : Z Q S D + Espace");
+        Label txt2 = new Label("Joueur 2 : O K L M + Shift");
+
+        Label titre4 = new Label("Bonus");
+        titre4.setStyle("-fx-font-weight: bold; -fx-text-fill: #ff6600; -fx-font-size: 16px;");
+
+        ImageView bombImgView = new ImageView(bombBonusImage);
+        bombImgView.setFitHeight(40);
+        bombImgView.setFitWidth(40);
+        Label txt4 = new Label(": ajoute une bombe supplémentaire au joueur");
+        txt4.getStyleClass().add("bonus-label");
+        txt4.setWrapText(true);
+        HBox bombLine = new HBox(10, bombImgView, txt4);
+        bombLine.setAlignment(Pos.CENTER_LEFT);
+
+        ImageView rangeImgView = new ImageView(rangeBonusImage);
+        rangeImgView.setFitHeight(40);
+        rangeImgView.setFitWidth(40);
+        Label txt5 = new Label(": rallonge l'étendue de l'explosion");
+        txt5.getStyleClass().add("bonus-label");
+        txt5.setWrapText(true);
+
+        HBox rangeLine = new HBox(20, rangeImgView, txt5);
+        rangeLine.setAlignment(Pos.CENTER_LEFT);
+        txt5.getStyleClass().add("bonus-label");
+
+        Label titre3 = new Label("Difficulté");
+        titre3.setStyle("-fx-font-weight: bold; -fx-text-fill: #ff6600; -fx-font-size: 16px;");
+        Label txt3 = new Label("Normale");
+
+        content.getChildren().addAll(
+                titre1, txt1, txt2,
+                titre4, bombLine, rangeLine,
+                titre3, txt3
+        );
+
+        alert.getDialogPane().setContent(content);
+        alert.initModality(Modality.APPLICATION_MODAL);
+
+        // Style custom (optionnel)
+        alert.getDialogPane().getStylesheets().add(
+                getClass().getResource("/css/menu.css").toExternalForm()
+        );
+        alert.getDialogPane().getStyleClass().add("alert");
+
+        alert.showAndWait();
+
+        // Quand l'utilisateur ferme le popup
+        inputEnabled = true;
+        if (gameTimer != null) {
+            gameTimer.play();
+        }
+    }
 
     public static void setOriginalMenuDimensions(double width, double height) {
         originalMenuWidth = width;
