@@ -728,6 +728,8 @@ public class CaptureTheFlagController implements Initializable {
                 resumeGame();
             } else {
                 showPauseMenu();
+                pauseMenu.toFront();
+
             }
             event.consume();
             return;
