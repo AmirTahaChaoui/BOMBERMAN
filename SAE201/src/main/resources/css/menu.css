@@ -844,6 +844,34 @@
     innershadow(three-pass-box, rgba(68,68,68,0.8), 2, 0, -1, -1);
 }
 
+.map-scroll-pane {
+    -fx-background-color: transparent;
+    -fx-border-color: #ff6600;
+    -fx-border-width: 1;
+    -fx-border-radius: 5;
+    -fx-pref-height: 250;
+    -fx-max-height: 250;
+}
+
+.map-scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+
+.map-scroll-pane .scroll-bar:vertical {
+    -fx-background-color: #333333;
+    -fx-pref-width: 12;
+}
+
+.map-scroll-pane .scroll-bar:vertical .track {
+    -fx-background-color: #555555;
+    -fx-background-radius: 6;
+}
+
+.map-scroll-pane .scroll-bar:vertical .thumb {
+    -fx-background-color: #ff6600;
+    -fx-background-radius: 6;
+}
+
 
 
 

@@ -12,6 +12,7 @@
 <?import javafx.scene.image.Image?>
 
 <?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.ScrollPane?>
 <StackPane fx:id="root"
            xmlns="http://javafx.com/javafx/11.0.1"
            xmlns:fx="http://javafx.com/fxml/1"
@@ -338,9 +339,15 @@
             <VBox spacing="12" alignment="CENTER">
                 <Label text="CARTE:" styleClass="theme-section-title" />
 
-                <VBox fx:id="mapButtonsContainer" spacing="8" alignment="CENTER">
-                    <!-- Les boutons de maps seront ajoutés dynamiquement ici -->
-                </VBox>
+                <ScrollPane fx:id="mapScrollPane" styleClass="map-scroll-pane"
+                            hbarPolicy="NEVER" vbarPolicy="AS_NEEDED"
+                            fitToWidth="true" prefHeight="250"
+                            minHeight="250" maxHeight="250">
+
+                    <VBox fx:id="mapButtonsContainer" spacing="8" alignment="CENTER">
+                            <!-- Les boutons de maps seront ajoutés dynamiquement ici -->
+                    </VBox>
+                </ScrollPane>
             </VBox>
 
             <!-- Boutons d'action -->

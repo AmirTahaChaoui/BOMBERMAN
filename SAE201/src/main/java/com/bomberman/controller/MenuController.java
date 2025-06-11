@@ -113,6 +113,7 @@ public class MenuController implements Initializable {
 
     private MapManager mapManager;
     private static String selectedMapName = "Map Classique"; // Map par défaut
+    @FXML private ScrollPane mapScrollPane;
 
     @FXML private StackPane gameModeView;
     @FXML private VBox gameModeContent;
