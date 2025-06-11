@@ -24,6 +24,8 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
@@ -347,6 +349,43 @@ public class GameControllerTheme1 implements Initializable {
     }
 
 
+    private void playSound(String soundFileName) {
+        try {
+            URL soundURL = getClass().getResource("/Sound/" + soundFileName);
+            if (soundURL != null) {
+                Media sound = new Media(soundURL.toExternalForm());
+                MediaPlayer mediaPlayer = new MediaPlayer(sound);
+                mediaPlayer.setVolume(0.3); // Volume à 50%
+                mediaPlayer.play();
+            }
+        } catch (Exception e) {
+            System.err.println("❌ [CTF] Erreur lors de la lecture du son : " + e.getMessage());
+        }
+    }
+
+    private void playBonusSound() {
+        URL bonusSound = getClass().getResource("/Sound/bonus.mp3");
+        if (bonusSound != null) {
+            playSound("bonus.mp3");
+        } else {
+            // Son de fallback si bonus.mp3 n'existe pas
+            playSound("select.mp3");
+        }
+        System.out.println("♪ [CTF] Son de collection de bonus joué");
+    }
+
+    private void playExplosionSound() {
+        URL explosionSound = getClass().getResource("/Sound/bombSound.mp3");
+        if (explosionSound != null) {
+            playSound("bombSound.mp3");
+        } else {
+            // Son de fallback
+            playSound("select.mp3");
+        }
+        System.out.println("♪ [CTF] Son d'explosion joué");
+    }
+
+
 
     // Méthodes timer
     private void initializeTimer() {
@@ -587,6 +626,8 @@ public class GameControllerTheme1 implements Initializable {
                 resumeGame();
             } else {
                 showPauseMenu();
+                pauseMenu.toFront();
+
             }
             event.consume();
             return;
@@ -778,6 +819,8 @@ public class GameControllerTheme1 implements Initializable {
                 System.out.println("💣 Joueur 2 collecte un bonus bombes ! Nouvelles bombes max: " + player2MaxBombs);
             }
 
+            playBonusSound();
+
             gameBoard.setCellType(currentPlayer.getRow(), currentPlayer.getCol(), GameBoard.CellType.EMPTY);
             updateBoardDisplay();
 
@@ -789,6 +832,8 @@ public class GameControllerTheme1 implements Initializable {
                 player2ExplosionRange++;
                 System.out.println("🔥 Joueur 2 collecte un bonus portée ! Nouvelle portée: " + player2ExplosionRange);
             }
+
+            playBonusSound();
 
             gameBoard.setCellType(currentPlayer.getRow(), currentPlayer.getCol(), GameBoard.CellType.EMPTY);
             updateBoardDisplay();
@@ -850,6 +895,8 @@ public class GameControllerTheme1 implements Initializable {
 
     private void onBombExplosion(Bomb bomb, List<Bomb.Position> explosionCells) {
         System.out.println("💥 EXPLOSION ! " + bomb);
+
+        playExplosionSound();
 
         Circle bombSprite = bombSprites.get(bomb);
         if (bombSprite != null) {
