@@ -626,6 +626,8 @@ public class GameControllerTheme1 implements Initializable {
                 resumeGame();
             } else {
                 showPauseMenu();
+                pauseMenu.toFront();
+
             }
             event.consume();
             return;
