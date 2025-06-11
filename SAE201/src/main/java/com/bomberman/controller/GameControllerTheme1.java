@@ -3,10 +3,12 @@ package com.bomberman.controller;
 import com.bomberman.model.*;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.HPos;
+import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -19,12 +21,14 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -172,7 +176,7 @@ public class GameControllerTheme1 implements Initializable {
         bombImage = new Image(this.getClass().getResource("/images/bomb.png").toExternalForm());
         bombBonusImage = new Image(this.getClass().getResource("/images/bomb-bonus.png").toExternalForm());
         rangeBonusImage = new Image(this.getClass().getResource("/images/range-bonus.png").toExternalForm());
-        
+
         // Charger les images avec le thème sélectionné
         loadThemeImages();
 
@@ -181,8 +185,12 @@ public class GameControllerTheme1 implements Initializable {
         setupKeyboardControls();
         initializeTimer();
 
-        // Démarrer automatiquement le jeu
-        gameTimer.play();
+        // ✅ NOUVEAU : Afficher le popup des explications au démarrage
+        Platform.runLater(() -> {
+            showSettingsPopup();
+        });
+
+        // Le timer ne démarre QUE après la fermeture du popup (géré dans showSettingsPopup)
     }
 
     // Pop-up des explications avant la partie
