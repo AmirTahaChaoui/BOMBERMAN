@@ -694,25 +694,21 @@ public class MenuController implements Initializable {
     // Button action handlers (inchangés)
     @FXML
     private void handlePlayButton() {
-    if (isInSubMenu) {
-        // Dans le sous-menu : "LANCER PARTIE"
-        System.out.println("Démarrage du jeu...");
-        // ----> Récupère le contrôleur
-        GameControllerTheme1 gameController = loader.getController();
-        // Lance le popup et la logique de démarrage
-        gameController.showSettingsPopup();
-        // (Si besoin, startGame() sera appelé après la popup dans showSettingsPopup())
-    } else {
-        // Dans le menu principal : "JOUER" -> aller au sous-menu
-        System.out.println("Navigation vers le sous-menu de jeu...");
-        isInSubMenu = true;
-        updateMenuDisplay();
+        if (isInSubMenu) {
+            // Dans le sous-menu : "LANCER PARTIE"
+            System.out.println("Démarrage du jeu...");
+            startGame(); // Utiliser la méthode existante
+        } else {
+            // Dans le menu principal : "JOUER" -> aller au sous-menu
+            System.out.println("Navigation vers le sous-menu de jeu...");
+            isInSubMenu = true;
+            updateMenuDisplay();
 
-        // Remettre la sélection sur le premier élément
-        selectedIndex = 0;
-        updateSelection();
+            // Remettre la sélection sur le premier élément
+            selectedIndex = 0;
+            updateSelection();
+        }
     }
-}
 
     private void startGame() {
         // NOUVEAU : Ouvrir la vue de sélection de mode au lieu de lancer directement
