@@ -60,19 +60,6 @@
 
     </HBox>
 
-    <!-- Instructions CTF -->
-    <Label text="🚩 CAPTURE THE FLAG - Récupérez le drapeau ennemi et ramenez-le à votre base ! (Score pour gagner: 3)"
-           styleClass="game-instructions"
-           textAlignment="CENTER"
-           wrapText="true">
-        <font>
-            <Font name="System Bold" size="10.0" />
-        </font>
-        <padding>
-            <Insets bottom="10.0" left="10.0" right="10.0" top="5.0" />
-        </padding>
-    </Label>
-
     <!-- Zone de jeu avec menu de pause superposé -->
     <StackPane fx:id="gameArea" styleClass="game-area" VBox.vgrow="ALWAYS">
         <!-- Plateau de jeu -->

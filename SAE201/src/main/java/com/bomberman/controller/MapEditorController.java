@@ -301,7 +301,9 @@ public class MapEditorController implements Initializable {
         System.out.println("🔍 Nom de la map: '" + mapName + "'");
 
         if (mapName.isEmpty()) {
-            showAlert("Erreur", "Nom de map requis", "Veuillez saisir un nom pour votre map.");
+            Alert alert = createStyledAlert(Alert.AlertType.WARNING, "Erreur", "Nom de map requis",
+                    "Veuillez saisir un nom pour votre map.");
+            alert.showAndWait();
             return;
         }
 
@@ -315,10 +317,8 @@ public class MapEditorController implements Initializable {
             System.out.println("🔍 Map existe déjà? " + mapExists);
 
             if (mapExists) {
-                Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-                confirm.setTitle("Map existante");
-                confirm.setHeaderText("Une map avec ce nom existe déjà");
-                confirm.setContentText("Voulez-vous la remplacer ?");
+                Alert confirm = createStyledAlert(Alert.AlertType.CONFIRMATION, "Map existante",
+                        "Une map avec ce nom existe déjà", "Voulez-vous la remplacer ?");
 
                 Optional<ButtonType> result = confirm.showAndWait();
                 if (result.isEmpty() || result.get() != ButtonType.OK) {
@@ -345,7 +345,9 @@ public class MapEditorController implements Initializable {
 
             System.out.println("🔍 Validation de la map...");
             if (!newMap.isValid()) {
-                showAlert("Erreur", "Map invalide", "La map doit contenir au moins 2 zones de spawn pour les joueurs");
+                Alert alert = createStyledAlert(Alert.AlertType.ERROR, "Erreur", "Map invalide",
+                        "La map doit contenir au moins 2 zones de spawn pour les joueurs");
+                alert.showAndWait();
                 return;
             }
             System.out.println("🔍 Map valide!");
@@ -355,19 +357,23 @@ public class MapEditorController implements Initializable {
             System.out.println("🔍 Sauvegarde réussie? " + success);
 
             if (success) {
-                showAlert("Succès", "Map sauvegardée",
+                Alert alert = createStyledAlert(Alert.AlertType.INFORMATION, "Succès", "Map sauvegardée",
                         "Map '" + mapName + "' sauvegardée avec succès !\n" +
                                 "Total maps : " + mapManager.getMapCount());
+                alert.showAndWait();
                 System.out.println("💾 Map sauvegardée: " + mapName);
             } else {
-                showAlert("Erreur", "Erreur de sauvegarde", "Impossible de sauvegarder la map");
+                Alert alert = createStyledAlert(Alert.AlertType.ERROR, "Erreur", "Erreur de sauvegarde",
+                        "Impossible de sauvegarder la map");
+                alert.showAndWait();
             }
 
         } catch (Exception e) {
             System.err.println("❌ EXCEPTION dans saveMap(): " + e.getMessage());
             e.printStackTrace();
-            showAlert("Erreur", "Erreur de sauvegarde",
+            Alert alert = createStyledAlert(Alert.AlertType.ERROR, "Erreur", "Erreur de sauvegarde",
                     "Impossible de sauvegarder la map:\n" + e.getMessage());
+            alert.showAndWait();
         }
 
         System.out.println("=== FIN DEBUG SAVE MAP ===");
@@ -442,15 +448,15 @@ public class MapEditorController implements Initializable {
         List<String> mapNames = mapManager.getMapsList();
 
         if (mapNames.isEmpty()) {
-            showAlert("Info", "Aucune map", "Aucune map sauvegardée trouvée.");
+            Alert alert = createStyledAlert(Alert.AlertType.INFORMATION, "Info", "Aucune map",
+                    "Aucune map sauvegardée trouvée.");
+            alert.showAndWait();
             return;
         }
 
-        // Dialog de sélection
-        ChoiceDialog<String> dialog = new ChoiceDialog<>(mapNames.get(0), mapNames);
-        dialog.setTitle("Charger une map");
-        dialog.setHeaderText("Sélectionnez une map à charger");
-        dialog.setContentText("Maps disponibles :");
+        // Dialog de sélection stylé
+        ChoiceDialog<String> dialog = createStyledChoiceDialog(mapNames.get(0), mapNames,
+                "Charger une map", "Sélectionnez une map à charger", "Maps disponibles :");
 
         Optional<String> result = dialog.showAndWait();
         if (result.isPresent()) {
@@ -462,7 +468,9 @@ public class MapEditorController implements Initializable {
         try {
             CustomMap map = mapManager.getMapByName(mapName);
             if (map == null) {
-                showAlert("Erreur", "Map introuvable", "Impossible de charger la map '" + mapName + "'");
+                Alert alert = createStyledAlert(Alert.AlertType.ERROR, "Erreur", "Map introuvable",
+                        "Impossible de charger la map '" + mapName + "'");
+                alert.showAndWait();
                 return;
             }
 
@@ -473,27 +481,28 @@ public class MapEditorController implements Initializable {
             // Recréer la grille visuelle
             createMapGrid();
 
-            showAlert("Succès", "Map chargée",
+            Alert alert = createStyledAlert(Alert.AlertType.INFORMATION, "Succès", "Map chargée",
                     "Map '" + map.getName() + "' chargée avec succès !\n" +
                             "Auteur : " + map.getAuthor() + "\n" +
                             "Taille : " + map.getWidth() + "x" + map.getHeight() + "\n" +
                             "Créée le : " + map.getCreated().substring(0, 10));
+            alert.showAndWait();
 
             System.out.println("📂 Map chargée: " + map.getName());
 
         } catch (Exception e) {
-            showAlert("Erreur", "Erreur de chargement",
+            Alert alert = createStyledAlert(Alert.AlertType.ERROR, "Erreur", "Erreur de chargement",
                     "Impossible de charger la map:\n" + e.getMessage());
+            alert.showAndWait();
             e.printStackTrace();
         }
     }
 
+
     @FXML
     private void clearMap() {
-        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-        confirm.setTitle("Effacer la map");
-        confirm.setHeaderText("Êtes-vous sûr ?");
-        confirm.setContentText("Cette action effacera toute la map actuelle.");
+        Alert confirm = createStyledAlert(Alert.AlertType.CONFIRMATION, "Effacer la map",
+                "Êtes-vous sûr ?", "Cette action effacera toute la map actuelle.");
 
         Optional<ButtonType> result = confirm.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
@@ -570,4 +579,34 @@ public class MapEditorController implements Initializable {
             this.col = col;
         }
     }
+
+    private Alert createStyledAlert(Alert.AlertType type, String title, String header, String content) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(header);
+        alert.setContentText(content);
+
+        // ✅ AJOUTER LE CSS
+        alert.getDialogPane().getStylesheets().add(
+                getClass().getResource("/css/mapeditor.css").toExternalForm()
+        );
+
+        return alert;
+    }
+
+    private ChoiceDialog<String> createStyledChoiceDialog(String defaultChoice, List<String> choices,
+                                                          String title, String header, String content) {
+        ChoiceDialog<String> dialog = new ChoiceDialog<>(defaultChoice, choices);
+        dialog.setTitle(title);
+        dialog.setHeaderText(header);
+        dialog.setContentText(content);
+
+        // ✅ AJOUTER LE CSS
+        dialog.getDialogPane().getStylesheets().add(
+                getClass().getResource("/css/mapeditor.css").toExternalForm()
+        );
+
+        return dialog;
+    }
+
 }

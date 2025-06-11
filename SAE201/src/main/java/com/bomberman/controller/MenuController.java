@@ -852,13 +852,13 @@ public class MenuController implements Initializable {
             Parent gameRoot = loader.load();
 
             // Créer la scène de jeu
-            Scene gameScene = new Scene(gameRoot, 800, 700);
+            Scene gameScene = new Scene(gameRoot, 800, 750);
             gameScene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
 
             stage.setScene(gameScene);
             stage.setTitle("Super Bomberman - Capture du Drapeau");
             stage.setWidth(800);
-            stage.setHeight(700);
+            stage.setHeight(750);
             stage.centerOnScreen();
 
             shutdown();

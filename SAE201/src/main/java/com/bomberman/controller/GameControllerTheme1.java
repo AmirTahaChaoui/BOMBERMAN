@@ -599,34 +599,34 @@ public class GameControllerTheme1 implements Initializable {
         if (player1Alive) {
             switch (event.getCode()) {
                 case Z: // Haut
-                    if (player1.moveUp(gameBoard)) {
-                        System.out.println("Joueur 1 monte : " + player1);
+                    if (!hasBombAt(activeBombs, player1.getRow() - 1, player1.getCol()) &&
+                            player1.moveUp(gameBoard)) {
                         player1Sprite.setFill(new ImagePattern(persoUp));
                         updatePlayer1Position();
                     }
                     break;
                 case S: // Bas
-                    if (player1.moveDown(gameBoard)) {
-                        System.out.println("Joueur 1 descend : " + player1);
+                    if (!hasBombAt(activeBombs, player1.getRow() + 1, player1.getCol()) &&
+                            player1.moveDown(gameBoard)) {
                         player1Sprite.setFill(new ImagePattern(persoDown));
                         updatePlayer1Position();
                     }
                     break;
                 case Q: // Gauche
-                    if (player1.moveLeft(gameBoard)) {
-                        System.out.println("Joueur 1 va à gauche : " + player1);
+                    if (!hasBombAt(activeBombs, player1.getRow(), player1.getCol() - 1) &&
+                            player1.moveLeft(gameBoard)) {
                         player1Sprite.setFill(new ImagePattern(persoLeft));
                         updatePlayer1Position();
                     }
                     break;
                 case D: // Droite
-                    if (player1.moveRight(gameBoard)) {
-                        System.out.println("Joueur 1 va à droite : " + player1);
+                    if (!hasBombAt(activeBombs, player1.getRow(), player1.getCol() + 1) &&
+                            player1.moveRight(gameBoard)) {
                         player1Sprite.setFill(new ImagePattern(persoRight));
                         updatePlayer1Position();
                     }
                     break;
-                case SPACE: // Placer une bombe
+                case SPACE:
                     placeBomb(1);
                     break;
             }
@@ -636,34 +636,34 @@ public class GameControllerTheme1 implements Initializable {
         if (player2Alive) {
             switch (event.getCode()) {
                 case O: // Haut
-                    if (player2.moveUp(gameBoard)) {
-                        System.out.println("Joueur 2 monte : " + player2);
+                    if (!hasBombAt(activeBombs, player2.getRow() - 1, player2.getCol()) &&
+                            player2.moveUp(gameBoard)) {
                         player2Sprite.setFill(new ImagePattern(perso2Up));
                         updatePlayer2Position();
                     }
                     break;
                 case L: // Bas
-                    if (player2.moveDown(gameBoard)) {
-                        System.out.println("Joueur 2 descend : " + player2);
+                    if (!hasBombAt(activeBombs, player2.getRow() + 1, player2.getCol()) &&
+                            player2.moveDown(gameBoard)) {
                         player2Sprite.setFill(new ImagePattern(perso2Down));
                         updatePlayer2Position();
                     }
                     break;
                 case K: // Gauche
-                    if (player2.moveLeft(gameBoard)) {
-                        System.out.println("Joueur 2 va à gauche : " + player2);
+                    if (!hasBombAt(activeBombs, player2.getRow(), player2.getCol() - 1) &&
+                            player2.moveLeft(gameBoard)) {
                         player2Sprite.setFill(new ImagePattern(perso2Left));
                         updatePlayer2Position();
                     }
                     break;
                 case M: // Droite
-                    if (player2.moveRight(gameBoard)) {
-                        System.out.println("Joueur 2 va à droite : " + player2);
+                    if (!hasBombAt(activeBombs, player2.getRow(), player2.getCol() + 1) &&
+                            player2.moveRight(gameBoard)) {
                         player2Sprite.setFill(new ImagePattern(perso2Right));
                         updatePlayer2Position();
                     }
                     break;
-                case SHIFT: // Placer une bombe
+                case SHIFT:
                     placeBomb(2);
                     break;
             }
@@ -671,6 +671,16 @@ public class GameControllerTheme1 implements Initializable {
 
         gameArea.requestFocus();
     }
+
+    private boolean hasBombAt(List<Bomb> activeBombs, int row, int col) {
+        for (Bomb bomb : activeBombs) {
+            if (bomb.getRow() == row && bomb.getCol() == col) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     private void showPauseMenu() {
         if (gameStarted && !gamePaused) {

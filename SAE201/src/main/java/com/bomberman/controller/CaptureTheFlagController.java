@@ -699,66 +699,74 @@ public class CaptureTheFlagController implements Initializable {
         if (!gameStarted || isPauseMenuVisible) return;
 
         // ✅ NOUVEAU : Contrôles du joueur 1 (ZQSD + ESPACE) - SEULEMENT si vivant
-        if (player1Alive) { // ✅ Cette vérification empêche le mouvement quand mort
+        if (player1Alive) {
             switch (event.getCode()) {
                 case Z: // Haut
-                    if (player1.moveUp(gameBoard)) {
+                    if (!hasBombAt(activeBombs, player1.getRow() - 1, player1.getCol()) &&
+                            player1.moveUp(gameBoard)) {
                         player1Sprite.setFill(new ImagePattern(persoUp));
                         updatePlayer1Position();
                     }
                     break;
                 case S: // Bas
-                    if (player1.moveDown(gameBoard)) {
+                    if (!hasBombAt(activeBombs, player1.getRow() + 1, player1.getCol()) &&
+                            player1.moveDown(gameBoard)) {
                         player1Sprite.setFill(new ImagePattern(persoDown));
                         updatePlayer1Position();
                     }
                     break;
                 case Q: // Gauche
-                    if (player1.moveLeft(gameBoard)) {
+                    if (!hasBombAt(activeBombs, player1.getRow(), player1.getCol() - 1) &&
+                            player1.moveLeft(gameBoard)) {
                         player1Sprite.setFill(new ImagePattern(persoLeft));
                         updatePlayer1Position();
                     }
                     break;
                 case D: // Droite
-                    if (player1.moveRight(gameBoard)) {
+                    if (!hasBombAt(activeBombs, player1.getRow(), player1.getCol() + 1) &&
+                            player1.moveRight(gameBoard)) {
                         player1Sprite.setFill(new ImagePattern(persoRight));
                         updatePlayer1Position();
                     }
                     break;
-                case SPACE: // Placer une bombe
+                case SPACE:
                     placeBomb(1);
                     break;
             }
         }
 
-        // ✅ NOUVEAU : Contrôles du joueur 2 (OKML + SHIFT) - SEULEMENT si vivant
-        if (player2Alive) { // ✅ Cette vérification empêche le mouvement quand mort
+        // Contrôles du joueur 2 (OKML + SHIFT)
+        if (player2Alive) {
             switch (event.getCode()) {
                 case O: // Haut
-                    if (player2.moveUp(gameBoard)) {
+                    if (!hasBombAt(activeBombs, player2.getRow() - 1, player2.getCol()) &&
+                            player2.moveUp(gameBoard)) {
                         player2Sprite.setFill(new ImagePattern(perso2Up));
                         updatePlayer2Position();
                     }
                     break;
                 case L: // Bas
-                    if (player2.moveDown(gameBoard)) {
+                    if (!hasBombAt(activeBombs, player2.getRow() + 1, player2.getCol()) &&
+                            player2.moveDown(gameBoard)) {
                         player2Sprite.setFill(new ImagePattern(perso2Down));
                         updatePlayer2Position();
                     }
                     break;
                 case K: // Gauche
-                    if (player2.moveLeft(gameBoard)) {
+                    if (!hasBombAt(activeBombs, player2.getRow(), player2.getCol() - 1) &&
+                            player2.moveLeft(gameBoard)) {
                         player2Sprite.setFill(new ImagePattern(perso2Left));
                         updatePlayer2Position();
                     }
                     break;
                 case M: // Droite
-                    if (player2.moveRight(gameBoard)) {
+                    if (!hasBombAt(activeBombs, player2.getRow(), player2.getCol() + 1) &&
+                            player2.moveRight(gameBoard)) {
                         player2Sprite.setFill(new ImagePattern(perso2Right));
                         updatePlayer2Position();
                     }
                     break;
-                case SHIFT: // Placer une bombe
+                case SHIFT:
                     placeBomb(2);
                     break;
             }
@@ -766,6 +774,16 @@ public class CaptureTheFlagController implements Initializable {
 
         gameArea.requestFocus();
     }
+
+    private boolean hasBombAt(List<Bomb> activeBombs, int row, int col) {
+        for (Bomb bomb : activeBombs) {
+            if (bomb.getRow() == row && bomb.getCol() == col) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     // Méthodes de pause (identiques)
     private void showPauseMenu() {

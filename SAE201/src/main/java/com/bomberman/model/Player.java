@@ -1,5 +1,7 @@
 package com.bomberman.model;
 
+import java.util.List;
+
 public class Player {
 
     private int row;
@@ -56,6 +58,16 @@ public class Player {
         return moveTo(gameBoard, row, col + 1);
     }
 
+    private boolean hasBombAt(List<Bomb> activeBombs, int row, int col) {
+        for (Bomb bomb : activeBombs) {
+            if (bomb.getRow() == row && bomb.getCol() == col) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
     // Getters et Setters
     public int getRow() { return row; }
     public int getCol() { return col; }
@@ -69,4 +81,5 @@ public class Player {
     public String toString() {
         return name + " at (" + row + ", " + col + ")";
     }
+
 }
