@@ -1009,3 +1009,20 @@
     -fx-effect: innershadow(three-pass-box, rgba(34,34,34,0.9), 3, 0, 2, 2),
     innershadow(three-pass-box, rgba(102,102,102,0.3), 1, 0, -1, -1);
 }
+
+.popup-content {
+    -fx-background-color: black;
+    -fx-alignment: center;
+}
+
+.popup-content > .label {
+    -fx-text-fill: white;
+    -fx-font-family: 'Press Start 2P', 'Courier New', monospace;
+    -fx-font-size: 12px;
+    -fx-padding: 8px;
+}
+
+.bonus-label {
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+}
