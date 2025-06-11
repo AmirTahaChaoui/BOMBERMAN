@@ -498,7 +498,7 @@ public class MenuController implements Initializable {
         } else {
             // Affichage du menu principal
             playButton.setText("JOUER");
-            settingsButton.setText("PARAMETRE");
+            settingsButton.setText("PARAMETRES");
             loginButton.setText("SE CONNECTER");
             exitButton.setText("QUITTER");
         }
