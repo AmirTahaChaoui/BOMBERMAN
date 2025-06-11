@@ -60,7 +60,7 @@
 
     </HBox>
 
-    <!-- Zone de jeu avec menu de pause superposé -->
+    <!-- Zone de jeu avec menus superposés -->
     <StackPane fx:id="gameArea" styleClass="game-area" VBox.vgrow="ALWAYS">
         <!-- Plateau de jeu -->
         <GridPane fx:id="gameGrid" alignment="CENTER" styleClass="game-grid">
@@ -94,6 +94,20 @@
                 </padding>
             </VBox>
         </StackPane>
+        <!-- Boutons de fin de partie en bas (invisibles par défaut) -->
+        <HBox fx:id="endGameButtons" alignment="CENTER" spacing="20" visible="false"
+              styleClass="end-game-buttons" StackPane.alignment="BOTTOM_CENTER">
+            <Button fx:id="replayButton" text="Rejouer" styleClass="end-game-button" onAction="#handleReplay">
+                <font>
+                    <Font name="System Bold" size="14.0" />
+                </font>
+            </Button>
+            <Button fx:id="menuButton" text="Menu" styleClass="end-game-button" onAction="#handleMenu">
+                <font>
+                    <Font name="System Bold" size="14.0" />
+                </font>
+            </Button>
+        </HBox>
     </StackPane>
 
 </VBox>

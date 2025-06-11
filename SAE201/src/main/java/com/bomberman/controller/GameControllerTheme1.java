@@ -159,6 +159,9 @@ public class GameControllerTheme1 implements Initializable {
     private static String selectedMap = "Map Classique"; // Map sélectionnée
     private boolean useCustomMap = false; // Indicateur si on utilise une map personnalisée
 
+    @FXML
+    private HBox endGameButtons;
+
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -1110,27 +1113,42 @@ public class GameControllerTheme1 implements Initializable {
         if (!player1Alive && !player2Alive) {
             System.out.println("🤝 MATCH NUL ! Les deux joueurs sont morts !");
             isDraw = true;
+            gameEnded = true;
+            gameStarted = false; // ✅ AJOUTÉ : Empêche les mouvements
+            gameTimer.stop();
             showResult("🤝 MATCH NUL ! Les deux joueurs sont morts !", egalite);
         } else if (!player1Alive) {
             System.out.println("🏆 JOUEUR 2 GAGNE !");
             winner = "player2";
+            gameEnded = true;
+            gameStarted = false; // ✅ AJOUTÉ : Empêche les mouvements
+            gameTimer.stop();
             showResult("🏆 JOUEUR 2 GAGNE !", victoire2);
         } else if (!player2Alive) {
             System.out.println("🏆 JOUEUR 1 GAGNE !");
             winner = "player1";
+            gameEnded = true;
+            gameStarted = false; // ✅ AJOUTÉ : Empêche les mouvements
+            gameTimer.stop();
             showResult("🏆 JOUEUR 1 GAGNE !", victoire1);
         } else if (timeRemainingSeconds <= 0) {
             System.out.println("⏰ TEMPS ÉCOULÉ ! MATCH NUL !");
             isDraw = true;
+            gameEnded = true;
+            gameStarted = false; // ✅ AJOUTÉ : Empêche les mouvements
+            gameTimer.stop();
             showResult("⏰ TEMPS ÉCOULÉ ! MATCH NUL !", egalite);
         }
 
-        gameEnded = true;
-        gameTimer.stop();
-        updateUserStats(winner, isDraw);
+        if (gameEnded) {
+            updateUserStats(winner, isDraw);
 
-        for (Bomb bomb : activeBombs) {
-            bomb.stopTimer();
+            for (Bomb bomb : activeBombs) {
+                bomb.stopTimer();
+            }
+
+            // ✅ APPEL DIRECT au lieu de Timeline
+            showEndGameDialog(winner, isDraw);
         }
     }
 
@@ -1175,47 +1193,33 @@ public class GameControllerTheme1 implements Initializable {
 
     // NOUVELLE MÉTHODE : Dialog de fin de partie
     private void showEndGameDialog(String winner, boolean isDraw) {
-        Timeline delayedDialog = new Timeline(new KeyFrame(Duration.seconds(3), e -> {
-            String title = isDraw ? "Match Nul" : (winner.equals("player1") ? "Joueur 1 Gagne !" : "Joueur 2 Gagne !");
-
-            String content = "";
-            if (userManager.isLoggedIn()) {
-                User user = userManager.getCurrentUser();
-                content = String.format("✅ Statistiques de %s :\nParties jouées : %d\nParties gagnées : %d\nRatio victoires : %.1f%%\n\n",
-                        user.getUsername(), user.getGamesPlayed(), user.getGamesWon(), user.getWinRate());
+        Platform.runLater(() -> {
+            System.out.println("🔍 DEBUG: endGameButtons = " + endGameButtons);
+            if (endGameButtons != null) {
+                endGameButtons.setVisible(true);
+                endGameButtons.toFront();
+                System.out.println("🎮 Boutons de fin de partie affichés");
+                System.out.println("🔍 DEBUG: Visible = " + endGameButtons.isVisible());
             } else {
-                content = "ℹ️ Connectez-vous pour sauvegarder vos statistiques !\n\n";
+                System.out.println("❌ ERROR: endGameButtons est null !");
             }
-            content += "Que voulez-vous faire ?";
+        });
+    }
 
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Fin de Partie");
-            alert.setHeaderText(title);
-            alert.setContentText(content);
+    // NOUVELLE MÉTHODE : Gérer le bouton Rejouer
+    @FXML
+    private void handleReplay() {
+        System.out.println("🔄 [CTF] Bouton Rejouer cliqué");
+        endGameButtons.setVisible(false);
+        restartGame();
+    }
 
-            // Personnaliser les boutons
-            ButtonType replayButton = new ButtonType("Rejouer");
-            ButtonType menuButton = new ButtonType("Menu Principal");
-            alert.getButtonTypes().setAll(replayButton, menuButton);
-
-            // Appliquer le style
-            alert.getDialogPane().getStylesheets().add(
-                    getClass().getResource("/css/menu.css").toExternalForm()
-            );
-            alert.getDialogPane().getStyleClass().add("alert");
-
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result.isPresent()) {
-                if (result.get() == replayButton) {
-                    restartGame();
-                } else {
-                    backToMainMenu();
-                }
-            } else {
-                backToMainMenu(); // Par défaut
-            }
-        }));
-        delayedDialog.play();
+    // NOUVELLE MÉTHODE : Gérer le bouton Menu
+    @FXML
+    private void handleMenu() {
+        System.out.println("🏠 [CTF] Bouton Menu cliqué");
+        endGameButtons.setVisible(false);
+        backToMainMenu();
     }
 
     // NOUVELLE MÉTHODE : Redémarrer la partie
@@ -1229,11 +1233,16 @@ public class GameControllerTheme1 implements Initializable {
                 bomb.stopTimer();
             }
 
-            // Recharger la scène de jeu
+            // ✅ CORRECTION : Charger le bon fichier FXML
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/theme1.fxml"));
             Parent gameRoot = loader.load();
 
-            Scene gameScene = new Scene(gameRoot, 800, 700);
+            // ✅ TRANSMETTRE les paramètres au nouveau contrôleur
+            GameControllerTheme1 newController = loader.getController();
+            newController.setCurrentTheme(currentTheme);
+            newController.setSelectedMap(selectedMap);
+
+            Scene gameScene = new Scene(gameRoot, 800, 800);
             gameScene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
 
             Stage stage = (Stage) gameArea.getScene().getWindow();
@@ -1245,7 +1254,7 @@ public class GameControllerTheme1 implements Initializable {
         } catch (Exception e) {
             e.printStackTrace();
             System.err.println("Erreur lors du redémarrage : " + e.getMessage());
-            backToMainMenu(); // Fallback vers le menu
+            backToMainMenu();
         }
     }
 

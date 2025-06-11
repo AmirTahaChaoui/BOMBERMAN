@@ -185,6 +185,9 @@ public class CaptureTheFlagController implements Initializable {
     private Image redBaseImage;
     private Image blueBaseImage;
 
+    @FXML
+    private HBox endGameButtons;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // NOUVEAU : Initialiser le chemin du thème
@@ -1560,13 +1563,13 @@ public class CaptureTheFlagController implements Initializable {
     // NOUVELLE MÉTHODE : Fin de partie CTF
     private void endGame() {
         gameEnded = true;
+        gameStarted = false;
         gameTimer.stop();
 
         String winner = null;
         boolean isDraw = false;
 
         if (player1Score >= WINNING_SCORE && player2Score >= WINNING_SCORE) {
-            // Ne devrait pas arriver, mais au cas où
             isDraw = true;
             showResult("🤝 [CTF] MATCH NUL !", egalite);
         } else if (player1Score >= WINNING_SCORE) {
@@ -1576,7 +1579,6 @@ public class CaptureTheFlagController implements Initializable {
             winner = "player2";
             showResult("🏆 [CTF] JOUEUR 2 GAGNE !", victoire2);
         } else if (timeRemainingSeconds <= 0) {
-            // Temps écoulé - le score le plus élevé gagne
             if (player1Score > player2Score) {
                 winner = "player1";
                 showResult("⏰ [CTF] TEMPS ÉCOULÉ ! JOUEUR 1 GAGNE !", victoire1);
@@ -1594,6 +1596,9 @@ public class CaptureTheFlagController implements Initializable {
         for (Bomb bomb : activeBombs) {
             bomb.stopTimer();
         }
+
+        // ✅ APPEL DIRECT au lieu de Timeline
+        showEndGameDialog(winner, isDraw);
 
         System.out.println("🏁 [CTF] Score final: Joueur 1: " + player1Score + " - Joueur 2: " + player2Score);
     }
@@ -1632,50 +1637,37 @@ public class CaptureTheFlagController implements Initializable {
         }
     }
 
-    // NOUVELLE MÉTHODE : Dialog de fin de partie (comme dans GameControllerTheme1)
+    // NOUVELLE MÉTHODE : Afficher le popup de fin de partie
     private void showEndGameDialog(String winner, boolean isDraw) {
-        Timeline delayedDialog = new Timeline(new KeyFrame(Duration.seconds(3), e -> {
-            String title = isDraw ? "Match Nul" : (winner.equals("player1") ? "Joueur 1 Gagne !" : "Joueur 2 Gagne !");
-
-            String content = "";
-            if (userManager.isLoggedIn()) {
-                User user = userManager.getCurrentUser();
-                content = String.format("✅ Statistiques de %s :\nParties jouées : %d\nParties gagnées : %d\nRatio victoires : %.1f%%\n\n",
-                        user.getUsername(), user.getGamesPlayed(), user.getGamesWon(), user.getWinRate());
+        Platform.runLater(() -> {
+            System.out.println("🔍 DEBUG: endGameButtons = " + endGameButtons);
+            if (endGameButtons != null) {
+                endGameButtons.setVisible(true);
+                endGameButtons.toFront();
+                System.out.println("🎮 Boutons de fin de partie affichés");
+                System.out.println("🔍 DEBUG: Visible = " + endGameButtons.isVisible());
             } else {
-                content = "ℹ️ Connectez-vous pour sauvegarder vos statistiques !\n\n";
+                System.out.println("❌ ERROR: endGameButtons est null !");
             }
-            content += "Que voulez-vous faire ?";
-
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Fin de Partie CTF");
-            alert.setHeaderText(title);
-            alert.setContentText(content);
-
-            // Personnaliser les boutons
-            ButtonType replayButton = new ButtonType("Rejouer");
-            ButtonType menuButton = new ButtonType("Menu Principal");
-            alert.getButtonTypes().setAll(replayButton, menuButton);
-
-            // Appliquer le style
-            alert.getDialogPane().getStylesheets().add(
-                    getClass().getResource("/css/menu.css").toExternalForm()
-            );
-            alert.getDialogPane().getStyleClass().add("alert");
-
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result.isPresent()) {
-                if (result.get() == replayButton) {
-                    restartGame();
-                } else {
-                    backToMainMenu();
-                }
-            } else {
-                backToMainMenu(); // Par défaut
-            }
-        }));
-        delayedDialog.play();
+        });
     }
+
+    // NOUVELLE MÉTHODE : Gérer le bouton Rejouer
+    @FXML
+    private void handleReplay() {
+        System.out.println("🔄 [CTF] Bouton Rejouer cliqué");
+        endGameButtons.setVisible(false);
+        restartGame();
+    }
+
+    // NOUVELLE MÉTHODE : Gérer le bouton Menu
+    @FXML
+    private void handleMenu() {
+        System.out.println("🏠 [CTF] Bouton Menu cliqué");
+        endGameButtons.setVisible(false);
+        backToMainMenu();
+    }
+
 
     // NOUVELLE MÉTHODE : Redémarrer la partie CTF
     private void restartGame() {
@@ -1688,11 +1680,11 @@ public class CaptureTheFlagController implements Initializable {
                 bomb.stopTimer();
             }
 
-            // Recharger la scène de jeu CTF
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/captureTheFlag.fxml"));
+            // ✅ CORRECTION : Charger le bon fichier FXML pour CTF
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/CTF.fxml"));
             Parent gameRoot = loader.load();
 
-            Scene gameScene = new Scene(gameRoot, 800, 700);
+            Scene gameScene = new Scene(gameRoot, 800, 750);
             gameScene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
 
             Stage stage = (Stage) gameArea.getScene().getWindow();
@@ -1704,7 +1696,7 @@ public class CaptureTheFlagController implements Initializable {
         } catch (Exception e) {
             e.printStackTrace();
             System.err.println("❌ [CTF] Erreur lors du redémarrage : " + e.getMessage());
-            backToMainMenu(); // Fallback vers le menu
+            backToMainMenu();
         }
     }
 
@@ -1718,32 +1710,6 @@ public class CaptureTheFlagController implements Initializable {
         resultImageView.setPreserveRatio(true);
         resultImageView.setFitWidth(500);
         gameArea.getChildren().add(resultImageView);
-
-        // Appeler le dialog après affichage de l'image
-        showEndGameDialog(determineWinner(), isDraw());
-    }
-
-    // MÉTHODES UTILITAIRES pour showResult()
-    private String determineWinner() {
-        if (player1Score >= WINNING_SCORE) {
-            return "player1";
-        } else if (player2Score >= WINNING_SCORE) {
-            return "player2";
-        } else if (timeRemainingSeconds <= 0) {
-            if (player1Score > player2Score) {
-                return "player1";
-            } else if (player2Score > player1Score) {
-                return "player2";
-            }
-        }
-        return null; // Match nul
-    }
-
-    private boolean isDraw() {
-        if (timeRemainingSeconds <= 0 && player1Score == player2Score) {
-            return true;
-        }
-        return false;
     }
 
     // NOUVELLES MÉTHODES : Sons CTF (optionnelles mais dans l'esprit GameControllerTheme1)
@@ -1798,4 +1764,4 @@ public class CaptureTheFlagController implements Initializable {
         }
     }
 
-} // Fin de la classe CaptureTheFlagController
+}

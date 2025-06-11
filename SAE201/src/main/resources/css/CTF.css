@@ -261,3 +261,21 @@
     -fx-max-width: 300px;
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.6), 5, 0, 0, 3);
 }
+
+/* Container du popup de fin de partie */
+.end-game-button {
+    -fx-background-color: #333333;;
+    -fx-text-fill: white;
+    -fx-font-family: 'Press Start 2P', 'Courier New', monospace;
+    -fx-background-radius: 5;
+    -fx-padding: 15 25;
+    -fx-cursor: hand;
+    -fx-font-weight: bold;
+    -fx-min-width: 100;
+    -fx-min-height: 40;
+    -fx-translate-y: 100;
+}
+
+.end-game-button:hover {
+    -fx-background-color: #ff8833;
+}
