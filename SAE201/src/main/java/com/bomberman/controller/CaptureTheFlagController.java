@@ -408,6 +408,44 @@ public class CaptureTheFlagController implements Initializable {
         }
     }
 
+    // Son pour les jeux :
+    private void playSound(String soundFileName) {
+        try {
+            URL soundURL = getClass().getResource("/Sound/" + soundFileName);
+            if (soundURL != null) {
+                Media sound = new Media(soundURL.toExternalForm());
+                MediaPlayer mediaPlayer = new MediaPlayer(sound);
+                mediaPlayer.setVolume(0.5); // Volume à 50%
+                mediaPlayer.play();
+            }
+        } catch (Exception e) {
+            System.err.println("❌ [CTF] Erreur lors de la lecture du son : " + e.getMessage());
+        }
+    }
+
+    private void playBonusSound() {
+        URL bonusSound = getClass().getResource("/Sound/bonus.mp3");
+        if (bonusSound != null) {
+            playSound("bonus.mp3");
+        } else {
+            // Son de fallback si bonus.mp3 n'existe pas
+            playSound("select.mp3");
+        }
+        System.out.println("♪ [CTF] Son de collection de bonus joué");
+    }
+
+    private void playExplosionSound() {
+        URL explosionSound = getClass().getResource("/Sound/bombSound.mp3");
+        if (explosionSound != null) {
+            playSound("bombSound.mp3");
+        } else {
+            // Son de fallback
+            playSound("select.mp3");
+        }
+        System.out.println("♪ [CTF] Son d'explosion joué");
+    }
+
+
     // Méthodes timer (identiques)
     private void initializeTimer() {
         gameTimer = new Timeline(new KeyFrame(Duration.seconds(1), e -> updateTimer()));
@@ -1077,6 +1115,8 @@ public class CaptureTheFlagController implements Initializable {
                 System.out.println("💣 [CTF] Joueur 2 collecte un bonus bombes ! Nouvelles bombes max: " + player2MaxBombs);
             }
 
+            playBonusSound();
+
             gameBoard.setCellType(currentPlayer.getRow(), currentPlayer.getCol(), GameBoard.CellType.EMPTY);
             updateBoardDisplay();
 
@@ -1088,6 +1128,8 @@ public class CaptureTheFlagController implements Initializable {
                 player2ExplosionRange++;
                 System.out.println("🔥 [CTF] Joueur 2 collecte un bonus portée ! Nouvelle portée: " + player2ExplosionRange);
             }
+
+            playBonusSound();
 
             gameBoard.setCellType(currentPlayer.getRow(), currentPlayer.getCol(), GameBoard.CellType.EMPTY);
             updateBoardDisplay();
@@ -1150,6 +1192,8 @@ public class CaptureTheFlagController implements Initializable {
 
     private void onBombExplosion(Bomb bomb, List<Bomb.Position> explosionCells) {
         System.out.println("💥 [CTF] EXPLOSION ! " + bomb);
+
+        playExplosionSound();
 
         Circle bombSprite = bombSprites.get(bomb);
         if (bombSprite != null) {
