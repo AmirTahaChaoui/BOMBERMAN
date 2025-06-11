@@ -111,6 +111,17 @@ public class MenuController implements Initializable {
     private MapManager mapManager;
     private static String selectedMapName = "Map Classique"; // Map par défaut
 
+    @FXML private StackPane gameModeView;
+    @FXML private VBox gameModeContent;
+    @FXML private Button normalModeButton;
+    @FXML private Button captureFlagModeButton;
+    @FXML private Button gameModeBackButton;
+
+    private static double originalMenuWidth = 800;
+    private static double originalMenuHeight = 600;
+    private static String currentTheme = "theme1";
+    private String themePath;
+    private boolean useCustomMap = false;
 
 
     // État de navigation
@@ -175,6 +186,9 @@ public class MenuController implements Initializable {
         }
         if (themeView != null) {
             themeView.setVisible(false);
+        }
+        if (gameModeView != null) {  // ← NOUVEAU
+            gameModeView.setVisible(false);
         }
 
 
@@ -510,7 +524,9 @@ public class MenuController implements Initializable {
     // NOUVELLE MÉTHODE : Vérifier si une vue est visible
     private boolean isAnyViewVisible() {
         return (loginView != null && loginView.isVisible()) ||
-                (registerView != null && registerView.isVisible());
+                (registerView != null && registerView.isVisible()) ||
+                (themeView != null && themeView.isVisible()) ||
+                (gameModeView != null && gameModeView.isVisible());
     }
 
     private void setupCursorAnimation() {
@@ -537,10 +553,11 @@ public class MenuController implements Initializable {
     }
 
     private void handleKeyPressed(KeyEvent event) {
-        // Ne pas traiter les touches si une vue de connexion/inscription/thème est visible
+        // Ne pas traiter les touches si une vue est visible
         if ((loginView != null && loginView.isVisible()) ||
                 (registerView != null && registerView.isVisible()) ||
-                (themeView != null && themeView.isVisible())) {
+                (themeView != null && themeView.isVisible()) ||
+                (gameModeView != null && gameModeView.isVisible())) { // ← NOUVEAU
 
             if (event.getCode() == KeyCode.ESCAPE) {
                 if (loginView.isVisible()) {
@@ -549,11 +566,11 @@ public class MenuController implements Initializable {
                     handleCancelRegisterButton();
                 } else if (themeView.isVisible()) {
                     handleThemeCloseButton();
+                } else if (gameModeView.isVisible()) { // ← NOUVEAU
+                    handleGameModeBackButton();
                 }
-                event.consume(); // ← Consommer seulement Échap
+                event.consume();
             }
-
-            // IMPORTANT : Ne pas consommer les autres événements pour laisser la ComboBox fonctionner
             return;
         }
 
@@ -697,11 +714,72 @@ public class MenuController implements Initializable {
     }
 
     private void startGame() {
+        // NOUVEAU : Ouvrir la vue de sélection de mode au lieu de lancer directement
+        System.out.println("🎮 Ouverture de la sélection de mode de jeu...");
+        showGameModeView();
+    }
+
+    private void showGameModeView() {
+        hideLoginView();
+        hideRegisterView();
+        hideThemeView();
+
+        gameModeView.setVisible(true);
+        gameModeView.toFront();
+
+        // Désactiver la navigation clavier du menu
+        root.setFocusTraversable(false);
+
+        Platform.runLater(() -> {
+            normalModeButton.requestFocus();
+        });
+
+        System.out.println("🎮 Vue sélection de mode ouverte");
+    }
+
+    private void hideGameModeView() {
+        gameModeView.setVisible(false);
+
+        // Réactiver la navigation clavier du menu
+        root.setFocusTraversable(true);
+
+        Platform.runLater(() -> {
+            root.requestFocus();
+        });
+
+        System.out.println("🎮 Vue sélection de mode fermée");
+    }
+
+    @FXML
+    private void handleNormalModeButton() {
+        System.out.println("🎯 Mode Normal sélectionné");
+        hideGameModeView();
+        launchNormalMode();
+    }
+
+    @FXML
+    private void handleCaptureFlagModeButton() {
+        System.out.println("🏴 Mode Capture du Drapeau sélectionné");
+        hideGameModeView();
+        launchCaptureTheFlagMode();
+    }
+
+    @FXML
+    private void handleGameModeBackButton() {
+        System.out.println("🔙 Retour depuis la sélection de mode");
+        hideGameModeView();
+    }
+
+    // ========== MÉTHODES DE LANCEMENT DES MODES ==========
+
+    private void launchNormalMode() {
         try {
-            // NOUVEAU : Passer la map sélectionnée au GameController
+            System.out.println("🚀 Lancement du mode normal...");
+
+            // Passer la map sélectionnée au GameController
             GameControllerTheme1.setSelectedMap(selectedMapName);
 
-            // SAUVEGARDER les dimensions actuelles du menu
+            // Sauvegarder les dimensions actuelles du menu
             Stage stage = (Stage) playButton.getScene().getWindow();
             double currentWidth = stage.getWidth();
             double currentHeight = stage.getHeight();
@@ -712,26 +790,110 @@ public class MenuController implements Initializable {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/theme1.fxml"));
             Parent gameRoot = loader.load();
 
-            // FORCER les bonnes dimensions pour le jeu
+            // Créer la scène de jeu
             Scene gameScene = new Scene(gameRoot, 800, 700);
             gameScene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
 
             stage.setScene(gameScene);
-            stage.setTitle("Super Bomberman - Jeu");
+            stage.setTitle("Super Bomberman - Mode Normal");
 
-            // FORCER les dimensions du jeu
+            // Forcer les dimensions du jeu
             stage.setWidth(800);
             stage.setHeight(700);
             stage.centerOnScreen();
 
             shutdown();
 
+            System.out.println("✅ Mode normal lancé avec succès");
+
         } catch (IOException e) {
             e.printStackTrace();
-            showErrorDialog("Erreur au niveau du jeu", "Impossible de charger le jeu.",
-                    "Vérifiez que le theme1.fxml existe bien dans le resources/fxml.");
+            showErrorDialog("Erreur", "Impossible de charger le mode normal",
+                    "Vérifiez que le fichier theme1.fxml existe dans resources/fxml/");
         }
     }
+
+    private void launchCaptureTheFlagMode() {
+        try {
+            System.out.println("🚀 Lancement du mode Capture du Drapeau...");
+
+            // Passer les données nécessaires au CaptureTheFlagController
+            CaptureTheFlagController.setSelectedMap(selectedMapName);
+            CaptureTheFlagController.setCurrentTheme(GameControllerTheme1.getCurrentTheme());
+
+            // Sauvegarder les dimensions actuelles du menu
+            Stage stage = (Stage) playButton.getScene().getWindow();
+            double currentWidth = stage.getWidth();
+            double currentHeight = stage.getHeight();
+
+            CaptureTheFlagController.setOriginalMenuDimensions(currentWidth, currentHeight);
+
+            // ESSAYER PLUSIEURS CHEMINS POSSIBLES
+            FXMLLoader loader = null;
+            String[] possiblePaths = {
+                    "/fxml/CTF.fxml",
+                    "/fxml/CaptureTheFlag.fxml",
+                    "/fxml/captureTheFlag.fxml",
+                    "/fxml/ctf.fxml"
+            };
+
+            for (String path : possiblePaths) {
+                URL resource = getClass().getResource(path);
+                if (resource != null) {
+                    System.out.println("✅ Fichier FXML trouvé : " + path);
+                    loader = new FXMLLoader(resource);
+                    break;
+                } else {
+                    System.out.println("❌ Fichier non trouvé : " + path);
+                }
+            }
+
+            if (loader == null) {
+                throw new IOException("Aucun fichier FXML CTF trouvé dans /fxml/");
+            }
+
+            Parent gameRoot = loader.load();
+
+            // Créer la scène de jeu
+            Scene gameScene = new Scene(gameRoot, 800, 700);
+            gameScene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
+
+            stage.setScene(gameScene);
+            stage.setTitle("Super Bomberman - Capture du Drapeau");
+            stage.setWidth(800);
+            stage.setHeight(700);
+            stage.centerOnScreen();
+
+            shutdown();
+
+            System.out.println("✅ Mode Capture du Drapeau lancé avec succès");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("❌ Erreur détaillée : " + e.getMessage());
+
+            // FALLBACK : Lister tous les fichiers FXML disponibles
+            System.out.println("🔍 Fichiers FXML disponibles :");
+            try {
+                URL fxmlDir = getClass().getResource("/fxml/");
+                if (fxmlDir != null) {
+                    System.out.println("   Dossier FXML trouvé : " + fxmlDir);
+                    // Tu peux lister manuellement tes fichiers ici
+                } else {
+                    System.out.println("   ❌ Dossier /fxml/ non trouvé");
+                }
+            } catch (Exception ex) {
+                System.out.println("   ❌ Erreur lors de la vérification : " + ex.getMessage());
+            }
+
+            showErrorDialog("Erreur", "Impossible de charger le mode Capture du Drapeau",
+                    "Le fichier FXML n'a pas été trouvé.\n\n" +
+                            "Vérifiez que capturetheflag.fxml existe dans resources/fxml/\n\n" +
+                            "Erreur : " + e.getMessage());
+        }
+    }
+
+
 
     @FXML
     private void handleSettingsButton() {

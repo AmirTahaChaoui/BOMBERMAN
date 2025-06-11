@@ -313,20 +313,40 @@ public class GameControllerTheme1 implements Initializable {
     }
 
     private void initializeGameArea() {
-        // NOUVEAU : Essayer de charger la map personnalisée sélectionnée
         CustomMap customMap = mapManager.getMapByName(selectedMap);
 
-        if (customMap != null && !selectedMap.equals("Map Classique")) {
-            // Utiliser la map personnalisée
-            System.out.println("✅ Chargement de la map personnalisée : " + selectedMap);
+        if (customMap != null) {
+            // ✅ CHANGEMENT : Utiliser TOUTE map trouvée, y compris "Map Classique"
+            System.out.println("✅ [CTF] Chargement de la map : " + selectedMap);
             gameBoard = customMap.toGameBoard();
             useCustomMap = true;
-            System.out.println("📐 Dimensions de la map : " + customMap.getWidth() + "x" + customMap.getHeight());
+            System.out.println("📐 [CTF] Dimensions de la map : " + customMap.getWidth() + "x" + customMap.getHeight());
         } else {
-            // Utiliser la map par défaut générée automatiquement
-            System.out.println("🔄 Utilisation de la map par défaut (génération automatique)");
-            gameBoard = new GameBoard(); // Génération automatique classique
+            // Utiliser la map par défaut générée automatiquement SEULEMENT si aucune map n'est trouvée
+            System.out.println("🔄 [CTF] Map non trouvée, utilisation de la génération automatique");
+            gameBoard = new GameBoard();
             useCustomMap = false;
+        }
+
+        // 🔍 DEBUG CRITIQUE : Vérifier les dimensions du plateau
+        System.out.println("🔍 [CTF] DEBUG - Dimensions après création : " + gameBoard.getWidth() + "x" + gameBoard.getHeight());
+
+        // ⚠️ VÉRIFICATION CRITIQUE : S'assurer que les dimensions sont valides
+        if (gameBoard.getWidth() == 0 || gameBoard.getHeight() == 0) {
+            System.out.println("❌ [CTF] ERREUR CRITIQUE - Dimensions invalides ! Tentative de fallback...");
+
+            // Essayer de forcer la Map Classique
+            CustomMap fallbackMap = mapManager.getMapByName("Map Classique");
+            if (fallbackMap != null) {
+                System.out.println("🔧 [CTF] Utilisation forcée de Map Classique");
+                gameBoard = fallbackMap.toGameBoard();
+                useCustomMap = true;
+            } else {
+                System.out.println("🔧 [CTF] Création d'un plateau minimal de secours");
+                gameBoard = createMinimalBoard();
+            }
+
+            System.out.println("🔧 [CTF] Plateau corrigé - Nouvelles dimensions : " + gameBoard.getWidth() + "x" + gameBoard.getHeight());
         }
 
         // Initialiser les joueurs selon les dimensions du plateau
@@ -382,6 +402,27 @@ public class GameControllerTheme1 implements Initializable {
         // Dégager les cases adjacentes aux spawns pour éviter que les joueurs soient bloqués
         clearSpawnArea(player1.getRow(), player1.getCol());
         clearSpawnArea(player2.getRow(), player2.getCol());
+    }
+
+    // NOUVELLE MÉTHODE : Créer un plateau minimal fonctionnel
+    private GameBoard createMinimalBoard() {
+        System.out.println("🛠️ [CTF] Création d'un plateau minimal...");
+
+        // Essayer d'utiliser une autre map disponible
+        List<String> availableMaps = mapManager.getMapsList();
+        for (String mapName : availableMaps) {
+            if (!mapName.equals(selectedMap)) {
+                CustomMap fallback = mapManager.getMapByName(mapName);
+                if (fallback != null && fallback.getWidth() > 0 && fallback.getHeight() > 0) {
+                    System.out.println("✅ [CTF] Utilisation de " + mapName + " comme fallback");
+                    return fallback.toGameBoard();
+                }
+            }
+        }
+
+        // En dernier recours, créer un GameBoard par défaut
+        System.out.println("⚠️ [CTF] Création d'un GameBoard par défaut en dernier recours");
+        return new GameBoard();
     }
 
     // NOUVELLE MÉTHODE : Dégager la zone de spawn

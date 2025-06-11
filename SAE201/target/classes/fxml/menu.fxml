@@ -333,5 +333,59 @@
 
         </VBox>
     </StackPane>
+    <!-- NOUVEAU : Vue de sélection de mode de jeu (cachée par défaut) -->
+    <StackPane fx:id="gameModeView"
+               styleClass="gamemode-overlay"
+               visible="false">
+        <VBox fx:id="gameModeContent"
+              alignment="CENTER"
+              spacing="30"
+              styleClass="gamemode-content">
 
+            <Label text="SÉLECTION DU MODE" styleClass="gamemode-title" />
+
+            <!-- Container des deux modes -->
+            <HBox spacing="40" alignment="CENTER">
+
+                <!-- Mode Normal -->
+                <VBox spacing="15" alignment="CENTER" styleClass="gamemode-section">
+                    <Label text="MODE NORMAL" styleClass="gamemode-section-title" />
+
+                    <Button fx:id="normalModeButton"
+                            text="BOMBERMAN CLASSIQUE"
+                            styleClass="gamemode-btn"
+                            onAction="#handleNormalModeButton" />
+
+                    <Label text="• 2 joueurs" styleClass="gamemode-description" />
+                    <Label text="• Maps personnalisées" styleClass="gamemode-description" />
+                    <Label text="• Mode survival" styleClass="gamemode-description" />
+                </VBox>
+
+                <!-- Séparateur visuel -->
+                <VBox styleClass="gamemode-separator" />
+
+                <!-- Mode Capture du Drapeau -->
+                <VBox spacing="15" alignment="CENTER" styleClass="gamemode-section">
+                    <Label text="CAPTURE DU DRAPEAU" styleClass="gamemode-section-title" />
+
+                    <Button fx:id="captureFlagModeButton"
+                            text="CAPTURE THE FLAG"
+                            styleClass="gamemode-btn"
+                            onAction="#handleCaptureFlagModeButton" />
+
+                    <Label text="• Mode équipes" styleClass="gamemode-description" />
+                    <Label text="• Objectif tactique" styleClass="gamemode-description" />
+                    <Label text="• Maps spécialisées" styleClass="gamemode-description" />
+                </VBox>
+
+            </HBox>
+
+            <!-- Bouton Retour -->
+            <Button fx:id="gameModeBackButton"
+                    text="RETOUR"
+                    styleClass="gamemode-btn-back"
+                    onAction="#handleGameModeBackButton" />
+
+        </VBox>
+    </StackPane>
 </StackPane>

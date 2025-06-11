@@ -171,7 +171,12 @@ public class GameBoard {
     }
 
     // Getters
-    public int getWidth() { return BOARD_WIDTH; }
-    public int getHeight() { return BOARD_HEIGHT; }
+    public int getWidth() {
+        return width; // Au lieu de BOARD_WIDTH si map custom
+    }
+
+    public int getHeight() {
+        return height; // Au lieu de BOARD_HEIGHT si map custom
+    }
     public CellType[][] getBoard() { return board; }
 }

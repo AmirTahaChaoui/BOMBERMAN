@@ -211,27 +211,43 @@ public class CustomMap {
      * Convertit cette CustomMap en GameBoard
      */
     public GameBoard toGameBoard() {
-        // CORRECTION : Utiliser les vraies dimensions de la matrice
-        int realHeight = matrix.length;
-        int realWidth = matrix.length > 0 ? matrix[0].length : 0;
+        // Cette méthode doit convertir la matrice de la CustomMap
+        // en un GameBoard avec les bonnes dimensions
+        GameBoard board = new GameBoard(this.width, this.height);
 
-        System.out.println("🔍 CustomMap.toGameBoard():");
-        System.out.println("   - Dimensions déclarées: " + width + "x" + height);
-        System.out.println("   - Dimensions réelles: " + realWidth + "x" + realHeight);
-
-        GameBoard gameBoard = new GameBoard(realWidth, realHeight);
-
-        // Copier la matrice vers le GameBoard en utilisant les VRAIES dimensions
-        for (int row = 0; row < realHeight; row++) {
-            for (int col = 0; col < realWidth; col++) {
-                // Accès direct à la matrice au lieu d'utiliser getCellType()
-                int cellValue = matrix[row][col];
-                GameBoard.CellType cellType = convertIntToCellType(cellValue);
-                gameBoard.setCellType(row, col, cellType);
+        for (int row = 0; row < this.height; row++) {
+            for (int col = 0; col < this.width; col++) {
+                // Copier les cellules de la matrice vers le GameBoard
+                GameBoard.CellType cellType = convertCellType(matrix[row][col]);
+                board.setCellType(row, col, cellType);
             }
         }
 
-        return gameBoard;
+        return board;
+    }
+
+    // DANS CustomMap.java
+    private GameBoard.CellType convertCellType(int cellValue) {
+        switch (cellValue) {
+            case 0:  // 0 = Case vide
+                return GameBoard.CellType.EMPTY;
+
+            case 1:  // 1 = Mur indestructible
+                return GameBoard.CellType.INDESTRUCTIBLE_WALL;
+
+            case 2:  // 2 = Mur destructible
+                return GameBoard.CellType.DESTRUCTIBLE_WALL;
+
+            case 3:  // 3 = Bonus bombes (si tu en as)
+                return GameBoard.CellType.BOMB_BONUS;
+
+            case 4:  // 4 = Bonus portée (si tu en as)
+                return GameBoard.CellType.RANGE_BONUS;
+
+            default: // Valeur inconnue = case vide
+                System.out.println("⚠️ Valeur inconnue dans la matrice : " + cellValue + " - converti en EMPTY");
+                return GameBoard.CellType.EMPTY;
+        }
     }
 
     /**
