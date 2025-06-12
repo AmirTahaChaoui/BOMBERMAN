@@ -387,8 +387,6 @@
 
                 <!-- Mode Capture du Drapeau -->
                 <VBox spacing="15" alignment="CENTER" styleClass="gamemode-section">
-                    <Label text="CAPTURE DU DRAPEAU" styleClass="gamemode-section-title" />
-
                     <Button fx:id="captureFlagModeButton"
                             text="CTF"
                             styleClass="gamemode-btn"
