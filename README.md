@@ -117,13 +117,14 @@ resources/
 ├── css/                    # Feuilles de style
 ├── images/                 # Assets graphiques
 ├── Sound/                  # Effets sonores
-└── data/                   # Données de sauvegarde
+└── docs/                   # Images screen shoot
 ```
 
 ## 🎨 Captures d'Écran
 
 | Menu Principal | Jeu Classique | Mode CTF |
 |:---:|:---:|:---:|
+(*indisponible pour le moment*)
 | ![Menu](docs/screenshots/menu.png) | ![Classic](docs/screenshots/classic.png) | ![CTF](docs/screenshots/ctf.png) |
 
 | Éditeur de Cartes | Profil Utilisateur | Thèmes |
@@ -135,7 +136,6 @@ resources/
 ### Système de Bonus
 - **💣 Bombe +** - Augmente le nombre de bombes
 - **🔥 Portée +** - Augmente la portée d'explosion
-- **⚡ Vitesse +** - Augmente la vitesse de déplacement
 
 ### Intelligence Artificielle (Futur)
 - [ ] IA pour mode solo
@@ -193,7 +193,7 @@ Les contributions sont les bienvenues ! Pour contribuer :
 
 - ⚠️ Parfois les drapeaux peuvent disparaître après explosion (corrigé en v1.1.2)
 - ⚠️ Rare désynchronisation audio sur certains systèmes
-- ⚠️ L'éditeur de cartes peut planter avec des cartes très grandes (>50x50)
+- ⚠️ L'éditeur de cartes peut ne pas afficher les cartes si il y en a trop (corrigé en v1.1.4)
 
 ## 📝 Changelog
 
@@ -208,10 +208,6 @@ Les contributions sont les bienvenues ! Pour contribuer :
 - 🔥 Mode classique fonctionnel
 - 👤 Système d'utilisateurs
 - 🗺️ Éditeur de cartes
-
-## 📄 Licence
-
-Ce projet est sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus de détails.
 
 ## 👥 Équipe
 
@@ -234,13 +230,13 @@ Ce projet est sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus de 
 
 ## 📞 Support
 
-- **Issues** : [GitHub Issues](https://github.com/adam-KUROPATWA-BUTTE/super-bomberman-javafx/issues)
-- **Email** : adam.kuropatwa@example.com
-- **Discord** : SuperBomberman#1234
+- **Issues** : [GitHub Issues](https://github.com/AmirTahaChaoui/BOMBERMAN)
+- **Email** : *a venir*
+- **Discord** : *a venir*
 
 ---
 
 ⭐ **N'oubliez pas de mettre une étoile si le projet vous plaît !** ⭐
 
-[![GitHub stars](https://img.shields.io/github/stars/adam-KUROPATWA-BUTTE/super-bomberman-javafx.svg?style=social&label=Star)](https://github.com/adam-KUROPATWA-BUTTE/super-bomberman-javafx)
-[![GitHub forks](https://img.shields.io/github/forks/adam-KUROPATWA-BUTTE/super-bomberman-javafx.svg?style=social&label=Fork)](https://github.com/adam-KUROPATWA-BUTTE/super-bomberman-javafx/fork)
+[![GitHub stars](https://img.shields.io/github/stars/AmirTahaChaoui/BOMBERMAN.svg?style=social&label=Star)](https://github.com/AmirTahaChaoui/BOMBERMAN)
+[![GitHub forks](https://img.shields.io/github/forks/AmirTahaChaoui/BOMBERMAN.svg?style=social&label=Fork)](https://github.com/AmirTahaChaoui/BOMBERMAN/fork)
