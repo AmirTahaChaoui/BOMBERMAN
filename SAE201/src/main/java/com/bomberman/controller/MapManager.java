@@ -19,6 +19,11 @@ public class MapManager {
         loadMaps();
     }
 
+    /**
+     * Retourne l'instance unique du gestionnaire de cartes (singleton).
+     *
+     * @return L'instance de {@code MapManager}.
+     */
     public static MapManager getInstance() {
         if (instance == null) {
             instance = new MapManager();
@@ -27,7 +32,8 @@ public class MapManager {
     }
 
     /**
-     * Charge toutes les maps depuis le fichier JSON (parsing manuel)
+     * Charge toutes les cartes à partir du fichier JSON et les stocke en mémoire.
+     * Utilise un parsing manuel du contenu JSON.
      */
     public void loadMaps() {
         loadedMaps.clear();
@@ -45,7 +51,11 @@ public class MapManager {
     }
 
     /**
-     * Sauvegarde une nouvelle map dans le fichier JSON
+     * Sauvegarde une carte dans la liste en mémoire et réécrit le fichier JSON complet.
+     * Si une carte avec le même nom existe, elle est remplacée.
+     *
+     * @param map La carte à sauvegarder.
+     * @return {@code true} si la sauvegarde a réussi, {@code false} sinon.
      */
     public boolean saveMap(CustomMap map) {
         try {
@@ -74,7 +84,7 @@ public class MapManager {
     }
 
     /**
-     * Retourne la liste des noms de toutes les maps
+     * Retourne la liste des noms de toutes les cartes chargées.
      */
     public List<String> getMapsList() {
         List<String> mapNames = new ArrayList<>();
@@ -103,8 +113,11 @@ public class MapManager {
         return new ArrayList<>(loadedMaps);
     }
 
-    // === MÉTHODES PRIVÉES ===
-
+    /**
+     * Analyse manuellement le contenu JSON et reconstruit les objets {@code CustomMap}.
+     *
+     * @param content Le contenu brut du fichier JSON.
+     */
     private void parseJsonContent(String content) {
         String[] lines = content.split("\n");
         boolean inMapArray = false;
@@ -193,6 +206,12 @@ public class MapManager {
         }
     }
 
+    /**
+     * Extrait une valeur de type chaîne depuis une ligne JSON.
+     *
+     * @param line Ligne contenant une valeur de chaîne JSON.
+     * @return La valeur extraite, ou chaîne vide en cas d'erreur.
+     */
     private String extractStringValue(String line) {
         try {
             int start = line.indexOf("\"", line.indexOf(":")) + 1;
@@ -205,11 +224,23 @@ public class MapManager {
         }
     }
 
+    /**
+     * Extrait une valeur entière depuis une ligne JSON.
+     *
+     * @param line Ligne contenant une valeur entière JSON.
+     * @return La valeur entière extraite.
+     */
     private int extractIntValue(String line) {
         String numberStr = line.substring(line.indexOf(":") + 1).replaceAll("[,\\s]", "");
         return Integer.parseInt(numberStr);
     }
 
+    /**
+     * Analyse une ligne représentant une ligne de matrice et retourne le tableau d'entiers correspondant.
+     *
+     * @param line Ligne JSON représentant une ligne de matrice.
+     * @return Tableau d'entiers correspondant à la ligne, ou {@code null} si parsing échoue.
+     */
     private int[] parseMatrixRow(String line) {
         // Supprimer les crochets
         String numbers = line.substring(1, line.length() - 1);
@@ -225,6 +256,12 @@ public class MapManager {
         return row;
     }
 
+    /**
+     * Réécrit l'intégralité du fichier JSON avec toutes les cartes chargées en mémoire.
+     * Ajoute également des métadonnées (version, totalMaps, date de dernière mise à jour).
+     *
+     * @throws IOException En cas d'erreur d'écriture du fichier.
+     */
     private void writeJsonFile() throws IOException {
         StringBuilder json = new StringBuilder();
         json.append("{\n");
@@ -289,6 +326,11 @@ public class MapManager {
         Files.write(Paths.get(MAPS_FILE_PATH), json.toString().getBytes());
     }
 
+    /**
+     * Retourne le nombre total de cartes actuellement chargées.
+     *
+     * @return Nombre de cartes.
+     */
     public int getMapCount() {
         return loadedMaps.size();
     }

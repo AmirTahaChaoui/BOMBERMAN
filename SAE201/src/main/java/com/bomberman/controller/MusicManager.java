@@ -25,6 +25,11 @@ public class MusicManager {
         createShuffledPlaylist();
     }
 
+    /**
+     * Retourne l'instance unique du gestionnaire de musique (pattern Singleton).
+     *
+     * @return L'instance de {@code MusicManager}.
+     */
     public static MusicManager getInstance() {
         if (instance == null) {
             instance = new MusicManager();
@@ -32,6 +37,9 @@ public class MusicManager {
         return instance;
     }
 
+    /**
+     * Initialise la liste des fichiers de musique disponibles (01.mp3 à 11.mp3).
+     */
     private void initializeMusicFiles() {
         musicFiles = new ArrayList<>();
         for (int i = 1; i <= 11; i++) {
@@ -39,6 +47,9 @@ public class MusicManager {
         }
     }
 
+    /**
+     * Crée une nouvelle playlist mélangée à partir des fichiers de musique disponibles.
+     */
     private void createShuffledPlaylist() {
         shuffledPlaylist = new ArrayList<>(musicFiles);
         if (isShuffle) {
@@ -47,12 +58,19 @@ public class MusicManager {
         currentTrackIndex = 0;
     }
 
+    /**
+     * Démarre la lecture de la musique de fond si aucune erreur n'est survenue
+     * et que la musique n'est pas déjà en cours.
+     */
     public void startBackgroundMusic() {
         if (!musicFailed && !isPlaying && !shuffledPlaylist.isEmpty()) {
             playCurrentTrack();
         }
     }
 
+    /**
+     * Arrête et libère les ressources de la musique en cours.
+     */
     public void stopBackgroundMusic() {
         if (currentPlayer != null) {
             currentPlayer.stop();
@@ -62,6 +80,9 @@ public class MusicManager {
         isPlaying = false;
     }
 
+    /**
+     * Met la musique en pause si elle est en cours de lecture.
+     */
     public void pauseBackgroundMusic() {
         if (currentPlayer != null && isPlaying && !musicFailed) {
             currentPlayer.pause();
@@ -69,6 +90,9 @@ public class MusicManager {
         }
     }
 
+    /**
+     * Reprend la lecture de la musique si elle a été mise en pause.
+     */
     public void resumeBackgroundMusic() {
         if (currentPlayer != null && !isPlaying && !musicFailed) {
             currentPlayer.play();
@@ -76,6 +100,9 @@ public class MusicManager {
         }
     }
 
+    /**
+     * Joue la piste actuelle de la playlist. En cas d’erreur, la lecture est désactivée.
+     */
     private void playCurrentTrack() {
         // Si la musique a déjà échoué, ne plus essayer
         if (musicFailed) {
@@ -127,6 +154,11 @@ public class MusicManager {
         }
     }
 
+    /**
+     * Passe à la piste suivante dans la playlist mélangée.
+     * Si la fin de la liste est atteinte, une nouvelle playlist est générée.
+     */
+
     public void nextTrack() {
         if (musicFailed) return;
 
@@ -140,6 +172,10 @@ public class MusicManager {
         }
     }
 
+    /**
+     * Passe à la piste précédente dans la playlist.
+     * Si le début est atteint, revient à la dernière piste.
+     */
     public void previousTrack() {
         if (musicFailed) return;
 
@@ -153,6 +189,11 @@ public class MusicManager {
         }
     }
 
+    /**
+     * Définit le volume de la musique.
+     *
+     * @param volume Volume entre 0.0 et 1.0.
+     */
     public void setVolume(double volume) {
         this.volume = Math.max(0.0, Math.min(1.0, volume));
         if (currentPlayer != null && !musicFailed) {
@@ -160,25 +201,39 @@ public class MusicManager {
         }
     }
 
+    /**
+     * Retourne le volume actuel de la musique.
+     *
+     * @return Volume entre 0.0 et 1.0.
+     */
     public double getVolume() {
         return volume;
     }
 
-    public void setShuffle(boolean shuffle) {
-        if (!musicFailed) {
-            this.isShuffle = shuffle;
-            createShuffledPlaylist();
-        }
-    }
 
+    /**
+     * Indique si le mode aléatoire est activé.
+     *
+     * @return {@code true} si le shuffle est activé, sinon {@code false}.
+     */
     public boolean isShuffle() {
         return isShuffle;
     }
 
+    /**
+     * Indique si la musique est actuellement en cours de lecture (et sans erreur).
+     *
+     * @return {@code true} si une piste est en cours de lecture, sinon {@code false}.
+     */
     public boolean isPlaying() {
         return isPlaying && !musicFailed;
     }
 
+    /**
+     * Retourne le nom de la piste actuellement jouée.
+     *
+     * @return Nom de la piste ou un message si la musique est désactivée.
+     */
     public String getCurrentTrackName() {
         if (musicFailed) {
             return "Musique désactivée";
@@ -189,19 +244,9 @@ public class MusicManager {
         return "Aucune";
     }
 
-    public void playSpecificTrack(int trackNumber) {
-        if (musicFailed) return;
-
-        if (trackNumber >= 1 && trackNumber <= 10) {
-            String trackName = String.format("%02d.mp3", trackNumber);
-            int index = shuffledPlaylist.indexOf(trackName);
-            if (index != -1) {
-                currentTrackIndex = index;
-                playCurrentTrack();
-            }
-        }
-    }
-
+    /**
+     * Arrête la musique de fond et réinitialise l'instance du singleton.
+     */
     public void shutdown() {
         stopBackgroundMusic();
         instance = null;

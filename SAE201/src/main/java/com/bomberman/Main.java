@@ -4,14 +4,18 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 import javafx.scene.text.Font;
 import java.net.URL;
 
 public class    Main extends Application {
 
+    /**
+     * Point d'entrée JavaFX. Configure la scène principale et charge les ressources.
+     *
+     * @param primaryStage la fenêtre principale de l'application
+     * @throws Exception en cas d'erreur de chargement
+     */
     @Override
     public void start(Stage primaryStage) throws Exception {
 
@@ -19,9 +23,6 @@ public class    Main extends Application {
         loadCustomFont();
 
         try {
-            // Debug: Afficher les ressources disponibles
-            debugResources();
-
             // Charger le FXML du menu
             URL fxmlUrl = getClass().getResource("/fxml/menu.fxml");
             if (fxmlUrl == null) {
@@ -69,6 +70,12 @@ public class    Main extends Application {
         }
     }
 
+    /**
+     * Charge une feuille de style CSS dans la scène donnée.
+     *
+     * @param scene la scène JavaFX
+     * @param cssPath chemin vers le fichier CSS
+     */
     private void loadStylesheet(Scene scene, String cssPath) {
         try {
             URL cssUrl = getClass().getResource(cssPath);
@@ -84,31 +91,9 @@ public class    Main extends Application {
         }
     }
 
-    private void debugResources() {
-        System.out.println("=== DEBUG RESSOURCES ===");
-
-        // Vérifier les ressources principales
-        String[] resources = {
-                "/fxml/menu.fxml",
-                "/css/menu.css",
-                "/fonts/PressStart2P.ttf",
-                "/images",
-                "/fxml/theme1.fxml",
-                "/css/style.css",
-                "/donnees/users.json"
-        };
-
-        for (String resource : resources) {
-            URL url = getClass().getResource(resource);
-            if (url != null) {
-                System.out.println("✓ Trouvé: " + resource + " -> " + url);
-            } else {
-                System.out.println("✗ Manquant: " + resource);
-            }
-        }
-        System.out.println("========================");
-    }
-
+    /**
+     * Charge la police personnalisée utilisée dans le jeu.
+     */
     private void loadCustomFont() {
         try {
             // Charger la police Press Start 2P
@@ -129,6 +114,11 @@ public class    Main extends Application {
         }
     }
 
+    /**
+     * Affiche un menu de secours si le menu principal ne peut être chargé.
+     *
+     * @param primaryStage la fenêtre principale
+     */
     private void createFallbackMenu(Stage primaryStage) {
         try {
             System.out.println("Création d'un menu de secours...");
@@ -151,6 +141,12 @@ public class    Main extends Application {
         }
     }
 
+    /**
+     * Point d'entrée principal de l'application.
+     * Lance l'application JavaFX.
+     *
+     * @param args arguments de la ligne de commande (non utilisés)
+     */
     public static void main(String[] args) {
         launch(args);
     }

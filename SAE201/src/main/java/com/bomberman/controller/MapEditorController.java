@@ -12,7 +12,6 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
@@ -56,6 +55,13 @@ public class MapEditorController implements Initializable {
     // Gestionnaires
     private UserManager userManager;
 
+    /**
+     * Initialise le contrôleur : charge les images du thème, prépare la grille de map,
+     * initialise les données et configure les raccourcis clavier.
+     *
+     * @param location  emplacement du fichier FXML (non utilisé)
+     * @param resources ressources pour la localisation (non utilisé)
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         userManager = UserManager.getInstance();
@@ -69,8 +75,11 @@ public class MapEditorController implements Initializable {
         updateInfoPanel();
     }
 
+    /**
+     * Charge les images de textures (mur, sol, bloc destructible) selon le thème en cours.
+     */
     private void loadImages() {
-        String currentTheme = GameControllerTheme1.getCurrentTheme();
+        String currentTheme = GameController.getCurrentTheme();
         String themePath = "/images/" + currentTheme + "/";
 
         wallImage = new Image(getClass().getResource(themePath + "wall.png").toExternalForm());
@@ -78,11 +87,20 @@ public class MapEditorController implements Initializable {
         blockImage = new Image(getClass().getResource(themePath + "block.png").toExternalForm());
     }
 
+    /**
+     * Définit les dimensions d'origine du menu principal pour les restaurer lors du retour.
+     *
+     * @param width  largeur d'origine
+     * @param height hauteur d'origine
+     */
     public void setOriginalDimensions(double width, double height) {
         this.originalWidth = width;
         this.originalHeight = height;
     }
 
+    /**
+     * Initialise les données de la map avec une grille vide entourée de murs indestructibles.
+     */
     private void initializeMapData() {
         mapData = new int[MAP_HEIGHT][MAP_WIDTH];
         mapCells = new Rectangle[MAP_HEIGHT][MAP_WIDTH];
@@ -99,6 +117,10 @@ public class MapEditorController implements Initializable {
         }
     }
 
+    /**
+     * Génère la grille graphique de l'éditeur à partir des données de la map,
+     * et attache les événements de clic et survol aux cellules.
+     */
     private void createMapGrid() {
         mapGrid.getChildren().clear();
 
@@ -122,6 +144,13 @@ public class MapEditorController implements Initializable {
         }
     }
 
+    /**
+     * Crée un rectangle représentant une cellule de la grille à la position spécifiée.
+     *
+     * @param row ligne de la cellule
+     * @param col colonne de la cellule
+     * @return le rectangle représentant la cellule
+     */
     private Rectangle createCell(int row, int col) {
         Rectangle cell = new Rectangle(CELL_SIZE, CELL_SIZE);
         updateCellAppearance(cell, mapData[row][col]);
@@ -133,6 +162,12 @@ public class MapEditorController implements Initializable {
         return cell;
     }
 
+    /**
+     * Met à jour l’apparence graphique d’une cellule en fonction de son type (vide, mur, bloc).
+     *
+     * @param cell     cellule à modifier
+     * @param cellType type de la cellule (0 = vide, 1 = mur, 2 = bloc destructible)
+     */
     private void updateCellAppearance(Rectangle cell, int cellType) {
         switch (cellType) {
             case 0: // Vide
@@ -161,7 +196,9 @@ public class MapEditorController implements Initializable {
         }
     }
 
-    // ✅ MODIFIÉE : setupTools() -> setupDefaults()
+    /**
+     * Configure les valeurs par défaut de l’éditeur (nom de map, utilisateur, etc.).
+     */
     private void setupDefaults() {
         // Nom de map par défaut
         if (userManager.isLoggedIn()) {
@@ -172,12 +209,20 @@ public class MapEditorController implements Initializable {
         }
     }
 
+    /**
+     * Configure les raccourcis clavier pour sauvegarder, charger ou quitter l’éditeur.
+     */
     private void setupKeyboardControls() {
         root.setOnKeyPressed(this::handleKeyPress);
         root.setFocusTraversable(true);
         root.requestFocus();
     }
 
+    /**
+     * Gère les raccourcis clavier pressés dans l’éditeur (Ctrl+S, Ctrl+L, Échap).
+     *
+     * @param event événement clavier capturé
+     */
     private void handleKeyPress(KeyEvent event) {
         KeyCode code = event.getCode();
 
@@ -199,7 +244,13 @@ public class MapEditorController implements Initializable {
         event.consume();
     }
 
-    // ✅ MÉTHODE INCHANGÉE : Logique simplifiée déjà en place
+    /**
+     * Gère le clic sur une cellule de la grille : bascule entre vide et mur indestructible.
+     *
+     * @param row   ligne de la cellule
+     * @param col   colonne de la cellule
+     * @param event événement de souris déclenché
+     */
     private void handleCellClick(int row, int col, MouseEvent event) {
         // Ne pas modifier les bordures
         if (row == 0 || row == MAP_HEIGHT - 1 || col == 0 || col == MAP_WIDTH - 1) {
@@ -225,13 +276,17 @@ public class MapEditorController implements Initializable {
         }
     }
 
-
+    /**
+     * Met à jour l'affichage des informations de la map (dimensions, etc.).
+     */
     private void updateInfoPanel() {
         mapSizeLabel.setText("Taille: " + MAP_WIDTH + "x" + MAP_HEIGHT);
     }
 
-    // ===== ACTIONS DES BOUTONS  =====
-
+    /**
+     * Sauvegarde la map actuelle après validation du nom, génération des murs destructibles
+     * et vérification de la validité. Affiche des alertes selon le résultat.
+     */
     @FXML
     private void saveMap() {
         String mapName = mapNameField.getText().trim();
@@ -286,6 +341,10 @@ public class MapEditorController implements Initializable {
         }
     }
 
+    /**
+     * Remplit toutes les cellules non protégées avec des murs destructibles.
+     * Ignore les bordures et les zones de spawn.
+     */
     private void generateDestructibleWalls() {
         for (int row = 0; row < MAP_HEIGHT; row++) {
             for (int col = 0; col < MAP_WIDTH; col++) {
@@ -310,6 +369,11 @@ public class MapEditorController implements Initializable {
         createMapGrid();
     }
 
+    /**
+     * Construit une matrice 2D représentant la map actuelle à partir de l'état de l'éditeur.
+     *
+     * @return une matrice d'entiers correspondant aux types de chaque cellule
+     */
     private int[][] createMatrixFromEditor() {
         // Utiliser les constantes de l'éditeur pour garantir la bonne taille
         int[][] matrix = new int[MAP_HEIGHT][MAP_WIDTH];
@@ -329,6 +393,13 @@ public class MapEditorController implements Initializable {
         return matrix;
     }
 
+    /**
+     * Vérifie si une cellule appartient à une zone de spawn (haut-gauche ou bas-droite).
+     *
+     * @param row ligne
+     * @param col colonne
+     * @return {@code true} si la cellule est une zone de spawn, sinon {@code false}
+     */
     private boolean isSpawnZone(int row, int col) {
         // Zone spawn joueur 1 (coin haut-gauche)
         if ((row == 1 && col == 1) || (row == 1 && col == 2) || (row == 2 && col == 1)) {
@@ -345,6 +416,10 @@ public class MapEditorController implements Initializable {
         return false;
     }
 
+    /**
+     * Ouvre une boîte de dialogue pour sélectionner une map enregistrée et la charger
+     * dans l’éditeur si elle est valide.
+     */
     @FXML
     private void loadMap() {
         List<String> mapNames = mapManager.getMapsList();
@@ -366,6 +441,11 @@ public class MapEditorController implements Initializable {
         }
     }
 
+    /**
+     * Charge les données d’une map existante par son nom et les affiche dans l’éditeur.
+     *
+     * @param mapName nom de la map à charger
+     */
     private void loadMapData(String mapName) {
         try {
             CustomMap map = mapManager.getMapByName(mapName);
@@ -400,7 +480,10 @@ public class MapEditorController implements Initializable {
         }
     }
 
-
+    /**
+     * Réinitialise la map en affichant une confirmation à l'utilisateur.
+     * Supprime tout contenu en recréant une map vide par défaut.
+     */
     @FXML
     private void clearMap() {
         Alert confirm = createStyledAlert(Alert.AlertType.CONFIRMATION, "Effacer la map",
@@ -413,6 +496,9 @@ public class MapEditorController implements Initializable {
         }
     }
 
+    /**
+     * Retourne à la scène du menu principal en restaurant les dimensions originales de la fenêtre.
+     */
     @FXML
     private void backToMenu() {
         try {
@@ -440,42 +526,15 @@ public class MapEditorController implements Initializable {
         }
     }
 
-    private void showAlert(String title, String header, String content) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(header);
-        alert.setContentText(content);
-        alert.showAndWait();
-    }
-
-    // ===== CLASSES DE DONNÉES (INCHANGÉES) =====
-
-    public static class MapData {
-        public String name;
-        public String author;
-        public String theme;
-        public int width;
-        public int height;
-        public String createdDate;
-        public int[][] cells;
-        public PlayerSpawns playerSpawns;
-    }
-
-    public static class PlayerSpawns {
-        public Position player1;
-        public Position player2;
-    }
-
-    public static class Position {
-        public int row;
-        public int col;
-
-        public Position(int row, int col) {
-            this.row = row;
-            this.col = col;
-        }
-    }
-
+    /**
+     * Crée une alerte personnalisée avec un style CSS adapté à l’éditeur.
+     *
+     * @param type    Type de l'alerte (INFO, WARNING, etc.)
+     * @param title   Titre
+     * @param header  En-tête
+     * @param content Corps du message
+     * @return l'objet {@link Alert} configuré
+     */
     private Alert createStyledAlert(Alert.AlertType type, String title, String header, String content) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
@@ -490,6 +549,16 @@ public class MapEditorController implements Initializable {
         return alert;
     }
 
+    /**
+     * Crée une boîte de dialogue de choix personnalisée avec les styles CSS de l'éditeur.
+     *
+     * @param defaultChoice choix sélectionné par défaut
+     * @param choices       liste des choix disponibles
+     * @param title         titre de la boîte
+     * @param header        en-tête
+     * @param content       description du contenu
+     * @return la boîte de dialogue {@link ChoiceDialog}
+     */
     private ChoiceDialog<String> createStyledChoiceDialog(String defaultChoice, List<String> choices,
                                                           String title, String header, String content) {
         ChoiceDialog<String> dialog = new ChoiceDialog<>(defaultChoice, choices);

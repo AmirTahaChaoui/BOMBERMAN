@@ -13,6 +13,14 @@ public class Flag {
     private boolean captured;
     private boolean dropped;
 
+
+    /**
+     * Crée un drapeau appartenant à une équipe, placé à une position initiale.
+     *
+     * @param row Ligne d'origine
+     * @param col Colonne d'origine
+     * @param team Équipe du drapeau (rouge ou bleue)
+     */
     public Flag(int row, int col, Team team) {
         this.originalRow = row;
         this.originalCol = col;
@@ -23,6 +31,13 @@ public class Flag {
         this.dropped = false;
     }
 
+    /**
+     * Dépose le drapeau à une nouvelle position sur le plateau.
+     * Le drapeau n'est plus capturé mais devient "déposé".
+     *
+     * @param row Nouvelle ligne où le drapeau est déposé
+     * @param col Nouvelle colonne où le drapeau est déposé
+     */
     public void drop(int row, int col) {
         this.currentRow = row;
         this.currentCol = col;
@@ -30,6 +45,10 @@ public class Flag {
         this.dropped = true;
     }
 
+    /**
+     * Réinitialise le drapeau à sa position d'origine.
+     * Le drapeau n'est plus capturé ni déposé.
+     */
     public void reset() {
         this.currentRow = originalRow;
         this.currentCol = originalCol;

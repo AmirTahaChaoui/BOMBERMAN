@@ -7,7 +7,6 @@ import com.google.gson.reflect.TypeToken;
 
 import java.io.*;
 import java.lang.reflect.Type;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -53,6 +52,11 @@ public class UserManager {
         loadUsers();
     }
 
+    /**
+     * Retourne l'instance unique du gestionnaire d'utilisateurs (pattern Singleton).
+     *
+     * @return L'instance de {@code UserManager}.
+     */
     public static UserManager getInstance() {
         if (instance == null) {
             instance = new UserManager();
@@ -60,7 +64,9 @@ public class UserManager {
         return instance;
     }
 
-    // ===== GESTION DES FICHIERS =====
+    /**
+     * Crée le dossier de sauvegarde si celui-ci n'existe pas.
+     */
     private void createSaveDirectory() {
         File file = new File(SAVE_FILE);
         File directory = file.getParentFile();
@@ -69,6 +75,10 @@ public class UserManager {
         }
     }
 
+    /**
+     * Charge la liste des utilisateurs depuis le fichier JSON.
+     * Si le fichier est vide ou invalide, initialise une liste vide.
+     */
     private void loadUsers() {
         File file = new File(SAVE_FILE);
 
@@ -93,6 +103,9 @@ public class UserManager {
         }
     }
 
+    /**
+     * Sauvegarde la liste actuelle des utilisateurs dans le fichier JSON.
+     */
     private void saveUsers() {
         try {
             // Créer le dossier si nécessaire
@@ -109,7 +122,12 @@ public class UserManager {
         }
     }
 
-    // ===== GESTION DES MOTS DE PASSE =====
+    /**
+     * Génère un hash SHA-256 sécurisé pour un mot de passe donné.
+     *
+     * @param password Mot de passe en clair.
+     * @return Chaîne hachée (hexadécimale).
+     */
     private String hashPassword(String password) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
@@ -127,7 +145,15 @@ public class UserManager {
         }
     }
 
-    // ===== OPÉRATIONS UTILISATEUR =====
+    /**
+     * Crée un nouvel utilisateur avec les informations fournies.
+     *
+     * @param username  Nom d'utilisateur unique.
+     * @param password  Mot de passe (sera haché).
+     * @param firstName Prénom.
+     * @param lastName  Nom de famille.
+     * @return {@code true} si l'utilisateur a été créé avec succès, {@code false} sinon.
+     */
     public boolean createUser(String username, String password, String firstName,
                               String lastName) {
 
@@ -148,6 +174,13 @@ public class UserManager {
         return true;
     }
 
+    /**
+     * Tente de connecter un utilisateur avec les identifiants fournis.
+     *
+     * @param username Nom d'utilisateur.
+     * @param password Mot de passe.
+     * @return {@code true} si la connexion est réussie, {@code false} sinon.
+     */
     public boolean login(String username, String password) {
 
         User user = getUserByUsername(username);
@@ -169,12 +202,22 @@ public class UserManager {
         return true;
     }
 
+    /**
+     * Déconnecte l'utilisateur actuellement connecté.
+     */
+
     public void logout() {
         if (currentUser != null) {
             currentUser = null;
         }
     }
 
+    /**
+     * Recherche un utilisateur par nom d'utilisateur (insensible à la casse).
+     *
+     * @param username Nom d'utilisateur.
+     * @return L'utilisateur correspondant ou {@code null} si non trouvé.
+     */
     private User getUserByUsername(String username) {
         for (User user : users) {
             if (user.getUsername().equalsIgnoreCase(username)) {
@@ -184,7 +227,11 @@ public class UserManager {
         return null;
     }
 
-    // ===== MISE À JOUR DES STATISTIQUES =====
+    /**
+     * Enregistre le résultat d'une partie pour l'utilisateur connecté.
+     *
+     * @param won {@code true} si la partie est gagnée, {@code false} sinon.
+     */
     public void recordGameResult(boolean won) {
         if (currentUser == null) {
             return;
@@ -198,6 +245,12 @@ public class UserManager {
         saveUsers();
     }
 
+    /**
+     * Met à jour les informations du profil de l'utilisateur connecté.
+     *
+     * @param firstName Nouveau prénom (peut être {@code null}).
+     * @param lastName  Nouveau nom de famille (peut être {@code null}).
+     */
     public void updateProfile(String firstName, String lastName) {
         if (currentUser == null) {
             return;
@@ -209,32 +262,38 @@ public class UserManager {
         saveUsers();
     }
 
-    public boolean changePassword(String oldPassword, String newPassword) {
-        if (currentUser == null) return false;
-
-        String oldHash = hashPassword(oldPassword);
-        if (!currentUser.checkPassword(oldHash)) {
-            return false;
-        }
-
-        currentUser.setPasswordHash(hashPassword(newPassword));
-        saveUsers();
-        return true;
-    }
-
-    // ===== GETTERS =====
+    /**
+     * Retourne l'utilisateur actuellement connecté.
+     *
+     * @return Utilisateur courant, ou {@code null} s'il n'y a pas de session.
+     */
     public User getCurrentUser() {
         return currentUser;
     }
 
+    /**
+     * Vérifie si un utilisateur est actuellement connecté.
+     *
+     * @return {@code true} si connecté, sinon {@code false}.
+     */
     public boolean isLoggedIn() {
         return currentUser != null;
     }
 
+    /**
+     * Retourne la liste de tous les utilisateurs enregistrés.
+     *
+     * @return Liste d'utilisateurs.
+     */
     public List<User> getAllUsers() {
         return new ArrayList<>(users);
     }
 
+    /**
+     * Retourne le nombre total d'utilisateurs enregistrés.
+     *
+     * @return Nombre d'utilisateurs.
+     */
     public int getUserCount() {
         return users.size();
     }

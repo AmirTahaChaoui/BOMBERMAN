@@ -120,6 +120,12 @@ public class MenuController implements Initializable {
     // Gestionnaire de musique
     private MusicManager musicManager;
 
+    /**
+     * Initialise le contrôleur du menu principal.
+     *
+     * @param location  L'emplacement utilisé pour résoudre les chemins relatifs pour l'objet racine.
+     * @param resources Les ressources utilisées pour localiser les éléments du fichier FXML.
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Initialiser le gestionnaire d'utilisateurs
@@ -143,7 +149,10 @@ public class MenuController implements Initializable {
         mapManager = MapManager.getInstance();
     }
 
-    // NOUVELLE MÉTHODE : Configuration du système de connexion
+    /**
+     * Initialise le système de connexion.
+     * Met à jour l'affichage du bouton de connexion et masque les vues de connexion, d'inscription, de thème et de mode de jeu.
+     */
     private void setupLoginSystem() {
         // Mettre à jour l'affichage selon l'état de connexion
         updateLoginDisplay();
@@ -163,7 +172,9 @@ public class MenuController implements Initializable {
         }
     }
 
-    // NOUVELLE MÉTHODE : Mettre à jour l'affichage de connexion
+    /**
+     * Met à jour le texte du bouton de connexion selon l'état de connexion de l'utilisateur.
+     */
     private void updateLoginDisplay() {
         if (userManager.isLoggedIn()) {
             User currentUser = userManager.getCurrentUser();
@@ -175,7 +186,9 @@ public class MenuController implements Initializable {
         }
     }
 
-
+    /**
+     * Gère l'action du bouton de connexion. Vérifie les identifiants et tente une connexion.
+     */
     @FXML
     private void handleConnectButton() {
         String username = usernameField.getText().trim();
@@ -201,6 +214,10 @@ public class MenuController implements Initializable {
         }
     }
 
+    /**
+     * Gère l'action du bouton d'annulation dans la vue de connexion.
+     * Ferme la vue de connexion et réinitialise les champs.
+     */
     @FXML
     private void handleCancelButton() {
         hideLoginView();
@@ -208,12 +225,17 @@ public class MenuController implements Initializable {
         loginErrorLabel.setVisible(false);
     }
 
+    /**
+     * Affiche la vue d'inscription lorsqu'on clique sur le lien "Créer un compte".
+     */
     @FXML
     private void handleCreateAccountLink() {
         showRegisterView();
     }
 
-    // NOUVELLES MÉTHODES : Gestion de l'inscription
+    /**
+     * Gère l'action du bouton de création de compte. Vérifie les champs et tente de créer un utilisateur.
+     */
     @FXML
     private void handleCreateAccountButton() {
         String firstName = firstNameField.getText().trim();
@@ -222,7 +244,6 @@ public class MenuController implements Initializable {
         String password = registerPasswordField.getText();
         String confirmPassword = confirmPasswordField.getText();
 
-        // Vider le message d'erreur
         registerErrorLabel.setVisible(false);
 
 
@@ -260,6 +281,10 @@ public class MenuController implements Initializable {
         }
     }
 
+    /**
+     * Gère l'action du bouton d'annulation dans la vue d'inscription.
+     * Ferme la vue et réinitialise les champs.
+     */
     @FXML
     private void handleCancelRegisterButton() {
         hideRegisterView();
@@ -267,6 +292,9 @@ public class MenuController implements Initializable {
         registerErrorLabel.setVisible(false);
     }
 
+    /**
+     * Revient à la vue de connexion depuis la vue d'inscription.
+     */
     @FXML
     private void handleBackToLoginLink() {
         hideRegisterView();
@@ -274,7 +302,9 @@ public class MenuController implements Initializable {
         clearRegisterFields();
     }
 
-    // NOUVELLES MÉTHODES : Gestion de l'affichage
+    /**
+     * Affiche la vue de connexion et désactive la navigation clavier dans le menu principal.
+     */
     private void showLoginView() {
         hideRegisterView();
         hideRankingView();
@@ -287,6 +317,9 @@ public class MenuController implements Initializable {
         });
     }
 
+    /**
+     * Masque la vue de connexion et réactive la navigation clavier du menu principal.
+     */
     private void hideLoginView() {
         loginView.setVisible(false);
         // Réactiver la navigation clavier du menu
@@ -296,6 +329,9 @@ public class MenuController implements Initializable {
         });
     }
 
+    /**
+     * Affiche la vue d'inscription et désactive la navigation clavier dans le menu principal.
+     */
     private void showRegisterView() {
         hideLoginView();
         hideRankingView();
@@ -308,6 +344,9 @@ public class MenuController implements Initializable {
         });
     }
 
+    /**
+     * Masque la vue d'inscription et réactive la navigation clavier du menu principal.
+     */
     private void hideRegisterView() {
         registerView.setVisible(false);
         // Réactiver la navigation clavier du menu
@@ -317,11 +356,17 @@ public class MenuController implements Initializable {
         });
     }
 
+    /**
+     * Réinitialise les champs du formulaire de connexion.
+     */
     private void clearLoginFields() {
         usernameField.clear();
         passwordField.clear();
     }
 
+    /**
+     * Réinitialise les champs du formulaire d'inscription.
+     */
     private void clearRegisterFields() {
         firstNameField.clear();
         lastNameField.clear();
@@ -330,16 +375,30 @@ public class MenuController implements Initializable {
         confirmPasswordField.clear();
     }
 
+    /**
+     * Affiche un message d'erreur dans la vue de connexion.
+     *
+     * @param message Message à afficher.
+     */
     private void showLoginError(String message) {
         loginErrorLabel.setText(message);
         loginErrorLabel.setVisible(true);
     }
 
+    /**
+     * Affiche un message d'erreur dans la vue d'inscription.
+     *
+     * @param message Message à afficher.
+     */
     private void showRegisterError(String message) {
         registerErrorLabel.setText(message);
         registerErrorLabel.setVisible(true);
     }
 
+    /**
+     * Affiche une boîte de dialogue contenant les informations de l'utilisateur connecté.
+     * Propose également une option de déconnexion.
+     */
     private void showUserProfile() {
         User currentUser = userManager.getCurrentUser();
 
@@ -371,13 +430,18 @@ public class MenuController implements Initializable {
         }
     }
 
-    // Méthodes existantes (inchangées)
+    /**
+     * Initialise la musique de fond avec un volume prédéfini.
+     */
     private void setupMusic() {
         musicManager = MusicManager.getInstance();
         musicManager.setVolume(0.3);
         musicManager.startBackgroundMusic();
     }
 
+    /**
+     * Initialise les différentes options du menu principal avec leurs boutons, curseurs et conteneurs.
+     */
     private void setupMenuOptions() {
         menuOptions = new ArrayList<>();
         menuOptions.add(new MenuOption(playButton, playCursor, playButtonContainer));
@@ -388,7 +452,9 @@ public class MenuController implements Initializable {
 
     }
 
-    /* mettre à jour l'affichage du menu*/
+    /**
+     * Met à jour les intitulés des boutons en fonction de l'état actuel (menu principal ou sous-menu).
+     */
     private void updateMenuDisplay() {
         if (isInSubMenu) {
             // Affichage du sous-menu
@@ -405,6 +471,9 @@ public class MenuController implements Initializable {
         }
     }
 
+    /**
+     * Configure les événements clavier pour naviguer dans le menu.
+     */
     private void setupKeyboardNavigation() {
         root.setOnKeyPressed(this::handleKeyPressed);
         root.setFocusTraversable(true);
@@ -417,7 +486,11 @@ public class MenuController implements Initializable {
         });
     }
 
-    // NOUVELLE MÉTHODE : Vérifier si une vue est visible
+    /**
+     * Vérifie si une vue secondaire (connexion, inscription, thème, mode de jeu) est actuellement visible.
+     *
+     * @return {@code true} si une vue est visible, sinon {@code false}.
+     */
     private boolean isAnyViewVisible() {
         return (loginView != null && loginView.isVisible()) ||
                 (registerView != null && registerView.isVisible()) ||
@@ -425,6 +498,9 @@ public class MenuController implements Initializable {
                 (gameModeView != null && gameModeView.isVisible());
     }
 
+    /**
+     * Configure et démarre l'animation de clignotement du curseur de sélection.
+     */
     private void setupCursorAnimation() {
         // Create blinking animation for the selected cursor
         cursorBlinkAnimation = new Timeline(
@@ -438,6 +514,9 @@ public class MenuController implements Initializable {
         isAnimationRunning = true;
     }
 
+    /**
+     * Affiche le titre texte si l'image du titre échoue à se charger.
+     */
     private void setupImageFallback() {
         // Show text title if image fails to load
         titleImage.imageProperty().addListener((obs, oldImage, newImage) -> {
@@ -448,6 +527,11 @@ public class MenuController implements Initializable {
         });
     }
 
+    /**
+     * Gère les événements clavier pour naviguer dans le menu ou interagir avec les vues secondaires.
+     *
+     * @param event L'événement clavier déclenché.
+     */
     private void handleKeyPressed(KeyEvent event) {
         // Ne pas traiter les touches si une vue est visible
         if ((loginView != null && loginView.isVisible()) ||
@@ -507,6 +591,10 @@ public class MenuController implements Initializable {
         }
     }
 
+    /**
+     * Met en pause ou reprend la musique de fond selon l'état actuel.
+     */
+
     private void toggleMusic() {
         if (musicManager.isPlaying()) {
             musicManager.pauseBackgroundMusic();
@@ -515,7 +603,11 @@ public class MenuController implements Initializable {
         }
     }
 
-    // Méthode générique pour jouer un son (effets sonores)
+    /**
+     * Joue un fichier audio depuis les ressources du projet.
+     *
+     * @param soundFileName Nom du fichier son à jouer (avec extension).
+     */
     private void playSound(String soundFileName) {
         URL soundUrl = getClass().getResource("/Sound/" + soundFileName);
         if (soundUrl == null) {
@@ -529,6 +621,10 @@ public class MenuController implements Initializable {
         mediaPlayer.play();
     }
 
+    /**
+     * Sélectionne l'option précédente dans le menu, si possible.
+     */
+
     private void navigateUp() {
         if (selectedIndex > 0) {
             selectedIndex--;
@@ -537,6 +633,9 @@ public class MenuController implements Initializable {
         }
     }
 
+    /**
+     * Sélectionne l'option suivante dans le menu, si possible.
+     */
     private void navigateDown() {
         if (selectedIndex < menuOptions.size() - 1) {
             selectedIndex++;
@@ -545,6 +644,9 @@ public class MenuController implements Initializable {
         }
     }
 
+    /**
+     * Met à jour l'affichage visuel de l'option actuellement sélectionnée dans le menu.
+     */
     private void updateSelection() {
         // Hide all cursors and remove selection style
         for (int i = 0; i < menuOptions.size(); i++) {
@@ -561,6 +663,9 @@ public class MenuController implements Initializable {
         }
     }
 
+    /**
+     * Exécute l'action correspondant au bouton actuellement sélectionné.
+     */
     private void activateSelected() {
         MenuOption selected = menuOptions.get(selectedIndex);
         playSelectionSound();
@@ -579,7 +684,9 @@ public class MenuController implements Initializable {
         }
     }
 
-    // Button action handlers (inchangés)
+    /**
+     * Gère l'action du bouton "Jouer". Lance la partie ou affiche le sous-menu.
+     */
     @FXML
     private void handlePlayButton() {
         if (isInSubMenu) {
@@ -596,11 +703,17 @@ public class MenuController implements Initializable {
         }
     }
 
+    /**
+     * Lance le processus de démarrage de la partie en affichant la vue de sélection du mode de jeu.
+     */
     private void startGame() {
         // NOUVEAU : Ouvrir la vue de sélection de mode au lieu de lancer directement
         showGameModeView();
     }
 
+    /**
+     * Affiche la vue de sélection du mode de jeu et désactive la navigation clavier dans le menu principal.
+     */
     private void showGameModeView() {
         hideLoginView();
         hideRegisterView();
@@ -617,6 +730,9 @@ public class MenuController implements Initializable {
         });
     }
 
+    /**
+     * Masque la vue de sélection du mode de jeu et réactive la navigation clavier dans le menu principal.
+     */
     private void hideGameModeView() {
         gameModeView.setVisible(false);
 
@@ -628,29 +744,41 @@ public class MenuController implements Initializable {
         });
     }
 
+    /**
+     * Gère le lancement du mode normal de jeu.
+     */
     @FXML
     private void handleNormalModeButton() {
         hideGameModeView();
         launchNormalMode();
     }
 
+    /**
+     * Gère le lancement du mode Capture the Flag.
+     */
     @FXML
     private void handleCaptureFlagModeButton() {
         hideGameModeView();
         launchCaptureTheFlagMode();
     }
 
+    /**
+     * Gère le retour depuis la sélection du mode de jeu vers le menu.
+     */
     @FXML
     private void handleGameModeBackButton() {
         hideGameModeView();
     }
 
-    // ========== MÉTHODES DE LANCEMENT DES MODES ==========
-
+    /**
+     * Lance le mode de jeu normal en chargeant la scène correspondante.
+     * Transmet les dimensions du menu et la carte sélectionnée au contrôleur du jeu.
+     * Affiche une erreur si le fichier FXML est introuvable.
+     */
     private void launchNormalMode() {
         try {
             // Passer la map sélectionnée au GameController
-            GameControllerTheme1.setSelectedMap(selectedMapName);
+            GameController.setSelectedMap(selectedMapName);
 
             // Sauvegarder les dimensions actuelles du menu
             Stage stage = (Stage) playButton.getScene().getWindow();
@@ -658,9 +786,9 @@ public class MenuController implements Initializable {
             double currentHeight = stage.getHeight();
 
             // Passer les dimensions au GameController
-            GameControllerTheme1.setOriginalMenuDimensions(currentWidth, currentHeight);
+            GameController.setOriginalMenuDimensions(currentWidth, currentHeight);
 
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/theme1.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/game.fxml"));
             Parent gameRoot = loader.load();
 
             // Créer la scène de jeu
@@ -679,15 +807,20 @@ public class MenuController implements Initializable {
         } catch (IOException e) {
             e.printStackTrace();
             showErrorDialog("Erreur", "Impossible de charger le mode normal",
-                    "Vérifiez que le fichier theme1.fxml existe dans resources/fxml/");
+                    "Vérifiez que le fichier game.fxml existe dans resources/fxml/");
         }
     }
 
+    /**
+     * Lance le mode "Capture du Drapeau" en chargeant la scène correspondante.
+     * Transmet la carte et le thème sélectionnés au contrôleur, ainsi que les dimensions du menu.
+     * Affiche une erreur dans la console en cas d'échec de chargement.
+     */
     private void launchCaptureTheFlagMode() {
         try {
             // Passer les données nécessaires au CaptureTheFlagController
             CaptureTheFlagController.setSelectedMap(selectedMapName);
-            CaptureTheFlagController.setCurrentTheme(GameControllerTheme1.getCurrentTheme());
+            CaptureTheFlagController.setCurrentTheme(GameController.getCurrentTheme());
 
             // Sauvegarder les dimensions actuelles du menu
             Stage stage = (Stage) playButton.getScene().getWindow();
@@ -696,7 +829,7 @@ public class MenuController implements Initializable {
 
             CaptureTheFlagController.setOriginalMenuDimensions(currentWidth, currentHeight);
 
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/theme1.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/game.fxml"));
             Parent gameRoot = loader.load();
 
             // Créer la scène de jeu
@@ -717,7 +850,9 @@ public class MenuController implements Initializable {
     }
 
 
-
+    /**
+     * Gère l'action du bouton "Paramètres". Affiche les infos de configuration ou lance la sélection de thème.
+     */
     @FXML
     private void handleSettingsButton() {
         if (isInSubMenu) {
@@ -745,14 +880,14 @@ public class MenuController implements Initializable {
         }
     }
 
-    // NOUVELLES MÉTHODES : Gestionnaires de connexion
+    /**
+     * Gère l'action du bouton "Se connecter". Affiche la vue de connexion ou le profil si déjà connecté.
+     */
     @FXML
     private void handleLoginButton() {
         if (isInSubMenu) {
-            // Dans le sous-menu : "MAP EDITOR"
             handleMapEditor();
         } else {
-            // Dans le menu principal : "SE CONNECTER" -> système de connexion
             if (userManager.isLoggedIn()) {
                 showUserProfile();
             } else {
@@ -761,6 +896,9 @@ public class MenuController implements Initializable {
         }
     }
 
+    /**
+     * Gère l'action du bouton "Quitter" ou "Retour" selon le menu affiché.
+     */
     @FXML
     private void handleExitButton() {
         if (isInSubMenu) {
@@ -793,12 +931,18 @@ public class MenuController implements Initializable {
         }
     }
 
-    // NOUVELLE MÉTHODE : Afficher le classement
+    /**
+     * Gère l'affichage du classement des joueurs.
+     */
     @FXML
     private void handleRankingButton() {
         showRankingView();
     }
 
+    /**
+     * Affiche une alerte contenant le classement des joueurs en fonction de leurs victoires et de leur ratio.
+     * Trie les joueurs et génère dynamiquement le contenu de l'alerte.
+     */
     private void showRankingView() {
         hideLoginView();
         hideRegisterView();
@@ -864,6 +1008,9 @@ public class MenuController implements Initializable {
         rankingAlert.showAndWait();
     }
 
+    /**
+     * Masque la vue du classement et réactive la navigation clavier.
+     */
     private void hideRankingView() {
         if (rankingView != null) {
             rankingView.setVisible(false);
@@ -875,18 +1022,19 @@ public class MenuController implements Initializable {
         });
     }
 
-    @FXML
-    private void handleCloseRankingButton() {
-        hideRankingView();
-    }
 
 
-
-
+    /**
+     * Gère l'action de sélection de thème en affichant la vue des thèmes.
+     */
     private void handleThemeSelection() {
         showThemeView();
     }
 
+    /**
+     * Affiche la vue des thèmes et charge dynamiquement la liste des cartes disponibles.
+     * Désactive la navigation clavier du menu principal.
+     */
     private void showThemeView() {
         hideLoginView();
         hideRegisterView();
@@ -907,6 +1055,9 @@ public class MenuController implements Initializable {
         });
     }
 
+    /**
+     * Masque la vue des thèmes et réactive la navigation clavier.
+     */
     private void hideThemeView() {
         themeView.setVisible(false);
 
@@ -918,6 +1069,10 @@ public class MenuController implements Initializable {
         });
     }
 
+    /**
+     * Charge dynamiquement les cartes disponibles à partir du gestionnaire de cartes
+     * et crée un bouton pour chacune dans l'interface.
+     */
     private void loadAvailableMaps() {
         if (mapButtonsContainer != null) {
             // Vider les boutons existants
@@ -953,6 +1108,12 @@ public class MenuController implements Initializable {
         }
     }
 
+    /**
+     * Sélectionne la carte spécifiée et met à jour l'état visuel des boutons de carte.
+     *
+     * @param mapName Nom de la carte sélectionnée.
+     * @param clickedButton Le bouton qui a déclenché la sélection.
+     */
     private void selectMap(String mapName, Button clickedButton) {
         // Changer la sélection
         selectedMapName = mapName;
@@ -961,6 +1122,9 @@ public class MenuController implements Initializable {
         updateMapButtonsSelection();
     }
 
+    /**
+     * Met à jour l'apparence des boutons de carte pour refléter la carte actuellement sélectionnée.
+     */
     private void updateMapButtonsSelection() {
         for (Button mapButton : mapButtons) {
             mapButton.getStyleClass().removeAll("selected");
@@ -971,9 +1135,11 @@ public class MenuController implements Initializable {
         }
     }
 
-
+    /**
+     * Met à jour l'apparence des boutons de thème en fonction du thème actuellement sélectionné.
+     */
     private void updateThemeButtons() {
-        String currentTheme = GameControllerTheme1.getCurrentTheme();
+        String currentTheme = GameController.getCurrentTheme();
 
         // Reset tous les styles
         theme1Button.getStyleClass().removeAll("selected");
@@ -987,27 +1153,39 @@ public class MenuController implements Initializable {
         }
     }
 
+    /**
+     * Sélectionne le thème correspondant pour le jeu.
+     */
     @FXML
     private void handleTheme1Button() {
         selectTheme("theme1", "Thème Classique");
     }
 
+    /**
+     * Sélectionne le thème correspondant pour le jeu.
+     */
     @FXML
     private void handleTheme2Button() {
         selectTheme("theme2", "Thème 2");
     }
 
+    /**
+     * Sélectionne le thème correspondant pour le jeu.
+     */
     @FXML
     private void handleTheme3Button() {
         selectTheme("theme3", "Thème 3");
     }
 
+    /**
+     * Applique le thème et la carte sélectionnés, puis ferme la vue des thèmes.
+     */
     @FXML
     private void handleThemeApplyButton() {
         Alert alert = createStyledAlert("Configuration appliquée",
                 "Paramètres sauvegardés",
                 "✅ Configuration appliquée !\n\n" +
-                        "Thème : " + GameControllerTheme1.getCurrentTheme().toUpperCase() + "\n" +
+                        "Thème : " + GameController.getCurrentTheme().toUpperCase() + "\n" +
                         "Map : " + selectedMapName + "\n\n" +
                         "Changements effectifs à la prochaine partie.");
         alert.showAndWait();
@@ -1015,30 +1193,45 @@ public class MenuController implements Initializable {
         hideThemeView();
     }
 
+    /**
+     * Ferme la vue des thèmes sans appliquer les modifications.
+     */
     @FXML
     private void handleThemeCloseButton() {
         hideThemeView();
     }
     // NOUVELLE MÉTHODE : Sélectionner un thème
     private void selectTheme(String themeId, String themeName) {
-        String oldTheme = GameControllerTheme1.getCurrentTheme();
+        String oldTheme = GameController.getCurrentTheme();
 
         if (!themeId.equals(oldTheme)) {
-            GameControllerTheme1.setCurrentTheme(themeId);
+            GameController.setCurrentTheme(themeId);
             updateThemeButtons();
         }
     }
 
-    // Méthodes statiques pour l'accès externe
+    /**
+     * Retourne le nom de la carte actuellement sélectionnée.
+     *
+     * @return Nom de la carte sélectionnée.
+     */
     public static String getSelectedMapName() {
         return selectedMapName;
     }
 
+    /**
+     * Définit le nom de la carte sélectionnée.
+     *
+     * @param mapName Nom de la carte à définir comme sélectionnée.
+     */
     public static void setSelectedMapName(String mapName) {
         selectedMapName = mapName;
     }
 
-
+    /**
+     * Ouvre l'éditeur de carte dans une nouvelle scène.
+     * Transmet les dimensions actuelles de la fenêtre au contrôleur de l'éditeur.
+     */
     private void handleMapEditor() {
 
         try {
@@ -1069,6 +1262,14 @@ public class MenuController implements Initializable {
         }
     }
 
+    /**
+     * Crée une alerte personnalisée avec un style CSS spécifique.
+     *
+     * @param title   Le titre de la boîte de dialogue.
+     * @param header  L'en-tête de l'alerte.
+     * @param content Le contenu principal du message.
+     * @return L'alerte stylisée prête à être affichée.
+     */
     private Alert createStyledAlert(String title, String header, String content) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
@@ -1084,6 +1285,13 @@ public class MenuController implements Initializable {
         return alert;
     }
 
+    /**
+     * Affiche une boîte de dialogue d'erreur avec un style personnalisé.
+     *
+     * @param title   Le titre de la boîte de dialogue.
+     * @param header  L'en-tête du message d'erreur.
+     * @param content Le contenu du message d'erreur.
+     */
     private void showErrorDialog(String title, String header, String content) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(title);
@@ -1098,7 +1306,10 @@ public class MenuController implements Initializable {
         alert.showAndWait();
     }
 
-    // Sound effect methods
+    /**
+     * Joue le son associé à la navigation dans le menu.
+     * Utilise un son par défaut si le fichier spécifique est introuvable.
+     */
     private void playNavigationSound() {
         URL navigationSound = getClass().getResource("/Sound/navigation.mp3");
         if (navigationSound != null) {
@@ -1108,6 +1319,10 @@ public class MenuController implements Initializable {
         }
     }
 
+    /**
+     * Joue le son associé à la sélection d'une option du menu.
+     * Utilise un son alternatif si le fichier est manquant.
+     */
     private void playSelectionSound() {
         URL selectionSound = getClass().getResource("/Sound/select.mp3");
         if (selectionSound != null) {
@@ -1117,27 +1332,32 @@ public class MenuController implements Initializable {
         }
     }
 
-    // Public methods for external control
-    public void selectOption(int index) {
-        if (index >= 0 && index < menuOptions.size()) {
-            selectedIndex = index;
-            updateSelection();
-        }
-    }
-
+    /**
+     * Arrête les animations du menu. N’arrête pas la musique.
+     */
     public void shutdown() {
         if (cursorBlinkAnimation != null && isAnimationRunning) {
             cursorBlinkAnimation.stop();
             isAnimationRunning = false;
         }
-        // Ne pas arrêter la musique ici pour qu'elle continue dans le jeu
     }
 
-    // Getters for testing or external access
+    // Getters
+
+    /**
+     * Retourne l’index actuellement sélectionné dans le menu.
+     *
+     * @return Index de l’option sélectionnée.
+     */
     public int getSelectedIndex() {
         return selectedIndex;
     }
 
+    /**
+     * Retourne le nombre total d’options dans le menu.
+     *
+     * @return Nombre d’options du menu.
+     */
     public int getMenuOptionsCount() {
         return menuOptions.size();
     }

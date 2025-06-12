@@ -81,7 +81,7 @@ public class CaptureTheFlagController implements Initializable {
     // État des joueurs
     private boolean player1Alive;
     private boolean player2Alive;
-    private int player1BombsActive;
+    private int     player1BombsActive;
     private int player2BombsActive;
 
     // Statistiques individuelles des joueurs
@@ -182,12 +182,13 @@ public class CaptureTheFlagController implements Initializable {
     private Image blueFlagImage;
     private Image redFlagDroppedImage;
     private Image blueFlagDroppedImage;
-    private Image redBaseImage;
-    private Image blueBaseImage;
-
     @FXML
     private HBox endGameButtons;
 
+    /**
+     * Initialise le contrôleur CaptureTheFlag après le chargement du FXML.
+     * Configure les images, la carte, les contrôles clavier et affiche le popup de démarrage.
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // NOUVEAU : Initialiser le chemin du thème
@@ -214,7 +215,10 @@ public class CaptureTheFlagController implements Initializable {
         // Le timer ne démarre QUE après la fermeture du popup (géré dans showSettingsPopup)
     }
 
-    // Pop-up des explications avant la partie
+    /**
+     * Affiche une fenêtre popup contenant les règles du mode Capture the Flag (CTF).
+     * Active les entrées clavier une fois le popup fermé et démarre le timer.
+     */
     public void showSettingsPopup2() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(" ");
@@ -282,26 +286,30 @@ public class CaptureTheFlagController implements Initializable {
         }
     }
 
-    // Méthodes statiques (identiques à GameControllerTheme1)
+    /**
+     * Définit les dimensions originales du menu principal.
+     * @param width largeur en pixels
+     * @param height hauteur en pixels
+     */
     public static void setOriginalMenuDimensions(double width, double height) {
         originalMenuWidth = width;
         originalMenuHeight = height;
     }
 
+    /**
+     * Définit la carte sélectionnée à utiliser pour la partie.
+     * @param mapName nom de la carte
+     */
     public static void setSelectedMap(String mapName) {
         selectedMap = mapName;
     }
 
-    public static String getSelectedMap() {
-        return selectedMap;
-    }
-
+    /**
+     * Définit le thème graphique à utiliser.
+     * @param theme nom du thème
+     */
     public static void setCurrentTheme(String theme) {
         currentTheme = theme;
-    }
-
-    public static String getCurrentTheme() {
-        return currentTheme;
     }
 
     // NOUVELLE MÉTHODE : Charger toutes les images du thème + images CTF
@@ -351,7 +359,10 @@ public class CaptureTheFlagController implements Initializable {
         blueFlagImage = new Image(getClass().getResource("/images/CTF/blueFlag.png").toExternalForm());
     }
 
-    // Son pour les jeux :
+    /**
+     * Joue un effet sonore spécifique.
+     * @param soundFileName nom du fichier audio à jouer
+     */
     private void playSound(String soundFileName) {
         URL soundURL = getClass().getResource("/Sound/" + soundFileName);
         if (soundURL != null) {
@@ -362,6 +373,9 @@ public class CaptureTheFlagController implements Initializable {
         }
     }
 
+    /**
+     * Joue le son associé à la collecte d'un bonus.
+     */
     private void playBonusSound() {
         URL bonusSound = getClass().getResource("/Sound/bonus.mp3");
         if (bonusSound != null) {
@@ -369,6 +383,9 @@ public class CaptureTheFlagController implements Initializable {
         }
     }
 
+    /**
+     * Joue le son associé à une explosion.
+     */
     private void playExplosionSound() {
         URL explosionSound = getClass().getResource("/Sound/bombSound.mp3");
         if (explosionSound != null) {
@@ -376,14 +393,18 @@ public class CaptureTheFlagController implements Initializable {
         }
     }
 
-
-    // Méthodes timer (identiques)
+    /**
+     * Initialise le système de minuterie de la partie.
+     */
     private void initializeTimer() {
         gameTimer = new Timeline(new KeyFrame(Duration.seconds(1), e -> updateTimer()));
         gameTimer.setCycleCount(Timeline.INDEFINITE);
         updateTimerDisplay();
     }
 
+    /**
+     * Met à jour le chronomètre de la partie à chaque seconde.
+     */
     private void updateTimer() {
         timeRemainingSeconds--;
         updateTimerDisplay();
@@ -394,6 +415,9 @@ public class CaptureTheFlagController implements Initializable {
         }
     }
 
+    /**
+     * Met à jour l'affichage visuel du chronomètre.
+     */
     private void updateTimerDisplay() {
         int minutes = timeRemainingSeconds / 60;
         int seconds = timeRemainingSeconds % 60;
@@ -409,6 +433,9 @@ public class CaptureTheFlagController implements Initializable {
         }
     }
 
+    /**
+     * Gère la fin du temps imparti de la partie.
+     */
     private void handleTimeUp() {
         gameEnded = true;
 
@@ -420,7 +447,9 @@ public class CaptureTheFlagController implements Initializable {
         gamePaused = true;
     }
 
-    // MODIFIÉE : Initialisation avec support CTF
+    /**
+     * Initialise le terrain de jeu, les joueurs et les éléments CTF (drapeaux).
+     */
     private void initializeGameArea() {
         CustomMap customMap = mapManager.getMapByName(selectedMap);
 
@@ -473,6 +502,10 @@ public class CaptureTheFlagController implements Initializable {
         createFlagSprites(); // ✅ Maintenant les drapeaux existent !
     }
 
+    /**
+     * Crée un plateau de jeu par défaut si aucune carte n'est disponible.
+     * @return un objet GameBoard minimal
+     */
     private GameBoard createMinimalBoard() {
         // Essayer d'utiliser une autre map disponible
         List<String> availableMaps = mapManager.getMapsList();
@@ -488,7 +521,9 @@ public class CaptureTheFlagController implements Initializable {
         return new GameBoard();
     }
 
-    // NOUVELLE MÉTHODE : Créer les sprites des drapeaux
+    /**
+     * Crée les sprites graphiques des drapeaux pour l'affichage.
+     */
     private void createFlagSprites() {
         redFlagSprite = new ImageView(redFlagImage);
         redFlagSprite.setFitWidth(CELL_SIZE * 0.8);
@@ -509,7 +544,9 @@ public class CaptureTheFlagController implements Initializable {
         GridPane.setValignment(blueFlagSprite, VPos.CENTER);
     }
 
-    // NOUVELLE MÉTHODE : Mettre à jour l'affichage des scores
+    /**
+     * Met à jour l'affichage des scores CTF pour chaque joueur.
+     */
     private void updateScoreDisplay() {
 
         // Mettre à jour les labels si ils existent
@@ -522,7 +559,9 @@ public class CaptureTheFlagController implements Initializable {
         }
     }
 
-    // Méthodes de validation (identiques à GameControllerTheme1)
+    /**
+     * Vérifie et ajuste les positions de spawn des joueurs.
+     */
     private void validatePlayerSpawns() {
         // Vérifier que les positions de spawn sont dans les limites
         if (player1.getRow() >= gameBoard.getHeight() || player1.getCol() >= gameBoard.getWidth()) {
@@ -544,6 +583,11 @@ public class CaptureTheFlagController implements Initializable {
         clearSpawnArea(player2.getRow(), player2.getCol());
     }
 
+    /**
+     * Débarrasse une zone autour du spawn du joueur des murs destructibles.
+     * @param row ligne du spawn
+     * @param col colonne du spawn
+     */
     private void clearSpawnArea(int row, int col) {
         // Dégager une zone 2x2 autour du spawn (sauf les murs indestructibles)
         for (int r = row; r <= row + 1 && r < gameBoard.getHeight(); r++) {
@@ -555,7 +599,9 @@ public class CaptureTheFlagController implements Initializable {
         }
     }
 
-    // Méthodes de création visuelle (identiques)
+    /**
+     * Crée l'affichage visuel du plateau de jeu.
+     */
     private void createVisualBoard() {
         for (int row = 0; row < gameBoard.getHeight(); row++) {
             for (int col = 0; col < gameBoard.getWidth(); col++) {
@@ -565,6 +611,12 @@ public class CaptureTheFlagController implements Initializable {
         }
     }
 
+    /**
+     * Crée une cellule du plateau avec le bon fond en fonction de son type.
+     * @param row ligne
+     * @param col colonne
+     * @return une cellule de type Rectangle
+     */
     private Rectangle createCell(int row, int col) {
         Rectangle cell = new Rectangle(CELL_SIZE, CELL_SIZE);
         GameBoard.CellType cellType = gameBoard.getCellType(row, col);
@@ -600,6 +652,9 @@ public class CaptureTheFlagController implements Initializable {
         return cell;
     }
 
+    /**
+     * Crée les sprites visuels des deux joueurs.
+     */
     private void createPlayersSprites() {
         player1Sprite = new Circle(CELL_SIZE / 2.1);
         player1Sprite.setFill(new ImagePattern(persoDown));
@@ -611,13 +666,19 @@ public class CaptureTheFlagController implements Initializable {
         gameGrid.add(player2Sprite, player2.getCol(), player2.getRow());
     }
 
-    // Contrôles clavier (identiques)
+    /**
+     * Configure les contrôles clavier pour le jeu.
+     */
     private void setupKeyboardControls() {
         gameArea.setFocusTraversable(true);
         gameArea.setOnKeyPressed(this::handleKeyPress);
         gameArea.requestFocus();
     }
 
+    /**
+     * Gère les événements clavier pendant la partie (déplacement, bombes, pause).
+     * @param event événement clavier
+     */
     @FXML
     private void handleKeyPress(KeyEvent event) {
         // Gestion de la pause avec Échap
@@ -713,6 +774,13 @@ public class CaptureTheFlagController implements Initializable {
         gameArea.requestFocus();
     }
 
+    /**
+     * Vérifie si une bombe est déjà placée à la position donnée.
+     * @param activeBombs liste des bombes actives
+     * @param row ligne
+     * @param col colonne
+     * @return vrai si une bombe est présente, faux sinon
+     */
     private boolean hasBombAt(List<Bomb> activeBombs, int row, int col) {
         for (Bomb bomb : activeBombs) {
             if (bomb.getRow() == row && bomb.getCol() == col) {
@@ -722,8 +790,9 @@ public class CaptureTheFlagController implements Initializable {
         return false;
     }
 
-
-    // Méthodes de pause (identiques)
+    /**
+     * Affiche le menu de pause et met en pause le jeu.
+     */
     private void showPauseMenu() {
         if (gameStarted && !gamePaused) {
             gamePaused = true;
@@ -740,6 +809,9 @@ public class CaptureTheFlagController implements Initializable {
         }
     }
 
+    /**
+     * Reprend la partie après une pause.
+     */
     @FXML
     private void resumeGame() {
         if (gamePaused) {
@@ -758,6 +830,9 @@ public class CaptureTheFlagController implements Initializable {
         }
     }
 
+    /**
+     * Retourne au menu principal depuis la partie.
+     */
     @FXML
     private void backToMainMenu() {
         try {
@@ -788,7 +863,9 @@ public class CaptureTheFlagController implements Initializable {
         }
     }
 
-    // MODIFIÉES : Méthodes de mise à jour position avec logique CTF
+    /**
+     * Met à jour la position du joueur 1 sur le plateau, vérifie les bonus et les drapeaux.
+     */
     private void updatePlayer1Position() {
         gameGrid.getChildren().remove(player1Sprite);
         gameGrid.add(player1Sprite, player1.getCol(), player1.getRow());
@@ -796,6 +873,9 @@ public class CaptureTheFlagController implements Initializable {
         checkFlagInteraction(1); // NOUVEAU : Interaction avec les drapeaux
     }
 
+    /**
+     * Met à jour la position du joueur 2 sur le plateau, vérifie les bonus et les drapeaux.
+     */
     private void updatePlayer2Position() {
         gameGrid.getChildren().remove(player2Sprite);
         gameGrid.add(player2Sprite, player2.getCol(), player2.getRow());
@@ -803,7 +883,10 @@ public class CaptureTheFlagController implements Initializable {
         checkFlagInteraction(2); // NOUVEAU : Interaction avec les drapeaux
     }
 
-    // NOUVELLE MÉTHODE : Gestion des interactions avec les drapeaux
+    /**
+     * Gère l’interaction d’un joueur avec les drapeaux (prise, retour base, ramassage).
+     * @param playerNumber numéro du joueur (1 ou 2)
+     */
     private void checkFlagInteraction(int playerNumber) {
         // ✅ VÉRIFICATION CRITIQUE : S'assurer que les drapeaux existent
         if (redFlag == null || blueFlag == null) {
@@ -850,7 +933,11 @@ public class CaptureTheFlagController implements Initializable {
         checkDroppedFlagPickup(playerNumber);
     }
 
-    // NOUVELLE MÉTHODE : Capturer un drapeau
+    /**
+     * Déclenche la capture d’un drapeau par un joueur.
+     * @param playerNumber numéro du joueur
+     * @param flag drapeau capturé
+     */
     private void captureFlag(int playerNumber, Flag flag) {
         flag.setCaptured(true);
         if (playerNumber == 1) {
@@ -870,10 +957,10 @@ public class CaptureTheFlagController implements Initializable {
         updatePlayerSpriteWithFlag(playerNumber, true);
     }
 
-    // NOUVELLE MÉTHODE : Marquer un point
-
-
-    // NOUVELLE MÉTHODE : Remettre un drapeau à sa base
+    /**
+     * Remet un drapeau capturé ou lâché à sa base d'origine.
+     * @param flag drapeau à réinitialiser
+     */
     private void resetFlag(Flag flag) {
         flag.reset();
 
@@ -888,7 +975,10 @@ public class CaptureTheFlagController implements Initializable {
         GridPane.setValignment(flag == redFlag ? redFlagSprite : blueFlagSprite, VPos.CENTER);
     }
 
-    // NOUVELLE MÉTHODE : Lâcher un drapeau
+    /**
+     * Force un joueur à lâcher le drapeau qu’il transporte.
+     * @param playerNumber numéro du joueur
+     */
     private void dropFlag(int playerNumber) {
         Player currentPlayer = (playerNumber == 1) ? player1 : player2;
 
@@ -926,7 +1016,10 @@ public class CaptureTheFlagController implements Initializable {
         updatePlayerSpriteWithFlag(playerNumber, false);
     }
 
-    // NOUVELLE MÉTHODE : Timer de retour automatique du drapeau
+    /**
+     * Démarre un minuteur pour retourner automatiquement un drapeau lâché.
+     * @param flag drapeau concerné
+     */
     private void startFlagReturnTimer(Flag flag) {
         Timeline returnTimer = new Timeline(new KeyFrame(Duration.seconds(FLAG_RETURN_TIME), e -> {
             if (flag.isDropped()) {
@@ -936,7 +1029,10 @@ public class CaptureTheFlagController implements Initializable {
         returnTimer.play();
     }
 
-    // NOUVELLE MÉTHODE : Ramasser un drapeau lâché
+    /**
+     * Vérifie si un joueur ramasse un drapeau lâché.
+     * @param playerNumber numéro du joueur
+     */
     private void checkDroppedFlagPickup(int playerNumber) {
         Player currentPlayer = (playerNumber == 1) ? player1 : player2;
 
@@ -977,7 +1073,11 @@ public class CaptureTheFlagController implements Initializable {
         }
     }
 
-    // NOUVELLE MÉTHODE : Indicateur visuel du joueur avec drapeau
+    /**
+     * Ajoute ou retire un contour visuel au joueur selon qu’il porte un drapeau.
+     * @param playerNumber numéro du joueur
+     * @param hasFlag indique si le joueur a un drapeau
+     */
     private void updatePlayerSpriteWithFlag(int playerNumber, boolean hasFlag) {
         if (hasFlag) {
             if (playerNumber == 1) {
@@ -998,7 +1098,10 @@ public class CaptureTheFlagController implements Initializable {
         }
     }
 
-    // Méthodes de collection de bonus (identiques)
+    /**
+     * Vérifie si un joueur a ramassé un bonus et applique ses effets.
+     * @param playerNumber numéro du joueur
+     */
     private void checkBonusCollection(int playerNumber) {
         Player currentPlayer = (playerNumber == 1) ? player1 : player2;
         GameBoard.CellType cellType = gameBoard.getCellType(currentPlayer.getRow(), currentPlayer.getCol());
@@ -1029,7 +1132,10 @@ public class CaptureTheFlagController implements Initializable {
         }
     }
 
-    // Méthodes de bombes (identiques à GameControllerTheme1)
+    /**
+     * Place une bombe pour le joueur s’il n’a pas atteint sa limite.
+     * @param playerNumber numéro du joueur
+     */
     private void placeBomb(int playerNumber) {
         Player currentPlayer;
         int playerExplosionRange;
@@ -1079,6 +1185,11 @@ public class CaptureTheFlagController implements Initializable {
         bomb.startTimer(this::onBombExplosion, gameBoard);
     }
 
+    /**
+     * Déclenche les effets d'une explosion de bombe (animation, dégâts, suppression).
+     * @param bomb bombe ayant explosé
+     * @param explosionCells cellules affectées par l'explosion
+     */
     private void onBombExplosion(Bomb bomb, List<Bomb.Position> explosionCells) {
         playExplosionSound();
 
@@ -1094,6 +1205,10 @@ public class CaptureTheFlagController implements Initializable {
         activeBombs.remove(bomb);
     }
 
+    /**
+     * Détruit les murs et les bonus dans les cellules touchées par une explosion.
+     * @param explosionCells liste des positions affectées
+     */
     private void destroyWallsInExplosion(List<Bomb.Position> explosionCells) {
         boolean needsUpdate = false;
 
@@ -1119,6 +1234,9 @@ public class CaptureTheFlagController implements Initializable {
         }
     }
 
+    /**
+     * Met à jour l’affichage du plateau après modification (murs, bonus, etc).
+     */
     private void updateBoardDisplay() {
         gameGrid.getChildren().removeIf(node -> {
             if (node instanceof Rectangle) {
@@ -1157,7 +1275,9 @@ public class CaptureTheFlagController implements Initializable {
         }
     }
 
-    // NOUVELLE MÉTHODE : Remettre les sprites des drapeaux
+    /**
+     * Remet les sprites des drapeaux si nécessaire (ex. après une explosion).
+     */
     private void restoreFlagSprites() {
         // ✅ VÉRIFICATION : S'assurer que les drapeaux et sprites existent
         if (redFlag == null || blueFlag == null || redFlagSprite == null || blueFlagSprite == null) {
@@ -1185,6 +1305,10 @@ public class CaptureTheFlagController implements Initializable {
         }
     }
 
+    /**
+     * Crée une animation d’explosion aux positions spécifiées.
+     * @param explosionCells liste des cellules touchées
+     */
     private void createExplosionAnimation(List<Bomb.Position> explosionCells) {
         if (explosionCells.isEmpty()) return;
 
@@ -1237,6 +1361,13 @@ public class CaptureTheFlagController implements Initializable {
         explosionTimer.play();
     }
 
+    /**
+     * Détermine l’image d’explosion à utiliser en fonction de la position.
+     * @param pos position de la cellule
+     * @param center position centrale de l’explosion
+     * @param allCells toutes les cellules de l’explosion
+     * @return image à utiliser
+     */
     private Image getExplosionImageForPosition(Bomb.Position pos, Bomb.Position center, List<Bomb.Position> allCells) {
         if (pos.row == center.row && pos.col == center.col) {
             return explosionCenterImage;
@@ -1280,6 +1411,14 @@ public class CaptureTheFlagController implements Initializable {
         return explosionCenterImage;
     }
 
+    /**
+     * Vérifie si la cellule est un bout d’explosion dans une direction donnée.
+     * @param pos cellule actuelle
+     * @param center centre de l’explosion
+     * @param allCells cellules de l’explosion
+     * @param direction direction analysée (0=bas, 1=haut, 2=droite, 3=gauche)
+     * @return vrai si c’est une extrémité d’explosion
+     */
     private boolean isExplosionEnd(Bomb.Position pos, Bomb.Position center, List<Bomb.Position> allCells, int direction) {
         int nextRow = pos.row;
         int nextCol = pos.col;
@@ -1308,6 +1447,10 @@ public class CaptureTheFlagController implements Initializable {
         return true;
     }
 
+    /**
+     * Vérifie si un joueur se trouve dans une zone d’explosion.
+     * @param explosionCells liste des positions touchées
+     */
     private void checkPlayersInExplosion(List<Bomb.Position> explosionCells) {
         if (player1Alive) {
             Bomb.Position player1Pos = new Bomb.Position(player1.getRow(), player1.getCol());
@@ -1332,7 +1475,10 @@ public class CaptureTheFlagController implements Initializable {
         }
     }
 
-    // MODIFIÉE : Gestion de la mort avec logique CTF
+    /**
+     * Gère la mort d’un joueur (drapeau, animation, respawn).
+     * @param playerNumber numéro du joueur
+     */
     private void playerDied(int playerNumber) {
         // ✅ NOUVEAU : Marquer le joueur comme mort IMMÉDIATEMENT
         if (playerNumber == 1) {
@@ -1355,37 +1501,10 @@ public class CaptureTheFlagController implements Initializable {
         respawnTimer.play();
     }
 
-    private void showRespawnCountdown(int playerNumber) {
-        // Créer un label de countdown temporaire
-        Label countdownLabel = new Label("Respawn dans: 5");
-        countdownLabel.setStyle("-fx-font-size: 20px; -fx-text-fill: red; -fx-font-weight: bold;");
-
-        // Positionner le label près du joueur mort
-        if (playerNumber == 1) {
-            gameGrid.add(countdownLabel, player1.getCol(), player1.getRow() - 1);
-        } else {
-            gameGrid.add(countdownLabel, player2.getCol(), player2.getRow() - 1);
-        }
-
-        // Créer une timeline pour le countdown
-        Timeline countdownTimer = new Timeline();
-        for (int i = 0; i <= 4; i++) {
-            final int secondsLeft = 4 - i;
-            KeyFrame keyFrame = new KeyFrame(Duration.seconds(i + 1), e -> {
-                if (secondsLeft > 0) {
-                    countdownLabel.setText("Respawn dans: " + secondsLeft);
-                } else {
-                    gameGrid.getChildren().remove(countdownLabel);
-                }
-            });
-            countdownTimer.getKeyFrames().add(keyFrame);
-        }
-
-        countdownTimer.play();
-    }
-
-
-    // NOUVELLE MÉTHODE : Respawn d'un joueur
+    /**
+     * Réinitialise un joueur mort à sa position de départ.
+     * @param playerNumber numéro du joueur
+     */
     private void respawnPlayer(int playerNumber) {
         if (playerNumber == 1) {
             // ✅ REMETTRE le joueur à sa position de spawn originale
@@ -1410,9 +1529,9 @@ public class CaptureTheFlagController implements Initializable {
         }
     }
 
-
-
-    // NOUVELLE MÉTHODE : Fin de partie CTF
+    /**
+     * Termine la partie CTF, détermine le gagnant ou l’égalité et affiche le résultat.
+     */
     private void endGame() {
         gameEnded = true;
         gameStarted = false;
@@ -1452,7 +1571,11 @@ public class CaptureTheFlagController implements Initializable {
         showEndGameDialog(winner, isDraw);
     }
 
-    // Méthodes de statistiques (identiques à GameControllerTheme1)
+    /**
+     * Met à jour les statistiques du joueur connecté après la partie.
+     * @param winner nom du gagnant ("player1", "player2" ou null)
+     * @param isDraw indique si la partie est nulle
+     */
     private void updateUserStats(String winner, boolean isDraw) {
         if (!userManager.isLoggedIn()) {
             return;
@@ -1471,7 +1594,11 @@ public class CaptureTheFlagController implements Initializable {
         userManager.updateProfile(null, null);
     }
 
-    // NOUVELLE MÉTHODE : Afficher le popup de fin de partie
+    /**
+     * Affiche l’écran de fin de partie.
+     * @param winner joueur gagnant ou null
+     * @param isDraw vrai si égalité
+     */
     private void showEndGameDialog(String winner, boolean isDraw) {
         Platform.runLater(() -> {
             if (endGameButtons != null) {
@@ -1481,14 +1608,18 @@ public class CaptureTheFlagController implements Initializable {
         });
     }
 
-    // NOUVELLE MÉTHODE : Gérer le bouton Rejouer
+    /**
+     * Gère le bouton Rejouer de l’écran de fin.
+     */
     @FXML
     private void handleReplay() {
         endGameButtons.setVisible(false);
         restartGame();
     }
 
-    // NOUVELLE MÉTHODE : Gérer le bouton Menu
+    /**
+     * Gère le bouton Menu de l’écran de fin.
+     */
     @FXML
     private void handleMenu() {
         endGameButtons.setVisible(false);
@@ -1496,7 +1627,9 @@ public class CaptureTheFlagController implements Initializable {
     }
 
 
-    // NOUVELLE MÉTHODE : Redémarrer la partie CTF
+    /**
+     * Redémarre une nouvelle partie CTF avec les mêmes paramètres.
+     */
     private void restartGame() {
         try {
             // Arrêter tous les timers
@@ -1523,7 +1656,10 @@ public class CaptureTheFlagController implements Initializable {
         }
     }
 
-    // MÉTHODE COMPLÉTÉE : showResult (identique au pattern GameControllerTheme1)
+    /**
+     * Affiche l'image correspondant au résultat de la partie.
+     * @param image image du résultat (victoire1, victoire2 ou égalité)
+     */
     private void showResult(Image image) {
         if (resultImageView != null) {
             return;
@@ -1534,6 +1670,10 @@ public class CaptureTheFlagController implements Initializable {
         gameArea.getChildren().add(resultImageView);
     }
 
+    /**
+     * Attribue un point à un joueur ayant capturé le drapeau adverse.
+     * @param playerNumber numéro du joueur
+     */
     private void scoreCapture(int playerNumber) {
         System.out.println("🏆 [CTF] Joueur " + playerNumber + " marque un point !");
 

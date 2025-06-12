@@ -8,6 +8,10 @@ public class Player {
     private int col;
     private String name;
 
+    /**
+     * Représente un joueur dans le jeu Bomberman.
+     * Chaque joueur a un nom et une position sur le plateau.
+     */
     public Player(String name, int startRow, int startCol) {
         this.name = name;
         this.row = startRow;

@@ -42,6 +42,14 @@ public class Bomb {
         }
     }
 
+
+    /**
+     * Crée une nouvelle bombe à une position donnée avec une portée d'explosion spécifiée.
+     *
+     * @param row Ligne de la bombe sur le plateau.
+     * @param col Colonne de la bombe sur le plateau.
+     * @param explosionRange Portée de l'explosion en cases.
+     */
     public Bomb(int row, int col, int explosionRange) {
         this.row = row;
         this.col = col;
@@ -52,7 +60,11 @@ public class Bomb {
     }
 
     /**
-     * Démarre le minuteur de la bombe
+     * Démarre ou reprend le minuteur de la bombe.
+     * Lorsque le temps est écoulé, la bombe explose automatiquement.
+     *
+     * @param callback Interface à appeler lors de l'explosion.
+     * @param gameBoard Référence au plateau de jeu pour calculer l'explosion.
      */
     public void startTimer(ExplosionCallback callback, GameBoard gameBoard) {
         if (timer == null) {
@@ -63,6 +75,9 @@ public class Bomb {
         }
     }
 
+    /**
+     * Arrête temporairement le minuteur de la bombe et sauvegarde le temps restant.
+     */
     public void stopTimer() {
         if (timer != null) {
             remainingTime = timer.getCurrentTime();
@@ -71,7 +86,10 @@ public class Bomb {
     }
 
     /**
-     * Fait exploser la bombe
+     * Fait exploser la bombe et notifie le callback avec les cellules affectées.
+     *
+     * @param callback Callback à appeler à l'explosion.
+     * @param gameBoard Plateau de jeu pour déterminer les cellules touchées.
      */
     private void explode(ExplosionCallback callback, GameBoard gameBoard) {
         if (hasExploded) return;
@@ -85,7 +103,11 @@ public class Bomb {
     }
 
     /**
-     * Calcule les cellules affectées par l'explosion
+     * Calcule toutes les cellules qui seront affectées par l'explosion,
+     * en tenant compte des murs destructibles et indestructibles.
+     *
+     * @param gameBoard Plateau de jeu à analyser.
+     * @return Liste des positions affectées par l'explosion.
      */
     private List<Position> calculateExplosionArea(GameBoard gameBoard) {
         List<Position> explosionCells = new ArrayList<>();

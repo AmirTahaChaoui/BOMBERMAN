@@ -12,7 +12,17 @@ public class CustomMap {
     private String author;
     private String created;
 
-    // Constructeur complet
+    /**
+     * Crée une carte personnalisée avec toutes les informations, y compris la date de création.
+     *
+     * @param name        Nom de la carte
+     * @param description Description de la carte
+     * @param width       Largeur (nombre de colonnes)
+     * @param height      Hauteur (nombre de lignes)
+     * @param matrix      Matrice représentant les cellules de la carte
+     * @param author      Auteur de la carte
+     * @param created     Date de création de la carte (format ISO 8601)
+     */
     public CustomMap(String name, String description, int width, int height, int[][] matrix, String author, String created) {
         this.name = name;
         this.description = description;
@@ -23,7 +33,16 @@ public class CustomMap {
         this.created = created;
     }
 
-    // Constructeur pour nouvelle map
+    /**
+     * Crée une nouvelle carte personnalisée avec la date de création automatiquement générée.
+     *
+     * @param name        Nom de la carte
+     * @param description Description de la carte
+     * @param width       Largeur de la carte
+     * @param height      Hauteur de la carte
+     * @param matrix      Matrice représentant la carte
+     * @param author      Auteur de la carte
+     */
     public CustomMap(String name, String description, int width, int height, int[][] matrix, String author) {
         this.name = name;
         this.description = description;
@@ -34,7 +53,11 @@ public class CustomMap {
         this.created = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
     }
 
-    // Constructeur de copie
+    /**
+     * Construit une nouvelle carte à partir d'une autre (copie profonde de la matrice).
+     *
+     * @param other Carte à copier
+     */
     public CustomMap(CustomMap other) {
         this.name = other.name;
         this.description = other.description;
@@ -209,7 +232,12 @@ public class CustomMap {
         return board;
     }
 
-    // DANS CustomMap.java
+    /**
+     * Convertit une valeur entière de cellule en type de cellule {@link GameBoard.CellType}.
+     *
+     * @param cellValue Valeur entière représentant un type de cellule
+     * @return Type de cellule correspondant à la valeur entière
+     */
     private GameBoard.CellType convertCellType(int cellValue) {
         switch (cellValue) {
             case 0:  // 0 = Case vide

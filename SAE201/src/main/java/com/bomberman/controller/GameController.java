@@ -14,7 +14,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -39,10 +38,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
-public class GameControllerTheme1 implements Initializable {
+public class GameController implements Initializable {
 
     @FXML
     private StackPane gameArea;
@@ -162,7 +160,10 @@ public class GameControllerTheme1 implements Initializable {
     @FXML
     private HBox endGameButtons;
 
-
+    /**
+     * Initialise le contrôleur après le chargement du FXML.
+     * Configure les images, la carte, les contrôles clavier, le timer, et lance le popup d'explications.
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // NOUVEAU : Initialiser le chemin du thème
@@ -194,7 +195,9 @@ public class GameControllerTheme1 implements Initializable {
         // Le timer ne démarre QUE après la fermeture du popup (géré dans showSettingsPopup)
     }
 
-    // Pop-up des explications avant la partie
+    /**
+     * Affiche un popup contenant les instructions et explications de jeu avant le démarrage.
+     */
     public void showSettingsPopup() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(" ");
@@ -262,32 +265,44 @@ public class GameControllerTheme1 implements Initializable {
         }
     }
 
+    /**
+     * Définit les dimensions originales du menu pour les futures restaurations.
+     * @param width Largeur du menu original
+     * @param height Hauteur du menu original
+     */
     public static void setOriginalMenuDimensions(double width, double height) {
         originalMenuWidth = width;
         originalMenuHeight = height;
     }
 
-    // Ajouter ces méthodes statiques pour gérer la map sélectionnée :
+
+    /**
+     * Définit le nom de la carte sélectionnée.
+     * @param mapName Nom de la carte
+     */
     public static void setSelectedMap(String mapName) {
         selectedMap = mapName;
     }
 
-    public static String getSelectedMap() {
-        return selectedMap;
-    }
-
-    // NOUVEAU : Méthode pour définir le thème (appelée depuis le menu)
+    /**
+     * Définit le thème de jeu à utiliser (change le répertoire des images).
+     * @param theme Nom du thème (ex: "theme1")
+     */
     public static void setCurrentTheme(String theme) {
         currentTheme = theme;
     }
 
-    // NOUVEAU : Méthode pour obtenir le thème actuel
+    /**
+     * Retourne le thème actuellement utilisé.
+     * @return Nom du thème
+     */
     public static String getCurrentTheme() {
         return currentTheme;
     }
 
-
-    // NOUVELLE MÉTHODE : Charger toutes les images du thème
+    /**
+     * Charge toutes les images (joueurs, murs, bonus, explosions) correspondant au thème sélectionné.
+     */
     private void loadThemeImages() {
         try {
             // Images perso 1
@@ -340,7 +355,10 @@ public class GameControllerTheme1 implements Initializable {
         }
     }
 
-
+    /**
+     * Joue un fichier audio à partir du nom fourni, à volume moyen.
+     * @param soundFileName Nom du fichier sonore
+     */
     private void playSound(String soundFileName) {
         URL soundURL = getClass().getResource("/Sound/" + soundFileName);
         if (soundURL != null) {
@@ -351,6 +369,9 @@ public class GameControllerTheme1 implements Initializable {
         }
     }
 
+    /**
+     * Joue le son de bonus.
+     */
     private void playBonusSound() {
         URL bonusSound = getClass().getResource("/Sound/bonus.mp3");
         if (bonusSound != null) {
@@ -358,6 +379,9 @@ public class GameControllerTheme1 implements Initializable {
         }
     }
 
+    /**
+     * Joue le son d'explosion.
+     */
     private void playExplosionSound() {
         URL explosionSound = getClass().getResource("/Sound/bombSound.mp3");
         if (explosionSound != null) {
@@ -365,16 +389,18 @@ public class GameControllerTheme1 implements Initializable {
         }
     }
 
-
-
-    // Méthodes timer
+    /**
+     * Initialise le timer du jeu pour décompte de la durée de la partie.
+     */
     private void initializeTimer() {
         gameTimer = new Timeline(new KeyFrame(Duration.seconds(1), e -> updateTimer()));
         gameTimer.setCycleCount(Timeline.INDEFINITE);
         updateTimerDisplay();
     }
 
-
+    /**
+     * Met à jour le temps restant et déclenche la fin de jeu si le temps est écoulé.
+     */
     private void updateTimer() {
         timeRemainingSeconds--;
         updateTimerDisplay();
@@ -385,6 +411,9 @@ public class GameControllerTheme1 implements Initializable {
         }
     }
 
+    /**
+     * Met à jour l'affichage visuel du timer (label) avec changement de couleur.
+     */
     private void updateTimerDisplay() {
         int minutes = timeRemainingSeconds / 60;
         int seconds = timeRemainingSeconds % 60;
@@ -400,6 +429,9 @@ public class GameControllerTheme1 implements Initializable {
         }
     }
 
+    /**
+     * Gère la fin de partie lorsque le temps est écoulé.
+     */
     private void handleTimeUp() {
         gameEnded = true;
         System.out.println("⏰ TEMPS ÉCOULÉ !");
@@ -412,6 +444,9 @@ public class GameControllerTheme1 implements Initializable {
         gamePaused = true;
     }
 
+    /**
+     * Initialise la zone de jeu (grille, joueurs, map).
+     */
     private void initializeGameArea() {
         CustomMap customMap = mapManager.getMapByName(selectedMap);
 
@@ -462,7 +497,9 @@ public class GameControllerTheme1 implements Initializable {
         createPlayersSprites();
     }
 
-    // NOUVELLE MÉTHODE : Valider les positions de spawn des joueurs
+    /**
+     * Valide que les positions de spawn des joueurs sont valides et libres.
+     */
     private void validatePlayerSpawns() {
         // Vérifier que les positions de spawn sont dans les limites
         if (player1.getRow() >= gameBoard.getHeight() || player1.getCol() >= gameBoard.getWidth()) {
@@ -484,7 +521,10 @@ public class GameControllerTheme1 implements Initializable {
         clearSpawnArea(player2.getRow(), player2.getCol());
     }
 
-    // NOUVELLE MÉTHODE : Créer un plateau minimal fonctionnel
+    /**
+     * Crée une carte par défaut minimaliste si toutes les autres ont échoué.
+     * @return Un GameBoard par défaut fonctionnel
+     */
     private GameBoard createMinimalBoard() {
         // Essayer d'utiliser une autre map disponible
         List<String> availableMaps = mapManager.getMapsList();
@@ -501,7 +541,11 @@ public class GameControllerTheme1 implements Initializable {
         return new GameBoard();
     }
 
-    // NOUVELLE MÉTHODE : Dégager la zone de spawn
+    /**
+     * Dégage une zone autour du spawn d’un joueur (2x2).
+     * @param row Ligne de spawn
+     * @param col Colonne de spawn
+     */
     private void clearSpawnArea(int row, int col) {
         // Dégager une zone 2x2 autour du spawn (sauf les murs indestructibles)
         for (int r = row; r <= row + 1 && r < gameBoard.getHeight(); r++) {
@@ -513,6 +557,9 @@ public class GameControllerTheme1 implements Initializable {
         }
     }
 
+    /**
+     * Crée la grille visuelle en fonction des types de cellules du plateau.
+     */
     private void createVisualBoard() {
         for (int row = 0; row < gameBoard.getHeight(); row++) {
             for (int col = 0; col < gameBoard.getWidth(); col++) {
@@ -522,6 +569,12 @@ public class GameControllerTheme1 implements Initializable {
         }
     }
 
+    /**
+     * Crée un rectangle représentant une cellule selon son type (mur, vide, bonus...).
+     * @param row Ligne de la cellule
+     * @param col Colonne de la cellule
+     * @return Rectangle représentant la cellule
+     */
     private Rectangle createCell(int row, int col) {
         Rectangle cell = new Rectangle(CELL_SIZE, CELL_SIZE);
         GameBoard.CellType cellType = gameBoard.getCellType(row, col);
@@ -557,6 +610,9 @@ public class GameControllerTheme1 implements Initializable {
         return cell;
     }
 
+    /**
+     * Crée les cercles représentant les deux joueurs et les place dans la grille.
+     */
     private void createPlayersSprites() {
         player1Sprite = new Circle(CELL_SIZE / 2.1);
         player1Sprite.setFill(new ImagePattern(persoDown));
@@ -568,12 +624,19 @@ public class GameControllerTheme1 implements Initializable {
         gameGrid.add(player2Sprite, player2.getCol(), player2.getRow());
     }
 
+    /**
+     * Configure les contrôles clavier pour gérer les déplacements et actions des joueurs.
+     */
     private void setupKeyboardControls() {
         gameArea.setFocusTraversable(true);
         gameArea.setOnKeyPressed(this::handleKeyPress);
         gameArea.requestFocus();
     }
 
+    /**
+     * Gère la pression sur une touche du clavier (mouvements, bombes, pause).
+     * @param event L’événement clavier capturé
+     */
     @FXML
     private void handleKeyPress(KeyEvent event) {
         // Gestion de la pause avec Échap
@@ -669,6 +732,13 @@ public class GameControllerTheme1 implements Initializable {
         gameArea.requestFocus();
     }
 
+    /**
+     * Vérifie s’il y a une bombe active à une position donnée.
+     * @param activeBombs Liste des bombes actives
+     * @param row Ligne à vérifier
+     * @param col Colonne à vérifier
+     * @return true si une bombe est présente
+     */
     private boolean hasBombAt(List<Bomb> activeBombs, int row, int col) {
         for (Bomb bomb : activeBombs) {
             if (bomb.getRow() == row && bomb.getCol() == col) {
@@ -678,7 +748,9 @@ public class GameControllerTheme1 implements Initializable {
         return false;
     }
 
-
+    /**
+     * Affiche le menu de pause et arrête le timer et les bombes.
+     */
     private void showPauseMenu() {
         if (gameStarted && !gamePaused) {
             gamePaused = true;
@@ -695,6 +767,9 @@ public class GameControllerTheme1 implements Initializable {
         }
     }
 
+    /**
+     * Reprend la partie après une pause (relance timer et bombes).
+     */
     @FXML
     private void resumeGame() {
         if (gamePaused) {
@@ -714,6 +789,9 @@ public class GameControllerTheme1 implements Initializable {
         }
     }
 
+    /**
+     * Retourne au menu principal depuis la partie.
+     */
     @FXML
     private void backToMainMenu() {
         try {
@@ -744,18 +822,28 @@ public class GameControllerTheme1 implements Initializable {
         }
     }
 
+    /**
+     * Met à jour la position visuelle du joueur 1.
+     */
     private void updatePlayer1Position() {
         gameGrid.getChildren().remove(player1Sprite);
         gameGrid.add(player1Sprite, player1.getCol(), player1.getRow());
         checkBonusCollection(1);
     }
 
+    /**
+     * Met à jour la position visuelle du joueur 2.
+     */
     private void updatePlayer2Position() {
         gameGrid.getChildren().remove(player2Sprite);
         gameGrid.add(player2Sprite, player2.getCol(), player2.getRow());
         checkBonusCollection(2);
     }
 
+    /**
+     * Gère la collecte d’un bonus par un joueur.
+     * @param playerNumber Numéro du joueur (1 ou 2)
+     */
     private void checkBonusCollection(int playerNumber) {
         Player currentPlayer = (playerNumber == 1) ? player1 : player2;
         GameBoard.CellType cellType = gameBoard.getCellType(currentPlayer.getRow(), currentPlayer.getCol());
@@ -786,6 +874,10 @@ public class GameControllerTheme1 implements Initializable {
         }
     }
 
+    /**
+     * Place une bombe pour un joueur donné, si les conditions sont réunies.
+     * @param playerNumber Numéro du joueur
+     */
     private void placeBomb(int playerNumber) {
         Player currentPlayer;
         int playerExplosionRange;
@@ -835,6 +927,11 @@ public class GameControllerTheme1 implements Initializable {
         bomb.startTimer(this::onBombExplosion, gameBoard);
     }
 
+    /**
+     * Appelé lorsque qu'une bombe explose : gère les effets visuels et les dégâts.
+     * @param bomb La bombe qui explose
+     * @param explosionCells Liste des cellules touchées
+     */
     private void onBombExplosion(Bomb bomb, List<Bomb.Position> explosionCells) {
         playExplosionSound();
 
@@ -850,6 +947,10 @@ public class GameControllerTheme1 implements Initializable {
         activeBombs.remove(bomb);
     }
 
+    /**
+     * Supprime les murs ou bonus détruits par une explosion.
+     * @param explosionCells Cellules impactées par l’explosion
+     */
     private void destroyWallsInExplosion(List<Bomb.Position> explosionCells) {
         boolean needsUpdate = false;
 
@@ -875,6 +976,9 @@ public class GameControllerTheme1 implements Initializable {
         }
     }
 
+    /**
+     * Met à jour visuellement la grille après destruction ou modification des cellules.
+     */
     private void updateBoardDisplay() {
         gameGrid.getChildren().removeIf(node -> {
             if (node instanceof Rectangle) {
@@ -905,6 +1009,10 @@ public class GameControllerTheme1 implements Initializable {
         }
     }
 
+    /**
+     * Crée une animation visuelle pour représenter l’explosion.
+     * @param explosionCells Cellules affectées par l’explosion
+     */
     private void createExplosionAnimation(List<Bomb.Position> explosionCells) {
         if (explosionCells.isEmpty()) return;
 
@@ -928,6 +1036,9 @@ public class GameControllerTheme1 implements Initializable {
         explosionTimer.play();
     }
 
+    /**
+     * Retourne l’image d’explosion appropriée pour une cellule donnée.
+     */
     private Image getExplosionImageForPosition(Bomb.Position pos, Bomb.Position center, List<Bomb.Position> allCells) {
         if (pos.row == center.row && pos.col == center.col) {
             return explosionCenterImage;
@@ -971,6 +1082,9 @@ public class GameControllerTheme1 implements Initializable {
         return explosionCenterImage;
     }
 
+    /**
+     * Vérifie si une cellule d’explosion est un bout de trajectoire.
+     */
     private boolean isExplosionEnd(Bomb.Position pos, Bomb.Position center, List<Bomb.Position> allCells, int direction) {
         int nextRow = pos.row;
         int nextCol = pos.col;
@@ -999,6 +1113,10 @@ public class GameControllerTheme1 implements Initializable {
         return true;
     }
 
+    /**
+     * Vérifie si un joueur est dans la zone d’explosion.
+     * @param explosionCells Liste des cellules explosées
+     */
     private void checkPlayersInExplosion(List<Bomb.Position> explosionCells) {
         if (player1Alive) {
             Bomb.Position player1Pos = new Bomb.Position(player1.getRow(), player1.getCol());
@@ -1023,6 +1141,10 @@ public class GameControllerTheme1 implements Initializable {
         }
     }
 
+    /**
+     * Gère la mort d’un joueur.
+     * @param playerNumber Numéro du joueur décédé
+     */
     private void playerDied(int playerNumber) {
         if (playerNumber == 1) {
             player1Alive = false;
@@ -1035,7 +1157,9 @@ public class GameControllerTheme1 implements Initializable {
         checkGameEnd();
     }
 
-    // NOUVELLE MÉTHODE : Gestion de la fin de partie avec statistiques
+    /**
+     * Vérifie si la partie est terminée et affiche le résultat si besoin.
+     */
     private void checkGameEnd() {
         if (gameEnded) return;
 
@@ -1080,7 +1204,11 @@ public class GameControllerTheme1 implements Initializable {
         }
     }
 
-    // NOUVELLE MÉTHODE : Mettre à jour les statistiques utilisateur (VERSION CORRIGÉE)
+    /**
+     * Met à jour les statistiques utilisateur à la fin d'une partie.
+     * @param winner Gagnant ("player1", "player2", ou null)
+     * @param isDraw true si égalité
+     */
     private void updateUserStats(String winner, boolean isDraw) {
         if (!userManager.isLoggedIn()) {
             return;
@@ -1100,7 +1228,11 @@ public class GameControllerTheme1 implements Initializable {
         userManager.updateProfile(null, null);
     }
 
-    // NOUVELLE MÉTHODE : Dialog de fin de partie
+    /**
+     * Affiche le dialogue de fin de partie avec boutons de choix.
+     * @param winner Gagnant ou null
+     * @param isDraw true si égalité
+     */
     private void showEndGameDialog(String winner, boolean isDraw) {
         Platform.runLater(() -> {
             if (endGameButtons != null) {
@@ -1110,21 +1242,27 @@ public class GameControllerTheme1 implements Initializable {
         });
     }
 
-    // NOUVELLE MÉTHODE : Gérer le bouton Rejouer
+    /**
+     * Relance une partie avec les mêmes paramètres.
+     */
     @FXML
     private void handleReplay() {
         endGameButtons.setVisible(false);
         restartGame();
     }
 
-    // NOUVELLE MÉTHODE : Gérer le bouton Menu
+    /**
+     * Retourne au menu principal après la fin d’une partie.
+     */
     @FXML
     private void handleMenu() {
         endGameButtons.setVisible(false);
         backToMainMenu();
     }
 
-    // NOUVELLE MÉTHODE : Redémarrer la partie
+    /**
+     * Redémarre entièrement la partie (rechargement de FXML).
+     */
     private void restartGame() {
         try {
             // Arrêter tous les timers
@@ -1136,11 +1274,11 @@ public class GameControllerTheme1 implements Initializable {
             }
 
             // ✅ CORRECTION : Charger le bon fichier FXML
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/theme1.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/game.fxml"));
             Parent gameRoot = loader.load();
 
             // ✅ TRANSMETTRE les paramètres au nouveau contrôleur
-            GameControllerTheme1 newController = loader.getController();
+            GameController newController = loader.getController();
             newController.setCurrentTheme(currentTheme);
             newController.setSelectedMap(selectedMap);
 
@@ -1156,6 +1294,10 @@ public class GameControllerTheme1 implements Initializable {
         }
     }
 
+    /**
+     * Affiche une image de résultat sur la zone de jeu.
+     * @param image Image de victoire ou égalité
+     */
     private void showResult(Image image) {
         if (resultImageView != null) {
             return;
