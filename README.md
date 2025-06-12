@@ -17,7 +17,7 @@ Un remake moderne du célèbre jeu Bomberman développé en Java avec JavaFX, in
 - **🗺️ Éditeur de Cartes** - Créez vos propres niveaux personnalisés
 
 ### 🎨 Système de Thèmes
-- **3 thèmes visuels** différents (Classique, Moderne, Rétro)
+- **3 thèmes visuels** différents
 - **Interface adaptive** qui s'adapte au thème choisi
 - **Assets graphiques** de haute qualité
 
