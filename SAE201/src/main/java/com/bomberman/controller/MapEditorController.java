@@ -1,9 +1,6 @@
 package com.bomberman.controller;
 
 import com.bomberman.model.User;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -21,22 +18,11 @@ import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.scene.image.Image;
-
-import java.io.File;
-import java.lang.reflect.Type;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-import com.bomberman.controller.MapManager;
 import com.bomberman.model.CustomMap;
 
 public class MapEditorController implements Initializable {
@@ -45,22 +31,10 @@ public class MapEditorController implements Initializable {
 
     @FXML private StackPane root;
     @FXML private GridPane mapGrid;
-    @FXML private VBox toolPanel;
-    @FXML private VBox infoPanel;
-
-    // ✅ SUPPRIMÉ : Outils de sélection
-    // Les RadioButton et ToggleGroup ont été retirés
 
     // Informations
     @FXML private Label mapSizeLabel;
     @FXML private TextField mapNameField;
-
-    // Boutons d'action
-    @FXML private Button saveButton;
-    @FXML private Button loadButton;
-    @FXML private Button clearButton;
-    @FXML private Button backButton;
-    @FXML private Button testButton;
 
     // Constantes
     private static final int CELL_SIZE = 30;
@@ -73,7 +47,6 @@ public class MapEditorController implements Initializable {
     // État de l'éditeur
     private int[][] mapData;
     private Rectangle[][] mapCells;
-    // ✅ SUPPRIMÉ : currentTool (plus besoin de sélection d'outil)
 
     // Images
     private Image wallImage;
@@ -94,34 +67,20 @@ public class MapEditorController implements Initializable {
         setupDefaults(); // ✅ RENOMMÉ : setupTools() -> setupDefaults()
         setupKeyboardControls();
         updateInfoPanel();
-
-        System.out.println("🗺️ Map Editor simplifié initialisé");
     }
 
     private void loadImages() {
-        try {
-            // Charger les images du thème actuel
-            String currentTheme = GameControllerTheme1.getCurrentTheme();
-            String themePath = "/images/" + currentTheme + "/";
+        String currentTheme = GameControllerTheme1.getCurrentTheme();
+        String themePath = "/images/" + currentTheme + "/";
 
-            wallImage = new Image(getClass().getResource(themePath + "wall.png").toExternalForm());
-            floorImage = new Image(getClass().getResource(themePath + "floor.png").toExternalForm());
-            blockImage = new Image(getClass().getResource(themePath + "block.png").toExternalForm());
-
-            System.out.println("✅ Images du thème " + currentTheme + " chargées pour l'éditeur");
-        } catch (Exception e) {
-            System.err.println("❌ Erreur chargement images éditeur : " + e.getMessage());
-            // Images par défaut en cas d'erreur
-            wallImage = null;
-            floorImage = null;
-            blockImage = null;
-        }
+        wallImage = new Image(getClass().getResource(themePath + "wall.png").toExternalForm());
+        floorImage = new Image(getClass().getResource(themePath + "floor.png").toExternalForm());
+        blockImage = new Image(getClass().getResource(themePath + "block.png").toExternalForm());
     }
 
     public void setOriginalDimensions(double width, double height) {
         this.originalWidth = width;
         this.originalHeight = height;
-        System.out.println("🔍 Dimensions originales sauvegardées : " + width + "x" + height);
     }
 
     private void initializeMapData() {
@@ -204,9 +163,6 @@ public class MapEditorController implements Initializable {
 
     // ✅ MODIFIÉE : setupTools() -> setupDefaults()
     private void setupDefaults() {
-        // ✅ SUPPRIMÉ : Configuration des outils radio
-        // Plus besoin de listeners pour les outils
-
         // Nom de map par défaut
         if (userManager.isLoggedIn()) {
             User user = userManager.getCurrentUser();
@@ -222,12 +178,10 @@ public class MapEditorController implements Initializable {
         root.requestFocus();
     }
 
-    // ✅ MODIFIÉE : Suppression des contrôles d'outils
     private void handleKeyPress(KeyEvent event) {
         KeyCode code = event.getCode();
 
         switch (code) {
-            // ✅ SUPPRIMÉ : DIGIT1, DIGIT2, DIGIT3 (plus d'outils à sélectionner)
             case S:
                 if (event.isControlDown()) {
                     saveMap();
@@ -242,7 +196,6 @@ public class MapEditorController implements Initializable {
                 backToMenu();
                 break;
         }
-
         event.consume();
     }
 
@@ -250,13 +203,11 @@ public class MapEditorController implements Initializable {
     private void handleCellClick(int row, int col, MouseEvent event) {
         // Ne pas modifier les bordures
         if (row == 0 || row == MAP_HEIGHT - 1 || col == 0 || col == MAP_WIDTH - 1) {
-            System.out.println("⚠️ Bordures protégées !");
             return;
         }
 
         // Protéger les zones de spawn
         if (isSpawnZone(row, col)) {
-            System.out.println("⚠️ Zone de spawn protégée !");
             return;
         }
 
@@ -265,40 +216,25 @@ public class MapEditorController implements Initializable {
             if (mapData[row][col] == 1) {
                 // Si c'est un mur indestructible, le supprimer
                 mapData[row][col] = 0;
-                System.out.println("🗑️ Mur supprimé en (" + row + "," + col + ")");
             } else {
                 // Sinon, placer un mur indestructible
                 mapData[row][col] = 1;
-                System.out.println("🧱 Mur placé en (" + row + "," + col + ")");
             }
 
             updateCellAppearance(mapCells[row][col], mapData[row][col]);
         }
     }
 
-    private String cellTypeToString(int type) {
-        switch (type) {
-            case 0: return "Vide";
-            case 1: return "Mur";
-            case 2: return "Bloc";
-            default: return "Inconnu";
-        }
-    }
 
-    // ✅ MODIFIÉE : Suppression de currentToolLabel
     private void updateInfoPanel() {
         mapSizeLabel.setText("Taille: " + MAP_WIDTH + "x" + MAP_HEIGHT);
-        // ✅ SUPPRIMÉ : currentToolLabel.setText("Outil: Vider");
     }
 
-    // ===== ACTIONS DES BOUTONS (INCHANGÉES) =====
+    // ===== ACTIONS DES BOUTONS  =====
 
     @FXML
     private void saveMap() {
-        System.out.println("=== DEBUG SAVE MAP ===");
-
         String mapName = mapNameField.getText().trim();
-        System.out.println("🔍 Nom de la map: '" + mapName + "'");
 
         if (mapName.isEmpty()) {
             Alert alert = createStyledAlert(Alert.AlertType.WARNING, "Erreur", "Nom de map requis",
@@ -307,76 +243,47 @@ public class MapEditorController implements Initializable {
             return;
         }
 
-        try {
-            System.out.println("🔍 Vérification maps existantes...");
-            List<String> existingMaps = mapManager.getMapsList();
-            System.out.println("🔍 Maps existantes: " + existingMaps);
-            System.out.println("🔍 Nombre de maps: " + existingMaps.size());
+        List<String> existingMaps = mapManager.getMapsList();
+        boolean mapExists = existingMaps.contains(mapName);
 
-            boolean mapExists = existingMaps.contains(mapName);
-            System.out.println("🔍 Map existe déjà? " + mapExists);
+        if (mapExists) {
+            Alert confirm = createStyledAlert(Alert.AlertType.CONFIRMATION, "Map existante",
+                    "Une map avec ce nom existe déjà", "Voulez-vous la remplacer ?");
 
-            if (mapExists) {
-                Alert confirm = createStyledAlert(Alert.AlertType.CONFIRMATION, "Map existante",
-                        "Une map avec ce nom existe déjà", "Voulez-vous la remplacer ?");
-
-                Optional<ButtonType> result = confirm.showAndWait();
-                if (result.isEmpty() || result.get() != ButtonType.OK) {
-                    return; // Annuler
-                }
-            }
-
-            System.out.println("🔍 Génération des murs destructibles...");
-            generateDestructibleWalls();
-
-            System.out.println("🔍 Création de la matrice...");
-            int[][] matrix = createMatrixFromEditor();
-            System.out.println("🔍 Matrice créée: " + matrix.length + "x" + (matrix.length > 0 ? matrix[0].length : 0));
-
-            System.out.println("🔍 Obtention de l'auteur...");
-            String author = userManager.isLoggedIn() ?
-                    userManager.getCurrentUser().getUsername() : "Anonyme";
-            System.out.println("🔍 Auteur: " + author);
-
-            System.out.println("🔍 Création de la CustomMap...");
-            CustomMap newMap = new CustomMap(mapName, "Map créée avec l'éditeur",
-                    MAP_WIDTH, MAP_HEIGHT, matrix, author);
-            System.out.println("🔍 CustomMap créée: " + newMap.getName());
-
-            System.out.println("🔍 Validation de la map...");
-            if (!newMap.isValid()) {
-                Alert alert = createStyledAlert(Alert.AlertType.ERROR, "Erreur", "Map invalide",
-                        "La map doit contenir au moins 2 zones de spawn pour les joueurs");
-                alert.showAndWait();
+            Optional<ButtonType> result = confirm.showAndWait();
+            if (result.isEmpty() || result.get() != ButtonType.OK) {
                 return;
             }
-            System.out.println("🔍 Map valide!");
-
-            System.out.println("🔍 Sauvegarde via MapManager...");
-            boolean success = mapManager.saveMap(newMap);
-            System.out.println("🔍 Sauvegarde réussie? " + success);
-
-            if (success) {
-                Alert alert = createStyledAlert(Alert.AlertType.INFORMATION, "Succès", "Map sauvegardée",
-                        "Map '" + mapName + "' sauvegardée avec succès !\n" +
-                                "Total maps : " + mapManager.getMapCount());
-                alert.showAndWait();
-                System.out.println("💾 Map sauvegardée: " + mapName);
-            } else {
-                Alert alert = createStyledAlert(Alert.AlertType.ERROR, "Erreur", "Erreur de sauvegarde",
-                        "Impossible de sauvegarder la map");
-                alert.showAndWait();
-            }
-
-        } catch (Exception e) {
-            System.err.println("❌ EXCEPTION dans saveMap(): " + e.getMessage());
-            e.printStackTrace();
-            Alert alert = createStyledAlert(Alert.AlertType.ERROR, "Erreur", "Erreur de sauvegarde",
-                    "Impossible de sauvegarder la map:\n" + e.getMessage());
-            alert.showAndWait();
         }
 
-        System.out.println("=== FIN DEBUG SAVE MAP ===");
+        generateDestructibleWalls();
+        int[][] matrix = createMatrixFromEditor();
+
+        String author = userManager.isLoggedIn() ?
+                userManager.getCurrentUser().getUsername() : "Anonyme";
+
+        CustomMap newMap = new CustomMap(mapName, "Map créée avec l'éditeur",
+                MAP_WIDTH, MAP_HEIGHT, matrix, author);
+
+        if (!newMap.isValid()) {
+            Alert alert = createStyledAlert(Alert.AlertType.ERROR, "Erreur", "Map invalide",
+                    "La map doit contenir au moins 2 zones de spawn pour les joueurs");
+            alert.showAndWait();
+            return;
+        }
+
+        boolean success = mapManager.saveMap(newMap);
+
+        if (success) {
+            Alert alert = createStyledAlert(Alert.AlertType.INFORMATION, "Succès", "Map sauvegardée",
+                    "Map '" + mapName + "' sauvegardée avec succès !\n" +
+                            "Total maps : " + mapManager.getMapCount());
+            alert.showAndWait();
+        } else {
+            Alert alert = createStyledAlert(Alert.AlertType.ERROR, "Erreur", "Erreur de sauvegarde",
+                    "Impossible de sauvegarder la map");
+            alert.showAndWait();
+        }
     }
 
     private void generateDestructibleWalls() {
@@ -399,7 +306,6 @@ public class MapEditorController implements Initializable {
                 }
             }
         }
-
         // Mettre à jour l'affichage
         createMapGrid();
     }
@@ -407,9 +313,6 @@ public class MapEditorController implements Initializable {
     private int[][] createMatrixFromEditor() {
         // Utiliser les constantes de l'éditeur pour garantir la bonne taille
         int[][] matrix = new int[MAP_HEIGHT][MAP_WIDTH];
-
-        System.out.println("🔍 Création matrice éditeur: " + MAP_WIDTH + "x" + MAP_HEIGHT);
-        System.out.println("🔍 Données éditeur: " + mapData.length + "x" + (mapData.length > 0 ? mapData[0].length : 0));
 
         for (int row = 0; row < MAP_HEIGHT; row++) {
             for (int col = 0; col < MAP_WIDTH; col++) {
@@ -419,7 +322,6 @@ public class MapEditorController implements Initializable {
                 } else {
                     // Remplir avec des murs si hors limites (bordures)
                     matrix[row][col] = 1;
-                    System.out.println("⚠️ Remplissage bordure à (" + row + "," + col + ")");
                 }
             }
         }
@@ -508,7 +410,6 @@ public class MapEditorController implements Initializable {
         if (result.isPresent() && result.get() == ButtonType.OK) {
             initializeMapData();
             createMapGrid();
-            System.out.println("🗑️ Map effacée");
         }
     }
 
@@ -533,13 +434,8 @@ public class MapEditorController implements Initializable {
             stage.setHeight(originalHeight);
             stage.centerOnScreen();
 
-            System.out.println("🏠 Retour au menu avec dimensions : " + originalWidth + "x" + originalHeight);
-
         } catch (Exception e) {
-            System.err.println("❌ Erreur lors du retour au menu : " + e.getMessage());
             e.printStackTrace();
-
-            // En cas d'erreur, fermer l'application
             System.exit(1);
         }
     }

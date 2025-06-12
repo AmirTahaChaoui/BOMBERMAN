@@ -111,9 +111,6 @@ public class CustomMap {
         if (row >= 0 && row < realHeight && col >= 0 && col < realWidth) {
             return matrix[row][col];
         }
-
-        System.out.println("⚠️ Accès hors limites dans getCellValue: (" + row + "," + col + ") " +
-                "max=(" + realHeight + "," + realWidth + ")");
         return -1; // Valeur invalide
     }
 
@@ -152,20 +149,6 @@ public class CustomMap {
             System.arraycopy(matrix[i], 0, copy[i], 0, width);
         }
         return copy;
-    }
-
-    /**
-     * Affiche la map en console (debug)
-     */
-    public void printMatrix() {
-        System.out.println("=== MAP: " + name + " ===");
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                System.out.print(matrix[i][j] + " ");
-            }
-            System.out.println();
-        }
-        System.out.println("========================");
     }
 
     /**
@@ -245,7 +228,6 @@ public class CustomMap {
                 return GameBoard.CellType.RANGE_BONUS;
 
             default: // Valeur inconnue = case vide
-                System.out.println("⚠️ Valeur inconnue dans la matrice : " + cellValue + " - converti en EMPTY");
                 return GameBoard.CellType.EMPTY;
         }
     }
@@ -261,7 +243,6 @@ public class CustomMap {
             case 3: return GameBoard.CellType.BOMB_BONUS;
             case 4: return GameBoard.CellType.RANGE_BONUS;
             default:
-                System.out.println("⚠️ Valeur inconnue dans la matrice : " + value + " -> EMPTY");
                 return GameBoard.CellType.EMPTY;
         }
     }

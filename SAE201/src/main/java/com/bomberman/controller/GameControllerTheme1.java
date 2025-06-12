@@ -156,8 +156,8 @@ public class GameControllerTheme1 implements Initializable {
 
     // Ajouter ces variables en haut de la classe :
     private MapManager mapManager;
-    private static String selectedMap = "Map Classique"; // Map sélectionnée
-    private boolean useCustomMap = false; // Indicateur si on utilise une map personnalisée
+    private static String selectedMap = "Map Classique";
+    private boolean useCustomMap = false;
 
     @FXML
     private HBox endGameButtons;
@@ -167,7 +167,6 @@ public class GameControllerTheme1 implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         // NOUVEAU : Initialiser le chemin du thème
         themePath = "/images/" + currentTheme + "/";
-        System.out.println("🎨 Chargement du thème : " + currentTheme);
 
         // NOUVEAU : Initialiser les gestionnaires
         userManager = UserManager.getInstance();
@@ -175,7 +174,6 @@ public class GameControllerTheme1 implements Initializable {
 
         // NOUVEAU : Récupérer la map sélectionnée depuis le menu
         selectedMap = MenuController.getSelectedMapName();
-        System.out.println("🗺️ Map à charger : " + selectedMap);
 
         // Bombe et bonus image
         bombImage = new Image(this.getClass().getResource("/images/bomb.png").toExternalForm());
@@ -184,8 +182,6 @@ public class GameControllerTheme1 implements Initializable {
 
         // Charger les images avec le thème sélectionné
         loadThemeImages();
-
-        System.out.println("GameController initialisé avec le thème : " + currentTheme);
         initializeGameArea();
         setupKeyboardControls();
         initializeTimer();
@@ -269,13 +265,11 @@ public class GameControllerTheme1 implements Initializable {
     public static void setOriginalMenuDimensions(double width, double height) {
         originalMenuWidth = width;
         originalMenuHeight = height;
-        System.out.println("🔍 Dimensions menu sauvegardées : " + width + "x" + height);
     }
 
     // Ajouter ces méthodes statiques pour gérer la map sélectionnée :
     public static void setSelectedMap(String mapName) {
         selectedMap = mapName;
-        System.out.println("🗺️ Map sélectionnée pour le jeu : " + mapName);
     }
 
     public static String getSelectedMap() {
@@ -285,7 +279,6 @@ public class GameControllerTheme1 implements Initializable {
     // NOUVEAU : Méthode pour définir le thème (appelée depuis le menu)
     public static void setCurrentTheme(String theme) {
         currentTheme = theme;
-        System.out.println("🎨 Thème sélectionné : " + theme);
     }
 
     // NOUVEAU : Méthode pour obtenir le thème actuel
@@ -337,32 +330,24 @@ public class GameControllerTheme1 implements Initializable {
             victoire2 = new Image(getClass().getResource("/images/victoire2.png").toExternalForm());
             egalite = new Image(getClass().getResource("/images/egalite.png").toExternalForm());
 
-            System.out.println("✅ Images du thème " + currentTheme + " chargées avec succès");
-
         } catch (Exception e) {
-            System.err.println("❌ Erreur lors du chargement des images du thème " + currentTheme + " : " + e.getMessage());
             // En cas d'erreur, revenir au thème par défaut
             if (!currentTheme.equals("theme1")) {
-                System.out.println("🔄 Retour au thème par défaut...");
                 currentTheme = "theme1";
                 themePath = "/images/" + currentTheme + "/";
-                loadThemeImages(); // Essayer de recharger avec le thème par défaut
+                loadThemeImages();
             }
         }
     }
 
 
     private void playSound(String soundFileName) {
-        try {
-            URL soundURL = getClass().getResource("/Sound/" + soundFileName);
-            if (soundURL != null) {
-                Media sound = new Media(soundURL.toExternalForm());
-                MediaPlayer mediaPlayer = new MediaPlayer(sound);
-                mediaPlayer.setVolume(0.3); // Volume à 50%
-                mediaPlayer.play();
-            }
-        } catch (Exception e) {
-            System.err.println("❌ [CTF] Erreur lors de la lecture du son : " + e.getMessage());
+        URL soundURL = getClass().getResource("/Sound/" + soundFileName);
+        if (soundURL != null) {
+            Media sound = new Media(soundURL.toExternalForm());
+            MediaPlayer mediaPlayer = new MediaPlayer(sound);
+            mediaPlayer.setVolume(0.3);
+            mediaPlayer.play();
         }
     }
 
@@ -370,22 +355,14 @@ public class GameControllerTheme1 implements Initializable {
         URL bonusSound = getClass().getResource("/Sound/bonus.mp3");
         if (bonusSound != null) {
             playSound("bonus.mp3");
-        } else {
-            // Son de fallback si bonus.mp3 n'existe pas
-            playSound("select.mp3");
         }
-        System.out.println("♪ [CTF] Son de collection de bonus joué");
     }
 
     private void playExplosionSound() {
         URL explosionSound = getClass().getResource("/Sound/bombSound.mp3");
         if (explosionSound != null) {
             playSound("bombSound.mp3");
-        } else {
-            // Son de fallback
-            playSound("select.mp3");
         }
-        System.out.println("♪ [CTF] Son d'explosion joué");
     }
 
 
@@ -440,36 +417,23 @@ public class GameControllerTheme1 implements Initializable {
 
         if (customMap != null) {
             // ✅ CHANGEMENT : Utiliser TOUTE map trouvée, y compris "Map Classique"
-            System.out.println("✅ [CTF] Chargement de la map : " + selectedMap);
             gameBoard = customMap.toGameBoard();
             useCustomMap = true;
-            System.out.println("📐 [CTF] Dimensions de la map : " + customMap.getWidth() + "x" + customMap.getHeight());
         } else {
             // Utiliser la map par défaut générée automatiquement SEULEMENT si aucune map n'est trouvée
-            System.out.println("🔄 [CTF] Map non trouvée, utilisation de la génération automatique");
             gameBoard = new GameBoard();
             useCustomMap = false;
         }
-
-        // 🔍 DEBUG CRITIQUE : Vérifier les dimensions du plateau
-        System.out.println("🔍 [CTF] DEBUG - Dimensions après création : " + gameBoard.getWidth() + "x" + gameBoard.getHeight());
-
         // ⚠️ VÉRIFICATION CRITIQUE : S'assurer que les dimensions sont valides
         if (gameBoard.getWidth() == 0 || gameBoard.getHeight() == 0) {
-            System.out.println("❌ [CTF] ERREUR CRITIQUE - Dimensions invalides ! Tentative de fallback...");
-
             // Essayer de forcer la Map Classique
             CustomMap fallbackMap = mapManager.getMapByName("Map Classique");
             if (fallbackMap != null) {
-                System.out.println("🔧 [CTF] Utilisation forcée de Map Classique");
                 gameBoard = fallbackMap.toGameBoard();
                 useCustomMap = true;
             } else {
-                System.out.println("🔧 [CTF] Création d'un plateau minimal de secours");
                 gameBoard = createMinimalBoard();
             }
-
-            System.out.println("🔧 [CTF] Plateau corrigé - Nouvelles dimensions : " + gameBoard.getWidth() + "x" + gameBoard.getHeight());
         }
 
         // Initialiser les joueurs selon les dimensions du plateau
@@ -496,23 +460,16 @@ public class GameControllerTheme1 implements Initializable {
         gameGrid.getChildren().clear();
         createVisualBoard();
         createPlayersSprites();
-
-        System.out.println("Plateau de jeu " + gameBoard.getWidth() + "x" + gameBoard.getHeight() + " créé");
-        System.out.println("Mode : " + (useCustomMap ? "Map personnalisée" : "Map générée"));
-        System.out.println("Joueur 1 créé : " + player1 + " (Max bombes: " + player1MaxBombs + ")");
-        System.out.println("Joueur 2 créé : " + player2 + " (Max bombes: " + player2MaxBombs + ")");
     }
 
     // NOUVELLE MÉTHODE : Valider les positions de spawn des joueurs
     private void validatePlayerSpawns() {
         // Vérifier que les positions de spawn sont dans les limites
         if (player1.getRow() >= gameBoard.getHeight() || player1.getCol() >= gameBoard.getWidth()) {
-            System.out.println("⚠️ Position joueur 1 hors limites, ajustement...");
             player1 = new Player("Player 1", 1, 1);
         }
 
         if (player2.getRow() >= gameBoard.getHeight() || player2.getCol() >= gameBoard.getWidth()) {
-            System.out.println("⚠️ Position joueur 2 hors limites, ajustement...");
             player2 = new Player("Player 2",
                     Math.max(1, gameBoard.getHeight() - 2),
                     Math.max(1, gameBoard.getWidth() - 2));
@@ -529,22 +486,18 @@ public class GameControllerTheme1 implements Initializable {
 
     // NOUVELLE MÉTHODE : Créer un plateau minimal fonctionnel
     private GameBoard createMinimalBoard() {
-        System.out.println("🛠️ [CTF] Création d'un plateau minimal...");
-
         // Essayer d'utiliser une autre map disponible
         List<String> availableMaps = mapManager.getMapsList();
         for (String mapName : availableMaps) {
             if (!mapName.equals(selectedMap)) {
                 CustomMap fallback = mapManager.getMapByName(mapName);
                 if (fallback != null && fallback.getWidth() > 0 && fallback.getHeight() > 0) {
-                    System.out.println("✅ [CTF] Utilisation de " + mapName + " comme fallback");
                     return fallback.toGameBoard();
                 }
             }
         }
 
         // En dernier recours, créer un GameBoard par défaut
-        System.out.println("⚠️ [CTF] Création d'un GameBoard par défaut en dernier recours");
         return new GameBoard();
     }
 
@@ -739,8 +692,6 @@ public class GameControllerTheme1 implements Initializable {
             for (Bomb bomb : activeBombs) {
                 bomb.stopTimer();
             }
-
-            System.out.println("⏸️ Jeu en pause");
         }
     }
 
@@ -760,7 +711,6 @@ public class GameControllerTheme1 implements Initializable {
             }
 
             gameArea.requestFocus();
-            System.out.println("▶️ Jeu repris");
         }
     }
 
@@ -789,9 +739,6 @@ public class GameControllerTheme1 implements Initializable {
             stage.setWidth(originalMenuWidth);
             stage.setHeight(originalMenuHeight);
             stage.centerOnScreen();
-
-            System.out.println("🏠 Retour au menu avec dimensions : " + originalMenuWidth + "x" + originalMenuHeight);
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -816,10 +763,8 @@ public class GameControllerTheme1 implements Initializable {
         if (cellType == GameBoard.CellType.BOMB_BONUS) {
             if (playerNumber == 1) {
                 player1MaxBombs++;
-                System.out.println("💣 Joueur 1 collecte un bonus bombes ! Nouvelles bombes max: " + player1MaxBombs);
             } else {
                 player2MaxBombs++;
-                System.out.println("💣 Joueur 2 collecte un bonus bombes ! Nouvelles bombes max: " + player2MaxBombs);
             }
 
             playBonusSound();
@@ -830,10 +775,8 @@ public class GameControllerTheme1 implements Initializable {
         } else if (cellType == GameBoard.CellType.RANGE_BONUS) {
             if (playerNumber == 1) {
                 player1ExplosionRange++;
-                System.out.println("🔥 Joueur 1 collecte un bonus portée ! Nouvelle portée: " + player1ExplosionRange);
             } else {
                 player2ExplosionRange++;
-                System.out.println("🔥 Joueur 2 collecte un bonus portée ! Nouvelle portée: " + player2ExplosionRange);
             }
 
             playBonusSound();
@@ -866,13 +809,11 @@ public class GameControllerTheme1 implements Initializable {
         }
 
         if (activeBombsCount >= playerMaxBombs) {
-            System.out.println("❌ Joueur " + playerNumber + " : Limite de bombes atteinte (" + activeBombsCount + "/" + playerMaxBombs + ") !");
             return;
         }
 
         for (Bomb bomb : activeBombs) {
             if (bomb.getRow() == currentPlayer.getRow() && bomb.getCol() == currentPlayer.getCol()) {
-                System.out.println("❌ Il y a déjà une bombe ici !");
                 return;
             }
         }
@@ -892,13 +833,9 @@ public class GameControllerTheme1 implements Initializable {
         GridPane.setValignment(bombSprite, VPos.CENTER);
 
         bomb.startTimer(this::onBombExplosion, gameBoard);
-
-        System.out.println("💣 Joueur " + playerNumber + " place une bombe : " + bomb + " (" + (activeBombsCount + 1) + "/" + playerMaxBombs + ")");
     }
 
     private void onBombExplosion(Bomb bomb, List<Bomb.Position> explosionCells) {
-        System.out.println("💥 EXPLOSION ! " + bomb);
-
         playExplosionSound();
 
         Circle bombSprite = bombSprites.get(bomb);
@@ -921,17 +858,14 @@ public class GameControllerTheme1 implements Initializable {
 
             boolean wallDestroyed = gameBoard.destroyWall(pos.row, pos.col);
             if (wallDestroyed) {
-                System.out.println("🧱 Mur détruit en (" + pos.row + ", " + pos.col + ")");
                 needsUpdate = true;
             }
 
             if (cellType == GameBoard.CellType.BOMB_BONUS) {
                 gameBoard.setCellType(pos.row, pos.col, GameBoard.CellType.EMPTY);
-                System.out.println("💣 Bonus bombes détruit en (" + pos.row + ", " + pos.col + ")");
                 needsUpdate = true;
             } else if (cellType == GameBoard.CellType.RANGE_BONUS) {
                 gameBoard.setCellType(pos.row, pos.col, GameBoard.CellType.EMPTY);
-                System.out.println("🔥 Bonus portée détruit en (" + pos.row + ", " + pos.col + ")");
                 needsUpdate = true;
             }
         }
@@ -1092,11 +1026,9 @@ public class GameControllerTheme1 implements Initializable {
     private void playerDied(int playerNumber) {
         if (playerNumber == 1) {
             player1Alive = false;
-            System.out.println("💀 LE JOUEUR 1 EST MORT !");
             player1Sprite.setFill(Color.GRAY);
         } else {
             player2Alive = false;
-            System.out.println("💀 LE JOUEUR 2 EST MORT !");
             player2Sprite.setFill(Color.GRAY);
         }
 
@@ -1111,33 +1043,29 @@ public class GameControllerTheme1 implements Initializable {
         boolean isDraw = false;
 
         if (!player1Alive && !player2Alive) {
-            System.out.println("🤝 MATCH NUL ! Les deux joueurs sont morts !");
             isDraw = true;
             gameEnded = true;
             gameStarted = false; // ✅ AJOUTÉ : Empêche les mouvements
             gameTimer.stop();
-            showResult("🤝 MATCH NUL ! Les deux joueurs sont morts !", egalite);
+            showResult(egalite);
         } else if (!player1Alive) {
-            System.out.println("🏆 JOUEUR 2 GAGNE !");
             winner = "player2";
             gameEnded = true;
             gameStarted = false; // ✅ AJOUTÉ : Empêche les mouvements
             gameTimer.stop();
-            showResult("🏆 JOUEUR 2 GAGNE !", victoire2);
+            showResult(victoire2);
         } else if (!player2Alive) {
-            System.out.println("🏆 JOUEUR 1 GAGNE !");
             winner = "player1";
             gameEnded = true;
             gameStarted = false; // ✅ AJOUTÉ : Empêche les mouvements
             gameTimer.stop();
-            showResult("🏆 JOUEUR 1 GAGNE !", victoire1);
+            showResult(victoire1);
         } else if (timeRemainingSeconds <= 0) {
-            System.out.println("⏰ TEMPS ÉCOULÉ ! MATCH NUL !");
             isDraw = true;
             gameEnded = true;
             gameStarted = false; // ✅ AJOUTÉ : Empêche les mouvements
             gameTimer.stop();
-            showResult("⏰ TEMPS ÉCOULÉ ! MATCH NUL !", egalite);
+            showResult(egalite);
         }
 
         if (gameEnded) {
@@ -1155,53 +1083,29 @@ public class GameControllerTheme1 implements Initializable {
     // NOUVELLE MÉTHODE : Mettre à jour les statistiques utilisateur (VERSION CORRIGÉE)
     private void updateUserStats(String winner, boolean isDraw) {
         if (!userManager.isLoggedIn()) {
-            System.out.println("⚠️ Aucun utilisateur connecté - pas de mise à jour des stats");
-            return; // Sortir de la méthode si personne n'est connecté
+            return;
         }
 
-        try {
-            User currentUser = userManager.getCurrentUser();
-            System.out.println("📊 Mise à jour des statistiques pour : " + currentUser.getUsername());
+        User currentUser = userManager.getCurrentUser();
 
-            // Incrémenter les parties jouées
-            currentUser.incrementGamesPlayed();
+        currentUser.incrementGamesPlayed();
 
-            // Ajouter une victoire si nécessaire
-            if (!isDraw) {
-                // Pour l'instant, considérons que l'utilisateur connecté est toujours "player1"
-                // Dans une future version, on pourrait demander qui est qui
-                boolean userWon = "player1".equals(winner);
-
-                if (userWon) {
-                    currentUser.incrementGamesWon();
-                    System.out.println("🏆 Victoire ajoutée ! Total : " + currentUser.getGamesWon() + "/" + currentUser.getGamesPlayed());
-                } else {
-                    System.out.println("😢 Défaite enregistrée. Score : " + currentUser.getGamesWon() + "/" + currentUser.getGamesPlayed());
-                }
-            } else {
-                System.out.println("🤝 Match nul enregistré. Score : " + currentUser.getGamesWon() + "/" + currentUser.getGamesPlayed());
+        if (!isDraw) {
+            boolean userWon = "player1".equals(winner);
+            if (userWon) {
+                currentUser.incrementGamesWon();
             }
-
-            // Forcer la sauvegarde via UserManager
-            userManager.updateProfile(null, null, null);
-
-        } catch (Exception e) {
-            System.err.println("❌ Erreur lors de la mise à jour des statistiques : " + e.getMessage());
-            e.printStackTrace();
         }
+
+        userManager.updateProfile(null, null);
     }
 
     // NOUVELLE MÉTHODE : Dialog de fin de partie
     private void showEndGameDialog(String winner, boolean isDraw) {
         Platform.runLater(() -> {
-            System.out.println("🔍 DEBUG: endGameButtons = " + endGameButtons);
             if (endGameButtons != null) {
                 endGameButtons.setVisible(true);
                 endGameButtons.toFront();
-                System.out.println("🎮 Boutons de fin de partie affichés");
-                System.out.println("🔍 DEBUG: Visible = " + endGameButtons.isVisible());
-            } else {
-                System.out.println("❌ ERROR: endGameButtons est null !");
             }
         });
     }
@@ -1209,7 +1113,6 @@ public class GameControllerTheme1 implements Initializable {
     // NOUVELLE MÉTHODE : Gérer le bouton Rejouer
     @FXML
     private void handleReplay() {
-        System.out.println("🔄 [CTF] Bouton Rejouer cliqué");
         endGameButtons.setVisible(false);
         restartGame();
     }
@@ -1217,7 +1120,6 @@ public class GameControllerTheme1 implements Initializable {
     // NOUVELLE MÉTHODE : Gérer le bouton Menu
     @FXML
     private void handleMenu() {
-        System.out.println("🏠 [CTF] Bouton Menu cliqué");
         endGameButtons.setVisible(false);
         backToMainMenu();
     }
@@ -1249,17 +1151,12 @@ public class GameControllerTheme1 implements Initializable {
             stage.setScene(gameScene);
             stage.setTitle("Super Bomberman - Nouvelle Partie");
 
-            System.out.println("🔄 Nouvelle partie démarrée !");
-
         } catch (Exception e) {
-            e.printStackTrace();
-            System.err.println("Erreur lors du redémarrage : " + e.getMessage());
             backToMainMenu();
         }
     }
 
-    private void showResult(String consoleMessage, Image image) {
-        System.out.println(consoleMessage);
+    private void showResult(Image image) {
         if (resultImageView != null) {
             return;
         }

@@ -192,7 +192,6 @@ public class CaptureTheFlagController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         // NOUVEAU : Initialiser le chemin du thème
         themePath = "/images/" + currentTheme + "/";
-        System.out.println("🎨 [CTF] Chargement du thème : " + currentTheme);
 
         // NOUVEAU : Initialiser les gestionnaires
         userManager = UserManager.getInstance();
@@ -200,12 +199,9 @@ public class CaptureTheFlagController implements Initializable {
 
         // NOUVEAU : Récupérer la map sélectionnée depuis le menu
         selectedMap = MenuController.getSelectedMapName();
-        System.out.println("🗺️ [CTF] Map à charger : " + selectedMap);
 
         // Charger les images avec le thème sélectionné
         loadThemeImages();
-
-        System.out.println("🏴 CaptureTheFlagController initialisé avec le thème : " + currentTheme);
         initializeGameArea();
         setupKeyboardControls();
         initializeTimer();
@@ -290,12 +286,10 @@ public class CaptureTheFlagController implements Initializable {
     public static void setOriginalMenuDimensions(double width, double height) {
         originalMenuWidth = width;
         originalMenuHeight = height;
-        System.out.println("🔍 [CTF] Dimensions menu sauvegardées : " + width + "x" + height);
     }
 
     public static void setSelectedMap(String mapName) {
         selectedMap = mapName;
-        System.out.println("🗺️ [CTF] Map sélectionnée pour le jeu : " + mapName);
     }
 
     public static String getSelectedMap() {
@@ -304,7 +298,6 @@ public class CaptureTheFlagController implements Initializable {
 
     public static void setCurrentTheme(String theme) {
         currentTheme = theme;
-        System.out.println("🎨 [CTF] Thème sélectionné : " + theme);
     }
 
     public static String getCurrentTheme() {
@@ -313,116 +306,59 @@ public class CaptureTheFlagController implements Initializable {
 
     // NOUVELLE MÉTHODE : Charger toutes les images du thème + images CTF
     private void loadThemeImages() {
-        try {
-            // Images perso 1
-            persoDown = new Image(getClass().getResource(themePath + "persoDown.png").toExternalForm());
-            persoLeft = new Image(getClass().getResource(themePath + "persoLeft.png").toExternalForm());
-            persoRight = new Image(getClass().getResource(themePath + "persoRight.png").toExternalForm());
-            persoUp = new Image(getClass().getResource(themePath + "persoUp.png").toExternalForm());
-            persoDeath = new Image(getClass().getResource(themePath + "death.png").toExternalForm());
+        // Images perso 1
+        persoDown = new Image(getClass().getResource(themePath + "persoDown.png").toExternalForm());
+        persoLeft = new Image(getClass().getResource(themePath + "persoLeft.png").toExternalForm());
+        persoRight = new Image(getClass().getResource(themePath + "persoRight.png").toExternalForm());
+        persoUp = new Image(getClass().getResource(themePath + "persoUp.png").toExternalForm());
+        persoDeath = new Image(getClass().getResource(themePath + "death.png").toExternalForm());
 
-            // Images perso 2
-            perso2Down = new Image(getClass().getResource(themePath + "perso2Down.png").toExternalForm());
-            perso2Left = new Image(getClass().getResource(themePath + "perso2Left.png").toExternalForm());
-            perso2Right = new Image(getClass().getResource(themePath + "perso2Right.png").toExternalForm());
-            perso2Up = new Image(getClass().getResource(themePath + "perso2Up.png").toExternalForm());
-            perso2Death = new Image(getClass().getResource(themePath + "death2.png").toExternalForm());
+        // Images perso 2
+        perso2Down = new Image(getClass().getResource(themePath + "perso2Down.png").toExternalForm());
+        perso2Left = new Image(getClass().getResource(themePath + "perso2Left.png").toExternalForm());
+        perso2Right = new Image(getClass().getResource(themePath + "perso2Right.png").toExternalForm());
+        perso2Up = new Image(getClass().getResource(themePath + "perso2Up.png").toExternalForm());
+        perso2Death = new Image(getClass().getResource(themePath + "death2.png").toExternalForm());
 
-            // Images des cellules
-            wallImage = new Image(getClass().getResource(themePath + "wall.png").toExternalForm());
-            blockImage = new Image(getClass().getResource(themePath + "block.png").toExternalForm());
-            floorImage = new Image(getClass().getResource(themePath + "floor.png").toExternalForm());
-            floorShadowImage = new Image(getClass().getResource(themePath + "floor_shadow.png").toExternalForm());
+        // Images des cellules
+        wallImage = new Image(getClass().getResource(themePath + "wall.png").toExternalForm());
+        blockImage = new Image(getClass().getResource(themePath + "block.png").toExternalForm());
+        floorImage = new Image(getClass().getResource(themePath + "floor.png").toExternalForm());
+        floorShadowImage = new Image(getClass().getResource(themePath + "floor_shadow.png").toExternalForm());
 
-            // Bombe et bonus images
-            bombImage = new Image(getClass().getResource(themePath + "bomb.png").toExternalForm());
-            bombBonusImage = new Image(getClass().getResource("/images/bomb-bonus.png").toExternalForm());
-            rangeBonusImage = new Image(getClass().getResource("/images/range-bonus.png").toExternalForm());
+        // Bombe et bonus images
+        bombImage = new Image(getClass().getResource(themePath + "bomb.png").toExternalForm());
+        bombBonusImage = new Image(getClass().getResource("/images/bomb-bonus.png").toExternalForm());
+        rangeBonusImage = new Image(getClass().getResource("/images/range-bonus.png").toExternalForm());
 
-            // Images explosion
-            explosionCenterImage = new Image(getClass().getResource("/images/explosion_milieu.png").toExternalForm());
-            explosionEndUpImage = new Image(getClass().getResource("/images/bout_explosion_haut.png").toExternalForm());
-            explosionEndDownImage = new Image(getClass().getResource("/images/bout_explosion_bas.png").toExternalForm());
-            explosionEndLeftImage = new Image(getClass().getResource("/images/bout_explosion_gauche.png").toExternalForm());
-            explosionEndRightImage = new Image(getClass().getResource("/images/bout_explosion_droite.png").toExternalForm());
-            explosionMiddleUpImage = new Image(getClass().getResource("/images/explosion_haut.png").toExternalForm());
-            explosionMiddleDownImage = new Image(getClass().getResource("/images/explosion_bas.png").toExternalForm());
-            explosionMiddleLeftImage = new Image(getClass().getResource("/images/explosion_gauche.png").toExternalForm());
-            explosionMiddleRightImage = new Image(getClass().getResource("/images/explosion_droite.png").toExternalForm());
+        // Images explosion
+        explosionCenterImage = new Image(getClass().getResource("/images/explosion_milieu.png").toExternalForm());
+        explosionEndUpImage = new Image(getClass().getResource("/images/bout_explosion_haut.png").toExternalForm());
+        explosionEndDownImage = new Image(getClass().getResource("/images/bout_explosion_bas.png").toExternalForm());
+        explosionEndLeftImage = new Image(getClass().getResource("/images/bout_explosion_gauche.png").toExternalForm());
+        explosionEndRightImage = new Image(getClass().getResource("/images/bout_explosion_droite.png").toExternalForm());
+        explosionMiddleUpImage = new Image(getClass().getResource("/images/explosion_haut.png").toExternalForm());
+        explosionMiddleDownImage = new Image(getClass().getResource("/images/explosion_bas.png").toExternalForm());
+        explosionMiddleLeftImage = new Image(getClass().getResource("/images/explosion_gauche.png").toExternalForm());
+        explosionMiddleRightImage = new Image(getClass().getResource("/images/explosion_droite.png").toExternalForm());
 
-            victoire1 = new Image(getClass().getResource("/images/victoire1.png").toExternalForm());
-            victoire2 = new Image(getClass().getResource("/images/victoire2.png").toExternalForm());
-            egalite = new Image(getClass().getResource("/images/egalite.png").toExternalForm());
+        victoire1 = new Image(getClass().getResource("/images/victoire1.png").toExternalForm());
+        victoire2 = new Image(getClass().getResource("/images/victoire2.png").toExternalForm());
+        egalite = new Image(getClass().getResource("/images/egalite.png").toExternalForm());
 
-            // NOUVEAU : Images CTF spécifiques - avec fallback
-            try {
-                redFlagImage = new Image(getClass().getResource("/images/CTF/redFlag.png").toExternalForm());
-            } catch (Exception e) {
-                System.out.println("⚠️ [CTF] redFlag.png non trouvé, utilisation du mur comme fallback");
-                redFlagImage = wallImage;
-            }
-
-            try {
-                blueFlagImage = new Image(getClass().getResource("/images/CTF/blueFlag.png").toExternalForm());
-            } catch (Exception e) {
-                System.out.println("⚠️ [CTF] blueFlag.png non trouvé, utilisation du mur comme fallback");
-                blueFlagImage = wallImage;
-            }
-
-            try {
-                redFlagDroppedImage = new Image(getClass().getResource("/images/CTF/redFlagDropped.png").toExternalForm());
-            } catch (Exception e) {
-                System.out.println("⚠️ [CTF] redFlagDropped.png non trouvé, utilisation du bloc comme fallback");
-                redFlagDroppedImage = blockImage;
-            }
-
-            try {
-                blueFlagDroppedImage = new Image(getClass().getResource("/images/CTF/blueFlagDropped.png").toExternalForm());
-            } catch (Exception e) {
-                System.out.println("⚠️ [CTF] blueFlagDropped.png non trouvé, utilisation du bloc comme fallback");
-                blueFlagDroppedImage = blockImage;
-            }
-
-            try {
-                redBaseImage = new Image(getClass().getResource("/images/CTF/redBase.png").toExternalForm());
-            } catch (Exception e) {
-                System.out.println("⚠️ [CTF] redBase.png non trouvé, utilisation du sol comme fallback");
-                redBaseImage = floorImage;
-            }
-
-            try {
-                blueBaseImage = new Image(getClass().getResource("/images/CTF/blueBase.png").toExternalForm());
-            } catch (Exception e) {
-                System.out.println("⚠️ [CTF] blueBase.png non trouvé, utilisation du sol comme fallback");
-                blueBaseImage = floorImage;
-            }
-
-            System.out.println("✅ [CTF] Images du thème " + currentTheme + " chargées avec succès");
-
-        } catch (Exception e) {
-            System.err.println("❌ [CTF] Erreur lors du chargement des images du thème " + currentTheme + " : " + e.getMessage());
-            // En cas d'erreur, revenir au thème par défaut
-            if (!currentTheme.equals("theme1")) {
-                System.out.println("🔄 [CTF] Retour au thème par défaut...");
-                currentTheme = "theme1";
-                themePath = "/images/" + currentTheme + "/";
-                loadThemeImages(); // Essayer de recharger avec le thème par défaut
-            }
-        }
+        // Images CTF spécifiques
+        redFlagImage = new Image(getClass().getResource("/images/CTF/redFlag.png").toExternalForm());
+        blueFlagImage = new Image(getClass().getResource("/images/CTF/blueFlag.png").toExternalForm());
     }
 
     // Son pour les jeux :
     private void playSound(String soundFileName) {
-        try {
-            URL soundURL = getClass().getResource("/Sound/" + soundFileName);
-            if (soundURL != null) {
-                Media sound = new Media(soundURL.toExternalForm());
-                MediaPlayer mediaPlayer = new MediaPlayer(sound);
-                mediaPlayer.setVolume(0.3); // Volume à 50%
-                mediaPlayer.play();
-            }
-        } catch (Exception e) {
-            System.err.println("❌ [CTF] Erreur lors de la lecture du son : " + e.getMessage());
+        URL soundURL = getClass().getResource("/Sound/" + soundFileName);
+        if (soundURL != null) {
+            Media sound = new Media(soundURL.toExternalForm());
+            MediaPlayer mediaPlayer = new MediaPlayer(sound);
+            mediaPlayer.setVolume(0.3);
+            mediaPlayer.play();
         }
     }
 
@@ -430,22 +366,14 @@ public class CaptureTheFlagController implements Initializable {
         URL bonusSound = getClass().getResource("/Sound/bonus.mp3");
         if (bonusSound != null) {
             playSound("bonus.mp3");
-        } else {
-            // Son de fallback si bonus.mp3 n'existe pas
-            playSound("select.mp3");
         }
-        System.out.println("♪ [CTF] Son de collection de bonus joué");
     }
 
     private void playExplosionSound() {
         URL explosionSound = getClass().getResource("/Sound/bombSound.mp3");
         if (explosionSound != null) {
             playSound("bombSound.mp3");
-        } else {
-            // Son de fallback
-            playSound("select.mp3");
         }
-        System.out.println("♪ [CTF] Son d'explosion joué");
     }
 
 
@@ -483,7 +411,6 @@ public class CaptureTheFlagController implements Initializable {
 
     private void handleTimeUp() {
         gameEnded = true;
-        System.out.println("⏰ [CTF] TEMPS ÉCOULÉ !");
 
         for (Bomb bomb : activeBombs) {
             bomb.stopTimer();
@@ -498,30 +425,21 @@ public class CaptureTheFlagController implements Initializable {
         CustomMap customMap = mapManager.getMapByName(selectedMap);
 
         if (customMap != null) {
-            System.out.println("✅ [CTF] Chargement de la map : " + selectedMap);
             gameBoard = customMap.toGameBoard();
             useCustomMap = true;
-            System.out.println("📐 [CTF] Dimensions de la map : " + customMap.getWidth() + "x" + customMap.getHeight());
         } else {
-            System.out.println("🔄 [CTF] Map non trouvée, utilisation de la génération automatique");
             gameBoard = new GameBoard();
             useCustomMap = false;
         }
 
-        System.out.println("🔍 [CTF] DEBUG - Dimensions après création : " + gameBoard.getWidth() + "x" + gameBoard.getHeight());
-
         if (gameBoard.getWidth() == 0 || gameBoard.getHeight() == 0) {
-            System.out.println("❌ [CTF] ERREUR CRITIQUE - Dimensions invalides ! Tentative de fallback...");
             CustomMap fallbackMap = mapManager.getMapByName("Map Classique");
             if (fallbackMap != null) {
-                System.out.println("🔧 [CTF] Utilisation forcée de Map Classique");
                 gameBoard = fallbackMap.toGameBoard();
                 useCustomMap = true;
             } else {
-                System.out.println("🔧 [CTF] Création d'un plateau minimal de secours");
                 gameBoard = createMinimalBoard();
             }
-            System.out.println("🔧 [CTF] Plateau corrigé - Nouvelles dimensions : " + gameBoard.getWidth() + "x" + gameBoard.getHeight());
         }
 
         // Initialiser les joueurs selon les dimensions du plateau
@@ -531,10 +449,6 @@ public class CaptureTheFlagController implements Initializable {
         // ✅ CORRECTION CRITIQUE : Initialiser les drapeaux CTF AVANT validatePlayerSpawns()
         redFlag = new Flag(1, 1, Flag.Team.RED);
         blueFlag = new Flag(gameBoard.getHeight() - 2, gameBoard.getWidth() - 2, Flag.Team.BLUE);
-
-        System.out.println("🚩 [CTF] Drapeaux initialisés :");
-        System.out.println("   Rouge : (" + redFlag.getRow() + "," + redFlag.getCol() + ")");
-        System.out.println("   Bleu : (" + blueFlag.getRow() + "," + blueFlag.getCol() + ")");
 
         // Vérifier que les positions de spawn sont valides
         validatePlayerSpawns();
@@ -557,30 +471,20 @@ public class CaptureTheFlagController implements Initializable {
         createVisualBoard();
         createPlayersSprites();
         createFlagSprites(); // ✅ Maintenant les drapeaux existent !
-
-        System.out.println("🏴 CTF - Plateau de jeu " + gameBoard.getWidth() + "x" + gameBoard.getHeight() + " créé");
-        System.out.println("🏴 CTF - Mode : " + (useCustomMap ? "Map personnalisée" : "Map générée"));
-        System.out.println("🚩 Drapeau rouge à: (" + redFlag.getRow() + ", " + redFlag.getCol() + ")");
-        System.out.println("🚩 Drapeau bleu à: (" + blueFlag.getRow() + ", " + blueFlag.getCol() + ")");
     }
 
     private GameBoard createMinimalBoard() {
-        System.out.println("🛠️ [CTF] Création d'un plateau minimal...");
-
         // Essayer d'utiliser une autre map disponible
         List<String> availableMaps = mapManager.getMapsList();
         for (String mapName : availableMaps) {
             if (!mapName.equals(selectedMap)) {
                 CustomMap fallback = mapManager.getMapByName(mapName);
                 if (fallback != null && fallback.getWidth() > 0 && fallback.getHeight() > 0) {
-                    System.out.println("✅ [CTF] Utilisation de " + mapName + " comme fallback");
                     return fallback.toGameBoard();
                 }
             }
         }
-
         // En dernier recours, créer un GameBoard par défaut
-        System.out.println("⚠️ [CTF] Création d'un GameBoard par défaut en dernier recours");
         return new GameBoard();
     }
 
@@ -607,21 +511,14 @@ public class CaptureTheFlagController implements Initializable {
 
     // NOUVELLE MÉTHODE : Mettre à jour l'affichage des scores
     private void updateScoreDisplay() {
-        System.out.println("📊 [CTF] Mise à jour affichage scores: J1=" + player1Score + " J2=" + player2Score);
 
         // Mettre à jour les labels si ils existent
         if (player1ScoreLabel != null) {
             player1ScoreLabel.setText(String.valueOf(player1Score));
-            System.out.println("✅ [CTF] Label Joueur 1 mis à jour: " + player1Score);
-        } else {
-            System.out.println("❌ [CTF] player1ScoreLabel est null!");
         }
 
         if (player2ScoreLabel != null) {
             player2ScoreLabel.setText(String.valueOf(player2Score));
-            System.out.println("✅ [CTF] Label Joueur 2 mis à jour: " + player2Score);
-        } else {
-            System.out.println("❌ [CTF] player2ScoreLabel est null!");
         }
     }
 
@@ -629,12 +526,10 @@ public class CaptureTheFlagController implements Initializable {
     private void validatePlayerSpawns() {
         // Vérifier que les positions de spawn sont dans les limites
         if (player1.getRow() >= gameBoard.getHeight() || player1.getCol() >= gameBoard.getWidth()) {
-            System.out.println("⚠️ Position joueur 1 hors limites, ajustement...");
             player1 = new Player("Player 1", 1, 1);
         }
 
         if (player2.getRow() >= gameBoard.getHeight() || player2.getCol() >= gameBoard.getWidth()) {
-            System.out.println("⚠️ Position joueur 2 hors limites, ajustement...");
             player2 = new Player("Player 2",
                     Math.max(1, gameBoard.getHeight() - 2),
                     Math.max(1, gameBoard.getWidth() - 2));
@@ -842,8 +737,6 @@ public class CaptureTheFlagController implements Initializable {
             for (Bomb bomb : activeBombs) {
                 bomb.stopTimer();
             }
-
-            System.out.println("⏸️ [CTF] Jeu en pause");
         }
     }
 
@@ -861,9 +754,7 @@ public class CaptureTheFlagController implements Initializable {
             for (Bomb bomb : activeBombs) {
                 bomb.startTimer(this::onBombExplosion, gameBoard);
             }
-
             gameArea.requestFocus();
-            System.out.println("▶️ [CTF] Jeu repris");
         }
     }
 
@@ -892,9 +783,6 @@ public class CaptureTheFlagController implements Initializable {
             stage.setWidth(originalMenuWidth);
             stage.setHeight(originalMenuHeight);
             stage.centerOnScreen();
-
-            System.out.println("🏠 [CTF] Retour au menu avec dimensions : " + originalMenuWidth + "x" + originalMenuHeight);
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -919,10 +807,8 @@ public class CaptureTheFlagController implements Initializable {
     private void checkFlagInteraction(int playerNumber) {
         // ✅ VÉRIFICATION CRITIQUE : S'assurer que les drapeaux existent
         if (redFlag == null || blueFlag == null) {
-            System.out.println("⚠️ [CTF] Drapeaux non initialisés ! Skipping flag interaction.");
             return;
         }
-
         Player currentPlayer = (playerNumber == 1) ? player1 : player2;
 
         // Vérifier si le joueur essaie de capturer le drapeau ennemi
@@ -933,7 +819,6 @@ public class CaptureTheFlagController implements Initializable {
                     !blueFlag.isDropped() && !blueFlag.isCaptured()) {
 
                 captureFlag(1, blueFlag);
-                playFlagCaptureSound();
             }
         } else if (playerNumber == 2 && !player2HasFlag) {
             // Joueur 2 essaie de prendre le drapeau rouge
@@ -942,7 +827,6 @@ public class CaptureTheFlagController implements Initializable {
                     !redFlag.isDropped() && !redFlag.isCaptured()) {
 
                 captureFlag(2, redFlag);
-                playFlagCaptureSound();
             }
         }
 
@@ -962,16 +846,12 @@ public class CaptureTheFlagController implements Initializable {
                 scoreCapture(2);
             }
         }
-
         // Vérifier si le joueur ramasse un drapeau lâché
         checkDroppedFlagPickup(playerNumber);
     }
 
     // NOUVELLE MÉTHODE : Capturer un drapeau
     private void captureFlag(int playerNumber, Flag flag) {
-        System.out.println("🚩 [CTF] Joueur " + playerNumber + " a capturé le drapeau " +
-                (flag.getTeam() == Flag.Team.RED ? "ROUGE" : "BLEU") + " !");
-
         flag.setCaptured(true);
         if (playerNumber == 1) {
             player1HasFlag = true;
@@ -1044,14 +924,12 @@ public class CaptureTheFlagController implements Initializable {
         }
 
         updatePlayerSpriteWithFlag(playerNumber, false);
-        System.out.println("💧 [CTF] Joueur " + playerNumber + " a lâché le drapeau !");
     }
 
     // NOUVELLE MÉTHODE : Timer de retour automatique du drapeau
     private void startFlagReturnTimer(Flag flag) {
         Timeline returnTimer = new Timeline(new KeyFrame(Duration.seconds(FLAG_RETURN_TIME), e -> {
             if (flag.isDropped()) {
-                System.out.println("⏰ [CTF] Drapeau retourné automatiquement à la base !");
                 resetFlag(flag);
             }
         }));
@@ -1069,7 +947,6 @@ public class CaptureTheFlagController implements Initializable {
 
             // Joueur 1 récupère son drapeau
             resetFlag(redFlag);
-            System.out.println("🔄 [CTF] Joueur 1 a récupéré son drapeau !");
 
         } else if (playerNumber == 2 && blueFlag.isDropped() &&
                 currentPlayer.getRow() == blueFlag.getRow() &&
@@ -1077,7 +954,6 @@ public class CaptureTheFlagController implements Initializable {
 
             // Joueur 2 récupère son drapeau
             resetFlag(blueFlag);
-            System.out.println("🔄 [CTF] Joueur 2 a récupéré son drapeau !");
 
         } else if (playerNumber == 1 && blueFlag.isDropped() && !player1HasFlag &&
                 currentPlayer.getRow() == blueFlag.getRow() &&
@@ -1088,7 +964,6 @@ public class CaptureTheFlagController implements Initializable {
             blueFlag.setDropped(false);
             player1HasFlag = true;
             updatePlayerSpriteWithFlag(1, true);
-            System.out.println("🎯 [CTF] Joueur 1 a ramassé le drapeau bleu lâché !");
 
         } else if (playerNumber == 2 && redFlag.isDropped() && !player2HasFlag &&
                 currentPlayer.getRow() == redFlag.getRow() &&
@@ -1099,7 +974,6 @@ public class CaptureTheFlagController implements Initializable {
             redFlag.setDropped(false);
             player2HasFlag = true;
             updatePlayerSpriteWithFlag(2, true);
-            System.out.println("🎯 [CTF] Joueur 2 a ramassé le drapeau rouge lâché !");
         }
     }
 
@@ -1132,10 +1006,8 @@ public class CaptureTheFlagController implements Initializable {
         if (cellType == GameBoard.CellType.BOMB_BONUS) {
             if (playerNumber == 1) {
                 player1MaxBombs++;
-                System.out.println("💣 [CTF] Joueur 1 collecte un bonus bombes ! Nouvelles bombes max: " + player1MaxBombs);
             } else {
                 player2MaxBombs++;
-                System.out.println("💣 [CTF] Joueur 2 collecte un bonus bombes ! Nouvelles bombes max: " + player2MaxBombs);
             }
 
             playBonusSound();
@@ -1146,10 +1018,8 @@ public class CaptureTheFlagController implements Initializable {
         } else if (cellType == GameBoard.CellType.RANGE_BONUS) {
             if (playerNumber == 1) {
                 player1ExplosionRange++;
-                System.out.println("🔥 [CTF] Joueur 1 collecte un bonus portée ! Nouvelle portée: " + player1ExplosionRange);
             } else {
                 player2ExplosionRange++;
-                System.out.println("🔥 [CTF] Joueur 2 collecte un bonus portée ! Nouvelle portée: " + player2ExplosionRange);
             }
 
             playBonusSound();
@@ -1183,13 +1053,11 @@ public class CaptureTheFlagController implements Initializable {
         }
 
         if (activeBombsCount >= playerMaxBombs) {
-            System.out.println("❌ Joueur " + playerNumber + " : Limite de bombes atteinte (" + activeBombsCount + "/" + playerMaxBombs + ") !");
             return;
         }
 
         for (Bomb bomb : activeBombs) {
             if (bomb.getRow() == currentPlayer.getRow() && bomb.getCol() == currentPlayer.getCol()) {
-                System.out.println("❌ Il y a déjà une bombe ici !");
                 return;
             }
         }
@@ -1209,13 +1077,9 @@ public class CaptureTheFlagController implements Initializable {
         GridPane.setValignment(bombSprite, VPos.CENTER);
 
         bomb.startTimer(this::onBombExplosion, gameBoard);
-
-        System.out.println("💣 Joueur " + playerNumber + " place une bombe : " + bomb + " (" + (activeBombsCount + 1) + "/" + playerMaxBombs + ")");
     }
 
     private void onBombExplosion(Bomb bomb, List<Bomb.Position> explosionCells) {
-        System.out.println("💥 [CTF] EXPLOSION ! " + bomb);
-
         playExplosionSound();
 
         Circle bombSprite = bombSprites.get(bomb);
@@ -1238,17 +1102,14 @@ public class CaptureTheFlagController implements Initializable {
 
             boolean wallDestroyed = gameBoard.destroyWall(pos.row, pos.col);
             if (wallDestroyed) {
-                System.out.println("🧱 [CTF] Mur détruit en (" + pos.row + ", " + pos.col + ")");
                 needsUpdate = true;
             }
 
             if (cellType == GameBoard.CellType.BOMB_BONUS) {
                 gameBoard.setCellType(pos.row, pos.col, GameBoard.CellType.EMPTY);
-                System.out.println("💣 [CTF] Bonus bombes détruit en (" + pos.row + ", " + pos.col + ")");
                 needsUpdate = true;
             } else if (cellType == GameBoard.CellType.RANGE_BONUS) {
                 gameBoard.setCellType(pos.row, pos.col, GameBoard.CellType.EMPTY);
-                System.out.println("🔥 [CTF] Bonus portée détruit en (" + pos.row + ", " + pos.col + ")");
                 needsUpdate = true;
             }
         }
@@ -1300,7 +1161,6 @@ public class CaptureTheFlagController implements Initializable {
     private void restoreFlagSprites() {
         // ✅ VÉRIFICATION : S'assurer que les drapeaux et sprites existent
         if (redFlag == null || blueFlag == null || redFlagSprite == null || blueFlagSprite == null) {
-            System.out.println("⚠️ [CTF] Drapeaux ou sprites non initialisés dans restoreFlagSprites()");
             return;
         }
 
@@ -1477,11 +1337,9 @@ public class CaptureTheFlagController implements Initializable {
         // ✅ NOUVEAU : Marquer le joueur comme mort IMMÉDIATEMENT
         if (playerNumber == 1) {
             player1Alive = false;
-            System.out.println("💀 [CTF] LE JOUEUR 1 EST MORT !");
             player1Sprite.setFill(new ImagePattern(persoDeath));
         } else {
             player2Alive = false;
-            System.out.println("💀 [CTF] LE JOUEUR 2 EST MORT !");
             player2Sprite.setFill(new ImagePattern(perso2Death));
         }
 
@@ -1495,8 +1353,6 @@ public class CaptureTheFlagController implements Initializable {
             respawnPlayer(playerNumber);
         }));
         respawnTimer.play();
-
-        System.out.println("⏱️ [CTF] Joueur " + playerNumber + " va respawn dans 5 secondes...");
     }
 
     private void showRespawnCountdown(int playerNumber) {
@@ -1541,8 +1397,6 @@ public class CaptureTheFlagController implements Initializable {
             // Mettre à jour la position visuelle
             gameGrid.getChildren().remove(player1Sprite);
             gameGrid.add(player1Sprite, player1.getCol(), player1.getRow());
-
-            System.out.println("♻️ [CTF] Joueur 1 a respawn à la position (1,1) !");
         } else {
             // ✅ REMETTRE le joueur à sa position de spawn originale
             player2.setRow(gameBoard.getHeight() - 2);
@@ -1553,8 +1407,6 @@ public class CaptureTheFlagController implements Initializable {
             // Mettre à jour la position visuelle
             gameGrid.getChildren().remove(player2Sprite);
             gameGrid.add(player2Sprite, player2.getCol(), player2.getRow());
-
-            System.out.println("♻️ [CTF] Joueur 2 a respawn à la position (" + (gameBoard.getHeight() - 2) + "," + (gameBoard.getWidth() - 2) + ") !");
         }
     }
 
@@ -1571,23 +1423,23 @@ public class CaptureTheFlagController implements Initializable {
 
         if (player1Score >= WINNING_SCORE && player2Score >= WINNING_SCORE) {
             isDraw = true;
-            showResult("🤝 [CTF] MATCH NUL !", egalite);
+            showResult(egalite);
         } else if (player1Score >= WINNING_SCORE) {
             winner = "player1";
-            showResult("🏆 [CTF] JOUEUR 1 GAGNE !", victoire1);
+            showResult(victoire1);
         } else if (player2Score >= WINNING_SCORE) {
             winner = "player2";
-            showResult("🏆 [CTF] JOUEUR 2 GAGNE !", victoire2);
+            showResult(victoire2);
         } else if (timeRemainingSeconds <= 0) {
             if (player1Score > player2Score) {
                 winner = "player1";
-                showResult("⏰ [CTF] TEMPS ÉCOULÉ ! JOUEUR 1 GAGNE !", victoire1);
+                showResult(victoire1);
             } else if (player2Score > player1Score) {
                 winner = "player2";
-                showResult("⏰ [CTF] TEMPS ÉCOULÉ ! JOUEUR 2 GAGNE !", victoire2);
+                showResult(victoire2);
             } else {
                 isDraw = true;
-                showResult("⏰ [CTF] TEMPS ÉCOULÉ ! MATCH NUL !", egalite);
+                showResult(egalite);
             }
         }
 
@@ -1596,58 +1448,35 @@ public class CaptureTheFlagController implements Initializable {
         for (Bomb bomb : activeBombs) {
             bomb.stopTimer();
         }
-
         // ✅ APPEL DIRECT au lieu de Timeline
         showEndGameDialog(winner, isDraw);
-
-        System.out.println("🏁 [CTF] Score final: Joueur 1: " + player1Score + " - Joueur 2: " + player2Score);
     }
 
     // Méthodes de statistiques (identiques à GameControllerTheme1)
     private void updateUserStats(String winner, boolean isDraw) {
         if (!userManager.isLoggedIn()) {
-            System.out.println("⚠️ [CTF] Aucun utilisateur connecté - pas de mise à jour des stats");
             return;
         }
 
-        try {
-            User currentUser = userManager.getCurrentUser();
-            System.out.println("📊 [CTF] Mise à jour des statistiques pour : " + currentUser.getUsername());
+        User currentUser = userManager.getCurrentUser();
 
-            currentUser.incrementGamesPlayed();
+        currentUser.incrementGamesPlayed();
 
-            if (!isDraw) {
-                boolean userWon = "player1".equals(winner);
-
-                if (userWon) {
-                    currentUser.incrementGamesWon();
-                    System.out.println("🏆 [CTF] Victoire ajoutée ! Total : " + currentUser.getGamesWon() + "/" + currentUser.getGamesPlayed());
-                } else {
-                    System.out.println("😢 [CTF] Défaite enregistrée. Score : " + currentUser.getGamesWon() + "/" + currentUser.getGamesPlayed());
-                }
-            } else {
-                System.out.println("🤝 [CTF] Match nul enregistré. Score : " + currentUser.getGamesWon() + "/" + currentUser.getGamesPlayed());
+        if (!isDraw) {
+            boolean userWon = "player1".equals(winner);
+            if (userWon) {
+                currentUser.incrementGamesWon();
             }
-
-            userManager.updateProfile(null, null, null);
-
-        } catch (Exception e) {
-            System.err.println("❌ [CTF] Erreur lors de la mise à jour des statistiques : " + e.getMessage());
-            e.printStackTrace();
         }
+        userManager.updateProfile(null, null);
     }
 
     // NOUVELLE MÉTHODE : Afficher le popup de fin de partie
     private void showEndGameDialog(String winner, boolean isDraw) {
         Platform.runLater(() -> {
-            System.out.println("🔍 DEBUG: endGameButtons = " + endGameButtons);
             if (endGameButtons != null) {
                 endGameButtons.setVisible(true);
                 endGameButtons.toFront();
-                System.out.println("🎮 Boutons de fin de partie affichés");
-                System.out.println("🔍 DEBUG: Visible = " + endGameButtons.isVisible());
-            } else {
-                System.out.println("❌ ERROR: endGameButtons est null !");
             }
         });
     }
@@ -1655,7 +1484,6 @@ public class CaptureTheFlagController implements Initializable {
     // NOUVELLE MÉTHODE : Gérer le bouton Rejouer
     @FXML
     private void handleReplay() {
-        System.out.println("🔄 [CTF] Bouton Rejouer cliqué");
         endGameButtons.setVisible(false);
         restartGame();
     }
@@ -1663,7 +1491,6 @@ public class CaptureTheFlagController implements Initializable {
     // NOUVELLE MÉTHODE : Gérer le bouton Menu
     @FXML
     private void handleMenu() {
-        System.out.println("🏠 [CTF] Bouton Menu cliqué");
         endGameButtons.setVisible(false);
         backToMainMenu();
     }
@@ -1691,18 +1518,13 @@ public class CaptureTheFlagController implements Initializable {
             stage.setScene(gameScene);
             stage.setTitle("Super Bomberman - Capture du Drapeau");
 
-            System.out.println("🔄 [CTF] Nouvelle partie démarrée !");
-
         } catch (Exception e) {
-            e.printStackTrace();
-            System.err.println("❌ [CTF] Erreur lors du redémarrage : " + e.getMessage());
             backToMainMenu();
         }
     }
 
     // MÉTHODE COMPLÉTÉE : showResult (identique au pattern GameControllerTheme1)
-    private void showResult(String consoleMessage, Image image) {
-        System.out.println(consoleMessage);
+    private void showResult(Image image) {
         if (resultImageView != null) {
             return;
         }
@@ -1710,33 +1532,6 @@ public class CaptureTheFlagController implements Initializable {
         resultImageView.setPreserveRatio(true);
         resultImageView.setFitWidth(500);
         gameArea.getChildren().add(resultImageView);
-    }
-
-    // NOUVELLES MÉTHODES : Sons CTF (optionnelles mais dans l'esprit GameControllerTheme1)
-    private void playFlagCaptureSound() {
-        try {
-            String soundPath = "/sounds/flag_capture.wav";
-            Media sound = new Media(getClass().getResource(soundPath).toExternalForm());
-            MediaPlayer mediaPlayer = new MediaPlayer(sound);
-            mediaPlayer.setVolume(0.5);
-            mediaPlayer.play();
-            System.out.println("🔊 [CTF] Son de capture de drapeau joué");
-        } catch (Exception e) {
-            System.out.println("⚠️ [CTF] Son de capture non trouvé : " + e.getMessage());
-        }
-    }
-
-    private void playFlagScoreSound() {
-        try {
-            String soundPath = "/sounds/flag_score.wav";
-            Media sound = new Media(getClass().getResource(soundPath).toExternalForm());
-            MediaPlayer mediaPlayer = new MediaPlayer(sound);
-            mediaPlayer.setVolume(0.7);
-            mediaPlayer.play();
-            System.out.println("🔊 [CTF] Son de score joué");
-        } catch (Exception e) {
-            System.out.println("⚠️ [CTF] Son de score non trouvé : " + e.getMessage());
-        }
     }
 
     private void scoreCapture(int playerNumber) {
@@ -1754,9 +1549,6 @@ public class CaptureTheFlagController implements Initializable {
 
         updatePlayerSpriteWithFlag(playerNumber, false);
         updateScoreDisplay();
-        playFlagScoreSound();
-
-        System.out.println("📊 [CTF] Score: Joueur 1: " + player1Score + " - Joueur 2: " + player2Score);
 
         // Vérifier la condition de victoire
         if (player1Score >= WINNING_SCORE || player2Score >= WINNING_SCORE) {

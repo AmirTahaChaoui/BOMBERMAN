@@ -66,27 +66,16 @@ public class UserManager {
         File directory = file.getParentFile();
         if (directory != null && !directory.exists()) {
             boolean created = directory.mkdirs();
-            if (created) {
-                System.out.println("📁 Dossier de sauvegarde créé : " + directory.getAbsolutePath());
-            }
         }
-        System.out.println("📍 Chemin du fichier de sauvegarde : " + new File(SAVE_FILE).getAbsolutePath());
     }
 
     private void loadUsers() {
         File file = new File(SAVE_FILE);
 
-        if (!file.exists()) {
-            System.out.println("📄 Aucun fichier de sauvegarde trouvé : " + SAVE_FILE);
-            System.out.println("📄 Démarrage avec une base vide.");
-            return;
-        }
-
         try {
             String json = new String(Files.readAllBytes(Paths.get(SAVE_FILE)), StandardCharsets.UTF_8);
 
             if (json.trim().isEmpty()) {
-                System.out.println("📄 Fichier vide, initialisation avec liste vide");
                 users = new ArrayList<>();
                 return;
             }
@@ -98,10 +87,7 @@ public class UserManager {
                 users = new ArrayList<>();
             }
 
-            System.out.println("✅ " + users.size() + " utilisateur(s) chargé(s) depuis " + SAVE_FILE);
-
         } catch (Exception e) {
-            System.err.println("❌ Erreur lors du chargement des utilisateurs : " + e.getMessage());
             e.printStackTrace();
             users = new ArrayList<>();
         }
@@ -118,10 +104,7 @@ public class UserManager {
             Files.write(Paths.get(SAVE_FILE), json.getBytes(StandardCharsets.UTF_8),
                     StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
 
-            System.out.println("💾 Utilisateurs sauvegardés dans " + SAVE_FILE);
-
         } catch (Exception e) {
-            System.err.println("❌ Erreur lors de la sauvegarde : " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -140,53 +123,41 @@ public class UserManager {
             return sb.toString();
 
         } catch (NoSuchAlgorithmException e) {
-            System.err.println("❌ Erreur de hashage : " + e.getMessage());
             return password; // Fallback non sécurisé
         }
     }
 
     // ===== OPÉRATIONS UTILISATEUR =====
     public boolean createUser(String username, String password, String firstName,
-                              String lastName, String avatarId) {
-        System.out.println("🔍 Tentative de création utilisateur : " + username);
+                              String lastName) {
 
         // Vérifier que le username n'existe pas déjà
         if (getUserByUsername(username) != null) {
-            System.out.println("❌ Nom d'utilisateur déjà pris : " + username);
             return false;
         }
 
         // Créer le nouvel utilisateur
         String passwordHash = hashPassword(password);
-        User newUser = new User(username, passwordHash, firstName, lastName, avatarId);
+        User newUser = new User(username, passwordHash, firstName, lastName);
 
         // Ajouter à la liste et sauvegarder
         users.add(newUser);
-        System.out.println("👤 Utilisateur ajouté à la liste. Total : " + users.size());
 
         saveUsers();
 
-        System.out.println("✅ Utilisateur créé avec succès : " + username);
         return true;
     }
 
     public boolean login(String username, String password) {
-        System.out.println("🔍 Tentative de connexion pour : " + username);
 
         User user = getUserByUsername(username);
 
         if (user == null) {
-            System.out.println("❌ Utilisateur introuvable : " + username);
-            System.out.println("📋 Utilisateurs disponibles :");
-            for (User u : users) {
-                System.out.println("  - " + u.getUsername());
-            }
             return false;
         }
 
         String passwordHash = hashPassword(password);
         if (!user.checkPassword(passwordHash)) {
-            System.out.println("❌ Mot de passe incorrect pour : " + username);
             return false;
         }
 
@@ -195,13 +166,11 @@ public class UserManager {
         currentUser.updateLastLogin();
         saveUsers();
 
-        System.out.println("✅ Connexion réussie : " + username);
         return true;
     }
 
     public void logout() {
         if (currentUser != null) {
-            System.out.println("👋 Déconnexion de : " + currentUser.getUsername());
             currentUser = null;
         }
     }
@@ -218,7 +187,6 @@ public class UserManager {
     // ===== MISE À JOUR DES STATISTIQUES =====
     public void recordGameResult(boolean won) {
         if (currentUser == null) {
-            System.out.println("⚠️ Aucun utilisateur connecté pour enregistrer le résultat");
             return;
         }
 
@@ -228,21 +196,17 @@ public class UserManager {
         }
 
         saveUsers();
-        System.out.println("📊 Statistiques mises à jour pour : " + currentUser.getUsername());
     }
 
-    public void updateProfile(String firstName, String lastName, String avatarId) {
+    public void updateProfile(String firstName, String lastName) {
         if (currentUser == null) {
-            System.out.println("⚠️ Aucun utilisateur connecté");
             return;
         }
 
         if (firstName != null) currentUser.setFirstName(firstName);
         if (lastName != null) currentUser.setLastName(lastName);
-        if (avatarId != null) currentUser.setAvatarId(avatarId);
 
         saveUsers();
-        System.out.println("✏️ Profil mis à jour pour : " + currentUser.getUsername());
     }
 
     public boolean changePassword(String oldPassword, String newPassword) {
@@ -250,13 +214,11 @@ public class UserManager {
 
         String oldHash = hashPassword(oldPassword);
         if (!currentUser.checkPassword(oldHash)) {
-            System.out.println("❌ Ancien mot de passe incorrect");
             return false;
         }
 
         currentUser.setPasswordHash(hashPassword(newPassword));
         saveUsers();
-        System.out.println("🔐 Mot de passe changé pour : " + currentUser.getUsername());
         return true;
     }
 

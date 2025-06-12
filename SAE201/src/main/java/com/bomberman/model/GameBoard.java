@@ -27,8 +27,6 @@ public class GameBoard {
                 board[row][col] = CellType.EMPTY;
             }
         }
-
-        System.out.println("🎮 GameBoard créé avec dimensions : " + width + "x" + height);
     }
 
 
@@ -154,11 +152,9 @@ public class GameBoard {
             if (random < 0.15) {
                 // 15% chance de bonus nombre de bombes
                 board[row][col] = CellType.BOMB_BONUS;
-                System.out.println("💣 Bonus nombre de bombes généré en (" + row + ", " + col + ")");
             } else if (random < 0.30) {
                 // 15% chance de bonus portée (0.15 + 0.15 = 0.30)
                 board[row][col] = CellType.RANGE_BONUS;
-                System.out.println("🔥 Bonus portée généré en (" + row + ", " + col + ")");
             } else {
                 // 70% chance de case vide
                 board[row][col] = CellType.EMPTY;

@@ -35,12 +35,6 @@ public class User {
      */
     private String lastName;
 
-    /**
-     * Identifiant de l'avatar choisi
-     * Exemple: "avatar1", "avatar2", etc.
-     */
-    private String avatarId;
-
     // ===== STATISTIQUES DE JEU =====
     /**
      * Nombre total de parties jouées
@@ -72,12 +66,11 @@ public class User {
      * Constructeur pour un nouvel utilisateur
      * Initialise les statistiques à 0 et définit les dates
      */
-    public User(String username, String passwordHash, String firstName, String lastName, String avatarId) {
+    public User(String username, String passwordHash, String firstName, String lastName) {
         this.username = username;
         this.passwordHash = passwordHash;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.avatarId = avatarId;
         this.gamesPlayed = 0;
         this.gamesWon = 0;
 
@@ -145,7 +138,6 @@ public class User {
     public String getPasswordHash() { return passwordHash; }
     public String getFirstName() { return firstName; }
     public String getLastName() { return lastName; }
-    public String getAvatarId() { return avatarId; }
     public int getGamesPlayed() { return gamesPlayed; }
     public int getGamesWon() { return gamesWon; }
     public String getRegistrationDate() { return registrationDate; }
@@ -154,7 +146,6 @@ public class User {
     // Setters - Pour modifier les valeurs (certains seulement)
     public void setFirstName(String firstName) { this.firstName = firstName; }
     public void setLastName(String lastName) { this.lastName = lastName; }
-    public void setAvatarId(String avatarId) { this.avatarId = avatarId; }
     public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
 
     // Setters pour la désérialisation JSON uniquement

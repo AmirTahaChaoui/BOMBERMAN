@@ -1,7 +1,5 @@
 package com.bomberman.controller;
 
-import com.bomberman.controller.MusicManager;
-import com.bomberman.controller.UserManager;
 import com.bomberman.model.User;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -23,7 +21,6 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
-import javafx.scene.control.ButtonBar;
 import java.util.stream.Collectors;
 
 import java.io.IOException;
@@ -37,13 +34,8 @@ public class MenuController implements Initializable {
 
     // FXML Elements existants
     @FXML private StackPane root;
-    @FXML private VBox menuContainer;
-    @FXML private VBox menuButtons;
     @FXML private ImageView titleImage;
     @FXML private Label gameTitle;
-    @FXML private Label gameSubtitle;
-    @FXML private Label versionLabel;
-    @FXML private Label controlsLabel;
 
     // Button containers existants
     @FXML private HBox playButtonContainer;
@@ -68,12 +60,8 @@ public class MenuController implements Initializable {
 
     // NOUVEAUX ÉLÉMENTS - Système de connexion
     @FXML private StackPane loginView;
-    @FXML private VBox loginContent;
     @FXML private TextField usernameField;
     @FXML private PasswordField passwordField;
-    @FXML private Button connectButton;
-    @FXML private Button cancelButton;
-    @FXML private Button createAccountLink;
     @FXML private Label loginErrorLabel;
 
     // NOUVEAUX ÉLÉMENTS - Système d'inscription
@@ -84,10 +72,6 @@ public class MenuController implements Initializable {
     @FXML private TextField registerUsernameField;
     @FXML private PasswordField registerPasswordField;
     @FXML private PasswordField confirmPasswordField;
-    @FXML private ComboBox<String> avatarComboBox;
-    @FXML private Button createAccountButton;
-    @FXML private Button cancelRegisterButton;
-    @FXML private Button backToLoginLink;
     @FXML private Label registerErrorLabel;
 
     // Navigation state existante
@@ -101,45 +85,26 @@ public class MenuController implements Initializable {
 
     // Variables pour la vue thème
     @FXML private StackPane themeView;
-    @FXML private VBox themeContent;
     @FXML private Button theme1Button;
     @FXML private Button theme2Button;
-    @FXML private Button theme3Button;
-    @FXML private Button themeApplyButton;
-    @FXML private Button themeCloseButton;
     @FXML private VBox mapButtonsContainer;
 
     private List<Button> mapButtons = new ArrayList<>();
 
     private MapManager mapManager;
     private static String selectedMapName = "Map Classique"; // Map par défaut
-    @FXML private ScrollPane mapScrollPane;
 
     @FXML private StackPane gameModeView;
-    @FXML private VBox gameModeContent;
     @FXML private Button normalModeButton;
-    @FXML private Button captureFlagModeButton;
-    @FXML private Button gameModeBackButton;
 
 
-    // NOUVEAU ÉLÉMENT - Vue du classement
+    // Vue du classement
     @FXML private StackPane rankingView;
-    @FXML private VBox rankingContent;
-    @FXML private Button closeRankingButton;
-
-    private static double originalMenuWidth = 800;
-    private static double originalMenuHeight = 600;
-    private static String currentTheme = "theme1";
-    private String themePath;
-    private boolean useCustomMap = false;
-
 
     // État de navigation
     private boolean isInSubMenu = false;
-    private MenuOption[] mainMenuOptions;
-    private MenuOption[] subMenuOptions;
 
-    // Menu option class to hold button and cursor references
+
     private static class MenuOption {
         final Button button;
         final Label cursor;
@@ -166,20 +131,16 @@ public class MenuController implements Initializable {
         setupImageFallback();
         setupMusic();
 
-        // NOUVEAU : Configurer le système de connexion
+        //Configurer le système de connexion
         setupLoginSystem();
 
-        // Set initial selection
         updateSelection();
 
-        // Request focus for keyboard navigation
         Platform.runLater(() -> {
             root.requestFocus();
         });
 
         mapManager = MapManager.getInstance();
-
-        // ← SUPPRIMER TOUTE LA SECTION mapComboBox ICI
     }
 
     // NOUVELLE MÉTHODE : Configuration du système de connexion
@@ -199,27 +160,6 @@ public class MenuController implements Initializable {
         }
         if (gameModeView != null) {  // ← NOUVEAU
             gameModeView.setVisible(false);
-        }
-
-
-        // Configurer les avatars disponibles
-        setupAvatarComboBox();
-    }
-
-    // NOUVELLE MÉTHODE : Configurer la liste des avatars
-    private void setupAvatarComboBox() {
-        if (avatarComboBox != null) {
-            avatarComboBox.getItems().addAll(
-                    "🧑‍💼 Avatar Business",
-                    "👨‍🎮 Avatar Gamer",
-                    "👩‍🎨 Avatar Artiste",
-                    "🧑‍🚀 Avatar Astronaute",
-                    "👨‍🔬 Avatar Scientifique",
-                    "👩‍🏫 Avatar Professeur",
-                    "🧑‍🍳 Avatar Chef",
-                    "👨‍⚕️ Avatar Médecin"
-            );
-            avatarComboBox.getSelectionModel().selectFirst(); // Sélectionner le premier par défaut
         }
     }
 
@@ -241,12 +181,6 @@ public class MenuController implements Initializable {
         String username = usernameField.getText().trim();
         String password = passwordField.getText();
 
-        // DEBUG : Afficher les infos de connexion
-        System.out.println("=== TENTATIVE DE CONNEXION ===");
-        System.out.println("Username saisi : '" + username + "'");
-        System.out.println("Password saisi : '" + password + "'");
-        System.out.println("Nombre d'utilisateurs : " + userManager.getUserCount());
-
         // Vider le message d'erreur
         loginErrorLabel.setVisible(false);
 
@@ -258,10 +192,7 @@ public class MenuController implements Initializable {
         // Tentative de connexion
         boolean success = userManager.login(username, password);
 
-        System.out.println("Résultat connexion : " + success);
-
         if (success) {
-            System.out.println("✅ Connexion réussie !");
             hideLoginView();
             updateLoginDisplay();
             clearLoginFields();
@@ -279,7 +210,6 @@ public class MenuController implements Initializable {
 
     @FXML
     private void handleCreateAccountLink() {
-        System.out.println("Lien créer un compte cliqué");
         showRegisterView();
     }
 
@@ -291,25 +221,10 @@ public class MenuController implements Initializable {
         String username = registerUsernameField.getText().trim();
         String password = registerPasswordField.getText();
         String confirmPassword = confirmPasswordField.getText();
-        String selectedAvatar = avatarComboBox.getSelectionModel().getSelectedItem();
-
-        // DEBUG : Afficher les infos de création
-        System.out.println("=== CRÉATION DE COMPTE ===");
-        System.out.println("Prénom : '" + firstName + "'");
-        System.out.println("Nom : '" + lastName + "'");
-        System.out.println("Username : '" + username + "'");
-        System.out.println("Password : '" + password + "'");
-        System.out.println("Avatar : '" + selectedAvatar + "'");
 
         // Vider le message d'erreur
         registerErrorLabel.setVisible(false);
 
-        // Validation des champs
-        if (firstName.isEmpty() || lastName.isEmpty() || username.isEmpty() ||
-                password.isEmpty() || confirmPassword.isEmpty() || selectedAvatar == null) {
-            showRegisterError("Veuillez remplir tous les champs");
-            return;
-        }
 
         // Vérifier que les mots de passe correspondent
         if (!password.equals(confirmPassword)) {
@@ -323,23 +238,12 @@ public class MenuController implements Initializable {
             return;
         }
 
-        // Extraire l'ID de l'avatar (premier mot après l'emoji)
-        String avatarId = selectedAvatar.split(" ")[1].toLowerCase(); // Ex: "business", "gamer", etc.
-
-        System.out.println("Avatar ID : '" + avatarId + "'");
-
         // Tentative de création du compte
-        boolean success = userManager.createUser(username, password, firstName, lastName, avatarId);
-
-        System.out.println("Résultat création : " + success);
-        System.out.println("Nombre d'utilisateurs après création : " + userManager.getUserCount());
+        boolean success = userManager.createUser(username, password, firstName, lastName);
 
         if (success) {
-            System.out.println("✅ Compte créé avec succès !");
-
             // Connexion automatique après création
             boolean loginSuccess = userManager.login(username, password);
-            System.out.println("Connexion automatique : " + loginSuccess);
 
             hideRegisterView();
             updateLoginDisplay();
@@ -424,9 +328,6 @@ public class MenuController implements Initializable {
         registerUsernameField.clear();
         registerPasswordField.clear();
         confirmPasswordField.clear();
-        if (avatarComboBox.getItems().size() > 0) {
-            avatarComboBox.getSelectionModel().selectFirst();
-        }
     }
 
     private void showLoginError(String message) {
@@ -467,7 +368,6 @@ public class MenuController implements Initializable {
         if (result.isPresent() && result.get() == logoutButton) {
             userManager.logout();
             updateLoginDisplay();
-            System.out.println("👋 Déconnexion réussie");
         }
     }
 
@@ -610,36 +510,23 @@ public class MenuController implements Initializable {
     private void toggleMusic() {
         if (musicManager.isPlaying()) {
             musicManager.pauseBackgroundMusic();
-            System.out.println("♪ Musique en pause");
         } else {
             musicManager.resumeBackgroundMusic();
-            System.out.println("♪ Musique reprise");
         }
     }
 
     // Méthode générique pour jouer un son (effets sonores)
     private void playSound(String soundFileName) {
-        try {
-            URL soundUrl = getClass().getResource("/Sound/" + soundFileName);
-            if (soundUrl == null) {
-                System.out.println("Fichier son non trouvé: /Sound/" + soundFileName);
-                return;
-            }
-
-            String musicFile = soundUrl.toExternalForm();
-            Media media = new Media(musicFile);
-            MediaPlayer mediaPlayer = new MediaPlayer(media);
-            mediaPlayer.setVolume(0.7); // Volume plus fort pour les effets sonores
-            mediaPlayer.play();
-
-        } catch (Exception e) {
-            System.out.println("Erreur lors du chargement du son " + soundFileName + ": " + e.getMessage());
+        URL soundUrl = getClass().getResource("/Sound/" + soundFileName);
+        if (soundUrl == null) {
+            return;
         }
-    }
 
-    // Méthode publique pour compatibility
-    public void playSound() {
-        playSound("select.mp3");
+        String musicFile = soundUrl.toExternalForm();
+        Media media = new Media(musicFile);
+        MediaPlayer mediaPlayer = new MediaPlayer(media);
+        mediaPlayer.setVolume(0.7);
+        mediaPlayer.play();
     }
 
     private void navigateUp() {
@@ -697,11 +584,9 @@ public class MenuController implements Initializable {
     private void handlePlayButton() {
         if (isInSubMenu) {
             // Dans le sous-menu : "LANCER PARTIE"
-            System.out.println("Démarrage du jeu...");
             startGame(); // Utiliser la méthode existante
         } else {
             // Dans le menu principal : "JOUER" -> aller au sous-menu
-            System.out.println("Navigation vers le sous-menu de jeu...");
             isInSubMenu = true;
             updateMenuDisplay();
 
@@ -713,7 +598,6 @@ public class MenuController implements Initializable {
 
     private void startGame() {
         // NOUVEAU : Ouvrir la vue de sélection de mode au lieu de lancer directement
-        System.out.println("🎮 Ouverture de la sélection de mode de jeu...");
         showGameModeView();
     }
 
@@ -731,8 +615,6 @@ public class MenuController implements Initializable {
         Platform.runLater(() -> {
             normalModeButton.requestFocus();
         });
-
-        System.out.println("🎮 Vue sélection de mode ouverte");
     }
 
     private void hideGameModeView() {
@@ -744,27 +626,22 @@ public class MenuController implements Initializable {
         Platform.runLater(() -> {
             root.requestFocus();
         });
-
-        System.out.println("🎮 Vue sélection de mode fermée");
     }
 
     @FXML
     private void handleNormalModeButton() {
-        System.out.println("🎯 Mode Normal sélectionné");
         hideGameModeView();
         launchNormalMode();
     }
 
     @FXML
     private void handleCaptureFlagModeButton() {
-        System.out.println("🏴 Mode Capture du Drapeau sélectionné");
         hideGameModeView();
         launchCaptureTheFlagMode();
     }
 
     @FXML
     private void handleGameModeBackButton() {
-        System.out.println("🔙 Retour depuis la sélection de mode");
         hideGameModeView();
     }
 
@@ -772,8 +649,6 @@ public class MenuController implements Initializable {
 
     private void launchNormalMode() {
         try {
-            System.out.println("🚀 Lancement du mode normal...");
-
             // Passer la map sélectionnée au GameController
             GameControllerTheme1.setSelectedMap(selectedMapName);
 
@@ -801,9 +676,6 @@ public class MenuController implements Initializable {
             stage.centerOnScreen();
 
             shutdown();
-
-            System.out.println("✅ Mode normal lancé avec succès");
-
         } catch (IOException e) {
             e.printStackTrace();
             showErrorDialog("Erreur", "Impossible de charger le mode normal",
@@ -813,8 +685,6 @@ public class MenuController implements Initializable {
 
     private void launchCaptureTheFlagMode() {
         try {
-            System.out.println("🚀 Lancement du mode Capture du Drapeau...");
-
             // Passer les données nécessaires au CaptureTheFlagController
             CaptureTheFlagController.setSelectedMap(selectedMapName);
             CaptureTheFlagController.setCurrentTheme(GameControllerTheme1.getCurrentTheme());
@@ -826,30 +696,7 @@ public class MenuController implements Initializable {
 
             CaptureTheFlagController.setOriginalMenuDimensions(currentWidth, currentHeight);
 
-            // ESSAYER PLUSIEURS CHEMINS POSSIBLES
-            FXMLLoader loader = null;
-            String[] possiblePaths = {
-                    "/fxml/CTF.fxml",
-                    "/fxml/CaptureTheFlag.fxml",
-                    "/fxml/captureTheFlag.fxml",
-                    "/fxml/ctf.fxml"
-            };
-
-            for (String path : possiblePaths) {
-                URL resource = getClass().getResource(path);
-                if (resource != null) {
-                    System.out.println("✅ Fichier FXML trouvé : " + path);
-                    loader = new FXMLLoader(resource);
-                    break;
-                } else {
-                    System.out.println("❌ Fichier non trouvé : " + path);
-                }
-            }
-
-            if (loader == null) {
-                throw new IOException("Aucun fichier FXML CTF trouvé dans /fxml/");
-            }
-
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/theme1.fxml"));
             Parent gameRoot = loader.load();
 
             // Créer la scène de jeu
@@ -864,30 +711,8 @@ public class MenuController implements Initializable {
 
             shutdown();
 
-            System.out.println("✅ Mode Capture du Drapeau lancé avec succès");
-
         } catch (IOException e) {
             e.printStackTrace();
-            System.err.println("❌ Erreur détaillée : " + e.getMessage());
-
-            // FALLBACK : Lister tous les fichiers FXML disponibles
-            System.out.println("🔍 Fichiers FXML disponibles :");
-            try {
-                URL fxmlDir = getClass().getResource("/fxml/");
-                if (fxmlDir != null) {
-                    System.out.println("   Dossier FXML trouvé : " + fxmlDir);
-                    // Tu peux lister manuellement tes fichiers ici
-                } else {
-                    System.out.println("   ❌ Dossier /fxml/ non trouvé");
-                }
-            } catch (Exception ex) {
-                System.out.println("   ❌ Erreur lors de la vérification : " + ex.getMessage());
-            }
-
-            showErrorDialog("Erreur", "Impossible de charger le mode Capture du Drapeau",
-                    "Le fichier FXML n'a pas été trouvé.\n\n" +
-                            "Vérifiez que capturetheflag.fxml existe dans resources/fxml/\n\n" +
-                            "Erreur : " + e.getMessage());
         }
     }
 
@@ -897,12 +722,9 @@ public class MenuController implements Initializable {
     private void handleSettingsButton() {
         if (isInSubMenu) {
             // Dans le sous-menu : "THEMES"
-            System.out.println("🎨 Ouverture de la sélection de thèmes...");
             handleThemeSelection();
         } else {
             // Dans le menu principal : "PARAMETRE" -> afficher les paramètres
-            System.out.println("Ouverture des paramètres...");
-
             String musicInfo = String.format("Musique: %s (Vol: %.0f%%)\nPiste actuelle: %s",
                     musicManager.isPlaying() ? "Activée" : "Désactivée",
                     musicManager.getVolume() * 100,
@@ -928,12 +750,9 @@ public class MenuController implements Initializable {
     private void handleLoginButton() {
         if (isInSubMenu) {
             // Dans le sous-menu : "MAP EDITOR"
-            System.out.println("🗺️ Ouverture de l'éditeur de cartes...");
             handleMapEditor();
         } else {
             // Dans le menu principal : "SE CONNECTER" -> système de connexion
-            System.out.println("Bouton connexion/compte cliqué");
-
             if (userManager.isLoggedIn()) {
                 showUserProfile();
             } else {
@@ -946,7 +765,6 @@ public class MenuController implements Initializable {
     private void handleExitButton() {
         if (isInSubMenu) {
             // Dans le sous-menu : "RETOUR" -> retour au menu principal
-            System.out.println("Retour au menu principal...");
             isInSubMenu = false;
             updateMenuDisplay();
 
@@ -955,7 +773,6 @@ public class MenuController implements Initializable {
             updateSelection();
         } else {
             // Dans le menu principal : "QUITTER" -> fermer le jeu
-            System.out.println("Fermeture du jeu...");
 
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Fermeture du jeu");
@@ -979,7 +796,6 @@ public class MenuController implements Initializable {
     // NOUVELLE MÉTHODE : Afficher le classement
     @FXML
     private void handleRankingButton() {
-        System.out.println("Affichage du classement...");
         showRankingView();
     }
 
@@ -1068,7 +884,6 @@ public class MenuController implements Initializable {
 
 
     private void handleThemeSelection() {
-        System.out.println("🎨 Ouverture de la sélection de thèmes...");
         showThemeView();
     }
 
@@ -1105,21 +920,16 @@ public class MenuController implements Initializable {
 
     private void loadAvailableMaps() {
         if (mapButtonsContainer != null) {
-            System.out.println("🔍 Début chargement maps...");
-
             // Vider les boutons existants
             mapButtonsContainer.getChildren().clear();
             mapButtons.clear();
 
             List<String> availableMaps = mapManager.getMapsList();
-            System.out.println("🗺️ Maps trouvées : " + availableMaps);
-            System.out.println("🗺️ Nombre de maps : " + availableMaps.size());
 
             if (availableMaps.isEmpty()) {
                 Label noMapsLabel = new Label("Aucune map disponible");
                 noMapsLabel.setStyle("-fx-text-fill: #666666; -fx-font-size: 9px;");
                 mapButtonsContainer.getChildren().add(noMapsLabel);
-                System.out.println("⚠️ Aucune map disponible");
             } else {
                 // Créer un bouton pour chaque map
                 for (String mapName : availableMaps) {
@@ -1138,22 +948,14 @@ public class MenuController implements Initializable {
 
                     mapButtons.add(mapButton);
                     mapButtonsContainer.getChildren().add(mapButton);
-
-                    System.out.println("✅ Bouton créé pour : " + mapName);
                 }
             }
-
-            System.out.println("🗺️ " + availableMaps.size() + " bouton(s) de map créé(s)");
-            System.out.println("🗺️ Sélection actuelle : " + selectedMapName);
-        } else {
-            System.out.println("❌ mapButtonsContainer est null !");
         }
     }
 
     private void selectMap(String mapName, Button clickedButton) {
         // Changer la sélection
         selectedMapName = mapName;
-        System.out.println("🗺️ Map sélectionnée : " + mapName);
 
         // Mettre à jour l'apparence des boutons
         updateMapButtonsSelection();
@@ -1197,10 +999,7 @@ public class MenuController implements Initializable {
 
     @FXML
     private void handleTheme3Button() {
-        Alert alert = createStyledAlert("Thème non disponible",
-                "Thème 3",
-                "Ce thème n'est pas encore disponible.");
-        alert.showAndWait();
+        selectTheme("theme3", "Thème 3");
     }
 
     @FXML
@@ -1227,7 +1026,6 @@ public class MenuController implements Initializable {
         if (!themeId.equals(oldTheme)) {
             GameControllerTheme1.setCurrentTheme(themeId);
             updateThemeButtons();
-            System.out.println("🎨 Thème changé : " + oldTheme + " → " + themeId);
         }
     }
 
@@ -1242,66 +1040,32 @@ public class MenuController implements Initializable {
 
 
     private void handleMapEditor() {
-        System.out.println("🗺️ Ouverture de l'éditeur de cartes...");
 
         try {
-            // SAUVEGARDER les dimensions actuelles
             Stage stage = (Stage) loginButton.getScene().getWindow();
             double originalWidth = stage.getWidth();
             double originalHeight = stage.getHeight();
 
-            // Charger la scène de l'éditeur de cartes
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/mapeditor.fxml"));
             Parent editorRoot = loader.load();
 
-            // Obtenir le contrôleur de l'éditeur
             MapEditorController editorController = loader.getController();
 
-            // PASSER les dimensions originales au contrôleur de l'éditeur
             editorController.setOriginalDimensions(originalWidth, originalHeight);
 
-            // Créer la nouvelle scène
             Scene editorScene = new Scene(editorRoot, 1000, 700);
 
-            // Appliquer le CSS si il existe
-            try {
-                editorScene.getStylesheets().add(getClass().getResource("/css/mapeditor.css").toExternalForm());
-            } catch (Exception e) {
-                System.out.println("⚠️ CSS mapeditor.css non trouvé, utilisation du style par défaut");
-            }
 
-            // Changer de scène et redimensionner pour l'éditeur
+            editorScene.getStylesheets().add(getClass().getResource("/css/mapeditor.css").toExternalForm());
+
             stage.setScene(editorScene);
             stage.setTitle("Super Bomberman - Éditeur de Cartes");
             stage.setWidth(1000);
             stage.setHeight(700);
             stage.centerOnScreen();
 
-            // Arrêter la musique du menu (optionnel)
-            if (musicManager != null) {
-                musicManager.pauseBackgroundMusic();
-            }
-
-            System.out.println("✅ Éditeur de cartes ouvert avec succès");
-
         } catch (IOException e) {
-            System.err.println("❌ Erreur lors du chargement de l'éditeur de cartes : " + e.getMessage());
             e.printStackTrace();
-
-            Alert alert = createStyledAlert("Erreur",
-                    "Impossible d'ouvrir l'éditeur",
-                    "Une erreur s'est produite lors du chargement de l'éditeur de cartes.\n\n" +
-                            "Vérifiez que le fichier mapeditor.fxml existe dans resources/fxml/\n\n" +
-                            "Erreur technique : " + e.getMessage());
-            alert.showAndWait();
-        } catch (Exception e) {
-            System.err.println("❌ Erreur inattendue : " + e.getMessage());
-            e.printStackTrace();
-
-            Alert alert = createStyledAlert("Erreur",
-                    "Erreur inattendue",
-                    "Une erreur inattendue s'est produite.\n\n" + e.getMessage());
-            alert.showAndWait();
         }
     }
 
@@ -1342,7 +1106,6 @@ public class MenuController implements Initializable {
         } else {
             playSound("select.mp3");
         }
-        System.out.println("♪ Son de navigation menu");
     }
 
     private void playSelectionSound() {
@@ -1352,7 +1115,6 @@ public class MenuController implements Initializable {
         } else {
             playSound("navigation.mp3");
         }
-        System.out.println("♪ Son de selection menu");
     }
 
     // Public methods for external control

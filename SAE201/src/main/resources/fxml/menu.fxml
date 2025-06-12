@@ -269,13 +269,6 @@
                                    promptText="Confirmez votre mot de passe"
                                    focusTraversable="true" />
                 </VBox>
-
-                <VBox spacing="3">
-                    <Label text="Avatar:" styleClass="login-label" />
-                    <ComboBox fx:id="avatarComboBox"
-                              promptText="Choisissez votre avatar"
-                              focusTraversable="true" />
-                </VBox>
             </VBox>
 
             <HBox spacing="15" alignment="CENTER">
@@ -320,18 +313,17 @@
                     <Button fx:id="theme1Button"
                             text="THÈME CLASSIQUE"
                             styleClass="theme-btn"
-                            onAction="#handleTheme1Button" />
+                            onAction="#handleTheme1Button"/>
 
                     <Button fx:id="theme2Button"
                             text="THÈME 2"
                             styleClass="theme-btn"
-                            onAction="#handleTheme2Button" />
+                            onAction="#handleTheme2Button"/>
 
                     <Button fx:id="theme3Button"
-                            text="THÈME 3 (bientôt)"
-                            styleClass="theme-btn-disabled"
-                            onAction="#handleTheme3Button"
-                            disable="true" />
+                            text="THÈME 3"
+                            styleClass="theme-btn"
+                            onAction="#handleTheme3Button"/>
                 </VBox>
             </VBox>
 
@@ -381,15 +373,12 @@
 
                 <!-- Mode Normal -->
                 <VBox spacing="15" alignment="CENTER" styleClass="gamemode-section">
-                    <Label text="MODE NORMAL" styleClass="gamemode-section-title" />
-
                     <Button fx:id="normalModeButton"
-                            text="BOMBERMAN CLASSIQUE"
+                            text="NORMAL"
                             styleClass="gamemode-btn"
                             onAction="#handleNormalModeButton" />
 
                     <Label text="• 2 joueurs" styleClass="gamemode-description" />
-                    <Label text="• Maps personnalisées" styleClass="gamemode-description" />
                     <Label text="• Mode survival" styleClass="gamemode-description" />
                 </VBox>
 
@@ -401,13 +390,12 @@
                     <Label text="CAPTURE DU DRAPEAU" styleClass="gamemode-section-title" />
 
                     <Button fx:id="captureFlagModeButton"
-                            text="CAPTURE THE FLAG"
+                            text="CTF"
                             styleClass="gamemode-btn"
                             onAction="#handleCaptureFlagModeButton" />
 
-                    <Label text="• Mode équipes" styleClass="gamemode-description" />
+                    <Label text="• 2 joueurs" styleClass="gamemode-description" />
                     <Label text="• Objectif tactique" styleClass="gamemode-description" />
-                    <Label text="• Maps spécialisées" styleClass="gamemode-description" />
                 </VBox>
 
             </HBox>

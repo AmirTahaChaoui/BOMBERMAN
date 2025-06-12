@@ -87,12 +87,10 @@ public class MusicManager {
         }
 
         String currentTrack = shuffledPlaylist.get(currentTrackIndex);
-        System.out.println("🎵 Tentative de lecture : " + currentTrack);
 
         URL musicUrl = getClass().getResource("/Music/" + currentTrack);
 
         if (musicUrl == null) {
-            System.out.println("❌ Musique désactivée - Fichier non trouvé");
             musicFailed = true;
             return;
         }
@@ -116,17 +114,14 @@ public class MusicManager {
             });
 
             currentPlayer.setOnError(() -> {
-                System.out.println("❌ Musique désactivée - Erreur de lecture");
                 musicFailed = true;
                 isPlaying = false;
             });
 
             currentPlayer.play();
             isPlaying = true;
-            System.out.println("♪ Lecture de: " + currentTrack);
 
         } catch (Exception e) {
-            System.out.println("❌ Musique désactivée - Erreur : " + e.getMessage());
             musicFailed = true;
             isPlaying = false;
         }
