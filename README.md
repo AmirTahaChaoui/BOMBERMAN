@@ -50,8 +50,7 @@ Un remake moderne du célèbre jeu Bomberman développé en Java avec JavaFX, in
 
 1. **Cloner le repository**
 ```bash
-git clone https://github.com/adam-KUROPATWA-BUTTE/super-bomberman-javafx.git
-cd super-bomberman-javafx
+git clone https://github.com/AmirTahaChaoui/BOMBERMAN
 ```
 
 2. **Configurer JavaFX**
@@ -82,7 +81,7 @@ java --module-path "path/to/javafx/lib" --add-modules javafx.controls,javafx.fxm
 
 #### Contrôles Généraux
 - **Échap** - Menu de pause
-- **Alt + F4** - Quitter le jeu
+- **Alt + F4** *ou bien* **Retour dans le menu echap** - Quitter le jeu
 
 ### Mode Classique
 - Détruisez votre adversaire avec des bombes
