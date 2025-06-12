@@ -129,6 +129,9 @@ public class User {
      * @return true si les mots de passe correspondent
      */
     public boolean checkPassword(String passwordHash) {
+        if (this.passwordHash == null) {
+            return passwordHash == null;
+        }
         return this.passwordHash.equals(passwordHash);
     }
 
